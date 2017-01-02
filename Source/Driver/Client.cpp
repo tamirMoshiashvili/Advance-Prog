@@ -236,4 +236,3 @@ void Client::drive() {
         memset(buffer, 0, 64);
     }
 }
-
