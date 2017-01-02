@@ -78,9 +78,9 @@ ssize_t Client::receiveData(char *buffer, size_t size) {
  */
 void Client::sendIds() {
     // Create the string that represents the ids.
-    string str = to_string(getId());
-    str.append(",");
-    str.append(to_string(getCabId()));
+    std::stringstream out;
+    out << getId() << "," << getCabId();
+    string str = out.str();
     // Send to the server.
     sendData(str);
 }
@@ -196,7 +196,7 @@ void Client::handleNavigation() {
     deque<int> oppositePath;
     ia >> oppositePath;
     // Create path of blocks from the path of ids.
-    deque<Block *> *path = new deque<Block *>();
+    std::deque<Block *> *path = new deque<Block *>();
     while (!oppositePath.empty()) {
         // Get the block with the id that on the top of the stack.
         Block *block =
