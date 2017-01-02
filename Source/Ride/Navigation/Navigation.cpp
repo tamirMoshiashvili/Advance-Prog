@@ -1,5 +1,6 @@
 #include "Navigation.h"
 
+
 /**
  * Constructor.
  * @param sourcePoint source point of the way.
