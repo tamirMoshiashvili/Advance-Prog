@@ -6,21 +6,14 @@
 #include "Source/Cab/TaxiCenter.h"
 #include "Source/Control/MainFlow.h"
 #include "Source/Input/InputManager.h"
-#include "Source/Ride/Navigation/BFS.h"
-#include "Source/Basic/Block/MatrixBlock.h"
-#include "Source/Cab/Vehicle/StandardCab.h"
-#include "Source/Cab/Vehicle/LuxuryCab.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
-#include <stdlib.h>
 
 using namespace std;
 using namespace boost;
 
 static void operate(uint16_t port);
-
-// hello tamir
 
 
 int main(int argc, char **argv) {
