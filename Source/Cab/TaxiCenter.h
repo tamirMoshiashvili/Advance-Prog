@@ -1,7 +1,6 @@
 #ifndef EX2_TAXICENTER_H
 #define EX2_TAXICENTER_H
 
-
 #include <map>
 #include "../Driver/Driver.h"
 #include "../Ride/Passenger.h"
