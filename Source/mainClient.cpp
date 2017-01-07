@@ -21,15 +21,4 @@ int main(int argc, char **argv) {
     //client->operate();
     //delete client;
     return 0;
-
-
-
-
-
-
-
-
-
-
-
 }
