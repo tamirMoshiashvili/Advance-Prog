@@ -13,7 +13,8 @@ int main(int argc, char **argv) {
     char buffer[128];
     s->receiveData(buffer, sizeof(buffer));
     cout << buffer;
-    s->sendData("hello again");
+    cin >> buffer;
+    s->sendData(buffer);
     delete s;
     //Client *client = InputManager::readClient(argv[1], std::atoi(argv[2]));
     //client->operate();

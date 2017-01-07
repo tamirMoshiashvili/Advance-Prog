@@ -19,14 +19,14 @@ static void operate(uint16_t port);
 
 int main(int argc, char **argv) {
     string port = argv[1];
-    TcpServer *s = new TcpServer((uint16_t) atoi(port.c_str()), 1);
+    TcpServer *s = new TcpServer((uint16_t) atoi(port.c_str()), 2);
     s->initialize();
     vector<int> *c = s->getClientDescriptors();
     char buffer[32];
     for (int i = 0; i < c->size(); ++i) {
-        s->sendData("hello", (*c)[i]);
+        s->sendData("hello\n", (*c)[i]);
         s->receiveData(buffer, sizeof(buffer), (*c)[i]);
-        cout << buffer;
+        cout << buffer << endl;
     }
     int i;
     cin >> i;
