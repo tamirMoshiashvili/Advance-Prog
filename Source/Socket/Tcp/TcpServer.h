@@ -16,7 +16,7 @@ private:
     vector<int> *clientDescriptors;
 
 public:
-    TcpServer(string ip_addr, uint16_t port_num, int numOfClients);
+    TcpServer(uint16_t port_num, int numOfClients);
 
     ~TcpServer();
 
