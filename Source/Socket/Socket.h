@@ -36,6 +36,7 @@ protected:
     string ip_address;
     int backLog;
     uint16_t port_number;
+
 public:
 
     Socket();

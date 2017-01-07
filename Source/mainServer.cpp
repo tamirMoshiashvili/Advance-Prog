@@ -6,6 +6,7 @@
 #include "Cab/TaxiCenter.h"
 #include "Control/MainFlow.h"
 #include "Input/InputManager.h"
+#include "Socket/Tcp/TcpServer.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -18,7 +19,10 @@ static void operate(uint16_t port);
 
 int main(int argc, char **argv) {
     string port = argv[1];
-    operate((uint16_t) atoi(port.c_str()));
+    Socket *s = new TcpServer((uint16_t) atoi(port.c_str()),1);
+    s->initialize();
+    delete s;
+    //operate((uint16_t) atoi(port.c_str()));
     return 0;
 }
 

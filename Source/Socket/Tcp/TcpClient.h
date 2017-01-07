@@ -6,7 +6,7 @@
 
 class TcpClient : public Tcp {
 public:
-    TcpClient(uint16_t port_num);
+    TcpClient(std::string ip_addr, uint16_t port_num);
 
     ~TcpClient();
 

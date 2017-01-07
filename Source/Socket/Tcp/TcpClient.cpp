@@ -3,10 +3,12 @@
 /**
  * Constructor.
  * @param port_num port number.
+ * @param ip_addr ip address.
  * @return Tcp client socket object.
  */
-TcpClient::TcpClient(uint16_t port_num) : Tcp(port_num) {
-
+TcpClient::TcpClient(std::string ip_addr, uint16_t port_num)
+        : Tcp(port_num) {
+    ip_address = ip_addr;
 }
 
 /**

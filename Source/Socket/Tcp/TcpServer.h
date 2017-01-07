@@ -2,7 +2,7 @@
 #define EX2_TCPSERVER_H
 
 
-#include <list>
+#include <vector>
 #include "Tcp.h"
 
 using namespace std;
@@ -13,10 +13,10 @@ using namespace std;
 class TcpServer : public Tcp {
 private:
     int numClients;
-    list<int> *clientDescriptors;
+    vector<int> *clientDescriptors;
 
 public:
-    TcpServer(uint16_t port_num, int numOfClients);
+    TcpServer(string ip_addr, uint16_t port_num, int numOfClients);
 
     ~TcpServer();
 

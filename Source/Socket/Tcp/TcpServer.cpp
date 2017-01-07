@@ -2,13 +2,15 @@
 
 /**
  * Constructor.
+ * @param ip_addr ip address.
  * @param port_num port number.
  * @param numOfClients number of clients.
  * @return Tcp server socket object.
  */
-TcpServer::TcpServer(uint16_t port_num, int numOfClients)
+TcpServer::TcpServer(string ip_addr, uint16_t port_num, int numOfClients)
         : Tcp(port_num), numClients(numOfClients) {
-    clientDescriptors = new list<int>();
+    ip_address = ip_addr;
+    clientDescriptors = new vector<int>();
 }
 
 /**
