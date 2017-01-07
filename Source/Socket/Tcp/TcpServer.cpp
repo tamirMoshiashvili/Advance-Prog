@@ -17,7 +17,7 @@ TcpServer::TcpServer(uint16_t port_num, int numOfClients)
  */
 TcpServer::~TcpServer() {
     for (int i = 0; i < clientDescriptors->size(); ++i) {
-        close(clientDescriptors->[i]);
+        close((*clientDescriptors)[i]);
     }
     delete clientDescriptors;
 }

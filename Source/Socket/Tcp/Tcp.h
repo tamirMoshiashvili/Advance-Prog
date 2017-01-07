@@ -14,7 +14,7 @@ public:
 
     virtual ~Tcp();
 
-    int initialize();
+    virtual int initialize();
 
     int sendData(string data, int sockDescriptor = -1);
 

@@ -40,6 +40,8 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         Source/Socket/Udp/UdpClient.cpp Source/Socket/Udp/UdpClient.h
 
         Source/Socket/Tcp/Tcp.cpp Source/Socket/Tcp/Tcp.h
+        Source/Socket/Tcp/TcpServer.cpp Source/Socket/Tcp/TcpServer.h
+        Source/Socket/Tcp/TcpClient.cpp Source/Socket/Tcp/TcpClient.h
 
         #Tests/PointTest.cpp
         #Tests/RecognizableTest.cpp
@@ -64,7 +66,7 @@ set(BOOST_ROOT CHACHE PATH "/usr/include/boost/")
 find_package(Boost 1.58.0 COMPONENTS serialization system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 add_executable(server ${SOURCE_FILES} Source/mainServer.cpp)
-add_executable(client ${SOURCE_FILES} Source/mainClient.cpp Source/Socket/Tcp/TcpServer.cpp Source/Socket/Tcp/TcpServer.h Source/Socket/Tcp/TcpClient.cpp Source/Socket/Tcp/TcpClient.h)
+add_executable(client ${SOURCE_FILES} Source/mainClient.cpp)
 target_link_libraries(server ${Boost_LIBRARIES})
 target_link_libraries(client ${Boost_LIBRARIES})
 
