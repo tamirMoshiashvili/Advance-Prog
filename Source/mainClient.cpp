@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
     cin >> buffer;
     s->sendData(buffer);
     delete s;
+
     //Client *client = InputManager::readClient(argv[1], std::atoi(argv[2]));
     //client->operate();
     //delete client;
