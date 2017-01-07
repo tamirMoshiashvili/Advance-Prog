@@ -1,4 +1,5 @@
 #include "TcpServer.h"
+#include <unistd.h>
 
 /**
  * Constructor.
@@ -15,6 +16,9 @@ TcpServer::TcpServer(uint16_t port_num, int numOfClients)
  * Destructor.
  */
 TcpServer::~TcpServer() {
+    for (int i = 0; i < clientDescriptors->size(); ++i) {
+        close(clientDescriptors->[i]);
+    }
     delete clientDescriptors;
 }
 
@@ -58,4 +62,12 @@ int TcpServer::initialize() {
         }
     }
     return returnVal;
+}
+
+/**
+ * Get the client-descriptors vector.
+ * @return vector of int.
+ */
+vector<int> *TcpServer::getClientDescriptors() {
+    return clientDescriptors;
 }

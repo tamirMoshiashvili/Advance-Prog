@@ -19,8 +19,15 @@ static void operate(uint16_t port);
 
 int main(int argc, char **argv) {
     string port = argv[1];
-    Socket *s = new TcpServer((uint16_t) atoi(port.c_str()),1);
+    TcpServer *s = new TcpServer((uint16_t) atoi(port.c_str()),1);
     s->initialize();
+    vector<int> *c = s->getClientDescriptors();
+    char buffer[32];
+    for (int i = 0; i < c->size(); ++i) {
+        s->sendData("hello", c->[i]);
+        s->receiveData(buffer, sizeof(buffer),c->[i]);
+        cout << buffer;
+    }
     delete s;
     //operate((uint16_t) atoi(port.c_str()));
     return 0;

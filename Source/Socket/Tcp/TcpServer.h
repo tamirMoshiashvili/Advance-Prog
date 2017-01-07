@@ -21,6 +21,8 @@ public:
     ~TcpServer();
 
     int initialize();
+
+    vector<int> *getClientDescriptors();
 };
 
 
