@@ -19,5 +19,5 @@ int main(int argc, char **argv) {
     //Client *client = InputManager::readClient(argv[1], std::atoi(argv[2]));
     //client->operate();
     //delete client;
-    return 0;
+
 }
