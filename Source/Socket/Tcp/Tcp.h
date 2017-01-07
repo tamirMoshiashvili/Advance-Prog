@@ -18,7 +18,7 @@ public:
 
     int sendData(string data, int sockDescriptor = -1);
 
-    int receiveData(char *buffer, size_t size);
+    ssize_t receiveData(char *buffer, size_t size, int sockDescriptor = -1);
 };
 
 #endif /* TCP_H_ */

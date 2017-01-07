@@ -43,7 +43,7 @@ int Tcp::sendData(string data, int sockDescriptor = -1) {
     unsigned long data_len = data.length();
     const char *datas = data.c_str();
     // Check for socket descriptor, is server or client.
-    if(sockDescriptor == -1){
+    if (sockDescriptor == -1) {
         sockDescriptor = socketDescriptor;
     }
     ssize_t sent_bytes = send(sockDescriptor, datas, data_len, 0);
@@ -55,27 +55,25 @@ int Tcp::sendData(string data, int sockDescriptor = -1) {
     return CORRECT;
 }
 
-/***********************************************************************
-* function name: recive	`											   *
-* The Input: none										               *
-* The output: int number representing the return status	               *
-* The Function operation: getting data from the other socket to,	   *
-* enter it to the buffer and print the data							   *
-***********************************************************************/
-int Tcp::receiveData(char *buffer, int size) {
-    int read_bytes = recv(this->isServer ? this->clientDescriptor
-                                         : this->socketDescriptor, buffer, size,
-                          0);
-    //checking the errors
+/**
+ * Getting data from the other socket and print the data.
+ * @param buffer the place where the data will be stored.
+ * @param size number.
+ * @param sockDescriptor descriptor.
+ * @return number.
+ */
+ssize_t Tcp::receiveData(char *buffer, size_t size, int sockDescriptor = -1) {
+    if (sockDescriptor == -1) {
+        sockDescriptor = socketDescriptor;
+    }
+    ssize_t read_bytes = recv(sockDescriptor, buffer, size, 0);
+    // Check the errors.
     if (read_bytes == 0) {
         return CONNECTION_CLOSED;
     } else if (read_bytes < 0) {
-        //return an error represent error at this method
-        return ERROR_RECIVE;
-    } else {
-        //prinrting the massege
-//		cout<<buffer<<endl;
+        // Return an error represent error at this method.
+        return ERROR_RECEIVE;
     }
-    //return correct if there were no problem
+    // Return correct if there were no problem.
     return read_bytes;
 }

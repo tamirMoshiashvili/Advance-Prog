@@ -33,9 +33,10 @@ int Udp::initialize() {
 /**
  * Sending the input data to the socket who connect to this socket.
  * @param data string representing the data to send.
+ * @param sockDescriptor descriptor.
  * @return number representing the return status.
  */
-int Udp::sendData(string data) {
+int Udp::sendData(string data, int sockDescriptor = -1) {
     // Initialize the struct.
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof(sin));
@@ -61,7 +62,7 @@ int Udp::sendData(string data) {
 * @param size number.
 * @return number of bytes received.
 */
-ssize_t Udp::receiveData(char *buffer, size_t size) {
+ssize_t Udp::receiveData(char *buffer, size_t size, int sockDescriptor = -1) {
     struct sockaddr_in to;
     unsigned int to_len = sizeof(struct sockaddr_in);
     // Receive.

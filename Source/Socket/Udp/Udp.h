@@ -15,9 +15,9 @@ public:
 
     virtual int initialize();
 
-    int sendData(string data);
+    int sendData(string data, int sockDescriptor = -1);
 
-    ssize_t receiveData(char *buffer, size_t size);
+    ssize_t receiveData(char *buffer, size_t size, int sockDescriptor = -1);
 };
 
 #endif /* UDP_H_ */
