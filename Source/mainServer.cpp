@@ -24,8 +24,8 @@ int main(int argc, char **argv) {
     vector<int> *c = s->getClientDescriptors();
     char buffer[32];
     for (int i = 0; i < c->size(); ++i) {
-        s->sendData("hello", c->[i]);
-        s->receiveData(buffer, sizeof(buffer),c->[i]);
+        s->sendData("hello", (*c)[i]);
+        s->receiveData(buffer, sizeof(buffer),(*c)[i]);
         cout << buffer;
     }
     delete s;

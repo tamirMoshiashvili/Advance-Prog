@@ -39,7 +39,7 @@ int Tcp::initialize() {
  * otherwise it will be number which mention the client socket descriptor.
  * @return
  */
-int Tcp::sendData(string data, int sockDescriptor = -1) {
+int Tcp::sendData(string data, int sockDescriptor) {
     unsigned long data_len = data.length();
     const char *datas = data.c_str();
     // Check for socket descriptor, is server or client.
@@ -62,7 +62,7 @@ int Tcp::sendData(string data, int sockDescriptor = -1) {
  * @param sockDescriptor descriptor.
  * @return number.
  */
-ssize_t Tcp::receiveData(char *buffer, size_t size, int sockDescriptor = -1) {
+ssize_t Tcp::receiveData(char *buffer, size_t size, int sockDescriptor) {
     if (sockDescriptor == -1) {
         sockDescriptor = socketDescriptor;
     }

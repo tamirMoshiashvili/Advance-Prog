@@ -36,7 +36,7 @@ int Udp::initialize() {
  * @param sockDescriptor descriptor.
  * @return number representing the return status.
  */
-int Udp::sendData(string data, int sockDescriptor = -1) {
+int Udp::sendData(string data, int sockDescriptor) {
     // Initialize the struct.
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof(sin));
@@ -62,7 +62,7 @@ int Udp::sendData(string data, int sockDescriptor = -1) {
 * @param size number.
 * @return number of bytes received.
 */
-ssize_t Udp::receiveData(char *buffer, size_t size, int sockDescriptor = -1) {
+ssize_t Udp::receiveData(char *buffer, size_t size, int sockDescriptor) {
     struct sockaddr_in to;
     unsigned int to_len = sizeof(struct sockaddr_in);
     // Receive.
