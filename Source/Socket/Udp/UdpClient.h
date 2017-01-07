@@ -4,6 +4,9 @@
 
 #include "Udp.h"
 
+/**
+ * Udp client socket.
+ */
 class UdpClient : public Udp {
 public:
 

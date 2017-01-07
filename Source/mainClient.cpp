@@ -1,6 +1,6 @@
 
-#include "Source/Driver/Client.h"
-#include "Source/Input/InputManager.h"
+#include "Driver/Client.h"
+#include "Input/InputManager.h"
 #include <stdlib.h>
 
 using namespace std;

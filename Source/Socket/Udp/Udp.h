@@ -3,7 +3,9 @@
 
 #include "../Socket.h"
 
-
+/**
+ * Udp socket.
+ */
 class Udp : public Socket {
 public:
 

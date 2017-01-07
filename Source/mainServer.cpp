@@ -3,9 +3,9 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include "Source/Cab/TaxiCenter.h"
-#include "Source/Control/MainFlow.h"
-#include "Source/Input/InputManager.h"
+#include "Cab/TaxiCenter.h"
+#include "Control/MainFlow.h"
+#include "Input/InputManager.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
