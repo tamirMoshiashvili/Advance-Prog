@@ -16,7 +16,7 @@ using namespace boost;
  * @param map pointer to city map.
  * @return TaxiCenter object.
  */
-TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0) {
+TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0), tcpServer(NULL) {
     detector = new LocationDetector(cityMap);
 }
 
@@ -27,7 +27,7 @@ TaxiCenter::~TaxiCenter() {
     //delete cityMap;
     delete detector;
     // Delete drivers.
-    closeAllSockets();
+    delete tcpServer;
     // Delete cabs.
     for (map<int, Cab *>::iterator it = idToCab.begin();
          it != idToCab.end(); ++it) {
@@ -41,17 +41,18 @@ TaxiCenter::~TaxiCenter() {
     }
 }
 
-/**
- * Close all the sockets from the clients and the socket of the server.
- */
-void TaxiCenter::closeAllSockets() {
-    // Iterate over the map and send everyone the message.
-    for (map<int, Socket *>::iterator it = driverIdToSocket.begin();
-         it != driverIdToSocket.end(); ++it) {
-        it->second->sendData(END);
-        delete it->second;
-    }
-}
+///**
+// * Close all the sockets from the clients and the socket of the server.
+// */
+//void TaxiCenter::closeAllSockets() {
+//    // Iterate over the map and send everyone the message.
+//    for (map<int, Socket *>::iterator it = driverIdToSocket.begin();
+//         it != driverIdToSocket.end(); ++it) {
+//        it->second->sendData(END);
+//        delete it->second;
+//    }
+//    delete tcpServer;
+//}
 
 /**
  * Create number of sockets, according to the number of drivers,
@@ -60,12 +61,9 @@ void TaxiCenter::closeAllSockets() {
  * @param port port number.
  */
 void TaxiCenter::initializeSocketsList(int numDrivers, uint16_t port) {
-    // Create socket for each driver.
-    for (int i = 0; i < numDrivers; ++i) {
-        Socket *sock = new UdpServer((uint16_t) (port + i));
-        sock->initialize();
-        sockets.push_back(sock);
-    }
+    // Create the main server socket.
+    tcpServer = new TcpServer(port, numDrivers);
+    tcpServer->initialize();
     // Connect drivers to their sockets.
     addDrivers();
 }
@@ -77,17 +75,17 @@ void TaxiCenter::addDrivers() {
     char buffer[128];
     int driverId = 0, cabId = 0;
     // Connect each socket to a driver.
-    for (list<Socket *>::iterator it = sockets.begin();
-         it != sockets.end(); ++it) {
+    vector<int> *clients = tcpServer->getClientDescriptors();
+    for (int i = 0; i < clients->size(); ++i) {
         // Wait for data (Ids) from a driver.
-        (*it)->receiveData(buffer, sizeof(buffer));
+        tcpServer->receiveData(buffer, sizeof(buffer), (*clients)[i]);
         // Parse the id of driver and its cab.
         string str(buffer);
-        unsigned long i = str.find(",");
-        driverId = atoi(str.substr(0, i).c_str());
-        cabId = atoi(str.substr(i + 1, str.length()).c_str());
-        // Add a driver and its socket to the map.
-        driverIdToSocket.insert(pair<int, Socket *>(driverId, *it));
+        unsigned long j = str.find(",");
+        driverId = atoi(str.substr(0, j).c_str());
+        cabId = atoi(str.substr(j + 1, str.length()).c_str());
+        // Add a driver and its socket descriptor to the map.
+        driverIdToDescriptor.insert(pair<int, int>(driverId, (*clients)[i]));
         // Serialize the cab of the driver.
         string serial_str;
         iostreams::back_insert_device<string> inserter(serial_str);
@@ -96,7 +94,7 @@ void TaxiCenter::addDrivers() {
         oa << idToCab.at(cabId);
         s2.flush();
         // Send the cab of the driver.
-        (*it)->sendData(serial_str);
+        tcpServer->sendData(serial_str, (*clients)[i]);
     }
 }
 
@@ -150,7 +148,7 @@ void TaxiCenter::removeRide(Ride *ride) {
  * @return number.
  */
 int TaxiCenter::getNumDrivers() {
-    return (int) driverIdToSocket.size();
+    return (int) driverIdToDescriptor.size();
 }
 
 /**
@@ -191,7 +189,7 @@ void TaxiCenter::sendRide(int driverId, Ride *ride) {
     oa << ride;
     stream.flush();
     // Send the ride to the driver.
-    driverIdToSocket.at(driverId)->sendData(serial_str);
+    tcpServer->sendData(serial_str, driverIdToDescriptor.at(driverId));
     // Send a navigation-system of the given ride to the driver.
     sendNavigation(driverId, ride);
 }
@@ -216,7 +214,7 @@ void TaxiCenter::sendNavigation(int driverId, Ride *ride) {
     oa << oppositePath;
     stream.flush();
     // Send the navigation-path to the driver.
-    driverIdToSocket.at(driverId)->sendData(serial_str);
+    tcpServer->sendData(serial_str, driverIdToDescriptor.at(driverId));
     delete navigation;
 }
 
@@ -228,11 +226,12 @@ void TaxiCenter::sendNavigation(int driverId, Ride *ride) {
 Point TaxiCenter::askDriverLocation(int driverId) {
     // Send the driver a message which acknowledge him that
     // he need to send his location to the server.
-    driverIdToSocket.at(driverId)->sendData(SEND_LOCATION);
+    int driverDescriptor = driverIdToDescriptor.at(driverId);
+    tcpServer->sendData(SEND_LOCATION, driverDescriptor);
     Point driverLocation;
     // De-serialize the location.
     char buffer[128];
-    driverIdToSocket.at(driverId)->receiveData(buffer, sizeof(buffer));
+    tcpServer->receiveData(buffer, sizeof(buffer), driverDescriptor);
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<iostreams::basic_array_source<char> > stream(device);
     archive::binary_iarchive ia(stream);
@@ -281,10 +280,11 @@ void TaxiCenter::operate() {
  */
 void TaxiCenter::makeDriversWork() {
     // Iterate over the drivers.
-    map<int, Socket *>::iterator it;
-    for (it = driverIdToSocket.begin(); it != driverIdToSocket.end(); it++) {
+    map<int, int>::iterator it;
+    for (it = driverIdToDescriptor.begin();
+         it != driverIdToDescriptor.end(); it++) {
         // Send the driver a message which acknowledge him to get to work.
-        it->second->sendData(GO);
+        tcpServer->sendData(GO, it->second);
     }
 }
 
@@ -330,12 +330,13 @@ void TaxiCenter::advanceClock() {
 int TaxiCenter::findAvailableDriver() {
     char buffer[16];
     // Iterate over the drivers sockets.
-    map<int, Socket *>::iterator it;
-    for (it = driverIdToSocket.begin(); it != driverIdToSocket.end(); ++it) {
+    map<int, int>::iterator it;
+    for (it = driverIdToDescriptor.begin();
+         it != driverIdToDescriptor.end(); ++it) {
         // Ask the driver for availability.
-        it->second->sendData(IS_AVAILABLE);
+        tcpServer->sendData(IS_AVAILABLE, it->second);
         // Get the driver's answer.
-        it->second->receiveData(buffer, sizeof(buffer));
+        tcpServer->receiveData(buffer, sizeof(buffer), it->second);
         if (!strcmp(buffer, YES)) {
             // Available driver has been found.
             return it->first;

@@ -4,6 +4,7 @@
 #include "../Cab/Vehicle/StandardCab.h"
 #include "../Ride/Navigation/BFS.h"
 #include "../Basic/Block/MatrixBlock.h"
+#include "../Socket/Tcp/TcpClient.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -39,7 +40,7 @@ Client::Client(int idNum, int ageVal, MaritalStatus status, int years,
         : Driver(idNum, ageVal, status, years, cabID) {
 
     // Handle the socket.
-    socket = new UdpClient(ip_addr, port);
+    socket = new TcpClient(ip_addr, port);
     socket->initialize();
     // Connect with server.
     sendIds();
