@@ -332,4 +332,3 @@ int TaxiCenter::findAvailableDriver() {
     // There is no available driver.
     return -1;
 }
-
