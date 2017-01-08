@@ -73,5 +73,3 @@ int TcpServer::initialize() {
 vector<int> *TcpServer::getClientDescriptors() {
     return clientDescriptors;
 }
-
-
