@@ -41,19 +41,6 @@ TaxiCenter::~TaxiCenter() {
     }
 }
 
-///**
-// * Close all the sockets from the clients and the socket of the server.
-// */
-//void TaxiCenter::closeAllSockets() {
-//    // Iterate over the map and send everyone the message.
-//    for (map<int, Socket *>::iterator it = driverIdToSocket.begin();
-//         it != driverIdToSocket.end(); ++it) {
-//        it->second->sendData(END);
-//        delete it->second;
-//    }
-//    delete tcpServer;
-//}
-
 /**
  * Create number of sockets, according to the number of drivers,
  *  with the given port, and initialize them.
@@ -328,7 +315,7 @@ void TaxiCenter::advanceClock() {
  * @return id of available driver, (-1) if there is no available driver.
  */
 int TaxiCenter::findAvailableDriver() {
-    char buffer[16];
+    char buffer[16] = {0};
     // Iterate over the drivers sockets.
     map<int, int>::iterator it;
     for (it = driverIdToDescriptor.begin();
