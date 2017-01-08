@@ -5,6 +5,7 @@
 #include "../Driver/Driver.h"
 #include "../Ride/Passenger.h"
 #include "../Socket/Socket.h"
+#include "../Socket/Tcp/TcpServer.h"
 
 #include <sys/socket.h>
 #include <stdio.h>
@@ -18,8 +19,8 @@
  */
 class TaxiCenter {
 private:
-    list<Socket *> sockets;
-    map<int, Socket *> driverIdToSocket;
+    TcpServer * tcpServer;
+    map<int, int> driverIdToDescriptor;
     map<int, Cab *> idToCab;
     map<int, Ride *> idToRides;
     CityMap *cityMap;
@@ -60,8 +61,6 @@ public:
 
 private:
     Navigation *produceNavigation(Ride *ride, Point srcDriverPoint);
-
-    void closeAllSockets();
 
     void addDrivers();
 
