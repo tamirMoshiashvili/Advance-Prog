@@ -10,12 +10,13 @@
 
 using namespace std;
 
-#define END          "end"
-#define IS_AVAILABLE "Are you available?"
-#define YES          "yes"
-#define NO           "no"
-#define GO           "go"
+#define END           "end"
+#define IS_AVAILABLE  "Are you available?"
+#define YES           "yes"
+#define NO            "no"
+#define GO            "go"
 #define SEND_LOCATION "send location"
+#define CLOSE        "close"
 
 // Return values to each function if error happened.
 #define CORRECT           0
