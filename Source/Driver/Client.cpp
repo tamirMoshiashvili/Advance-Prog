@@ -108,7 +108,7 @@ void Client::connectToCab() {
  */
 void Client::operate() {
     // Get message from server.
-    char buffer[64];
+    char buffer[64] = {0};
     while (true) {
         // Get a message from the server.
         receiveData(buffer, sizeof(buffer));
@@ -215,7 +215,7 @@ void Client::handleNavigation() {
  * Client is in the middle of a ride.
  */
 void Client::drive() {
-    char buffer[64];
+    char buffer[64] = {0};
     while (!getCab()->isArrivedToDestination()) {
         // Driver is in the middle of a ride.
         // Get message from server.
