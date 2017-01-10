@@ -43,6 +43,7 @@ int main(int argc, char **argv) {
     if (status) {
         cout << "ERROR\n";
     }
+    pthread_join(t1, NULL);
     // send hello to first client.
     Param1 p1;
     p1.param = p;
@@ -57,11 +58,12 @@ int main(int argc, char **argv) {
     Param1 param2;
     param2.param = p2;
     param2.str = "hello second client\n";
-    status = pthread_create(&t1, NULL, sendString, (void *) &param2);
+    status = pthread_create(&t2, NULL, sendString, (void *) &param2);
     if (status) {
         cout << "ERROR\n";
     }
-
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
     delete tcpServer;
 //    operate((uint16_t) atoi(port.c_str()));
     return 0;
