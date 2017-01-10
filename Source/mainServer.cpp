@@ -65,6 +65,7 @@ int main(int argc, char **argv) {
     pthread_join(t1, NULL);
     pthread_join(t2, NULL);
     delete tcpServer;
+    pthread_exit(NULL);
 //    operate((uint16_t) atoi(port.c_str()));
     return 0;
 }
