@@ -3,6 +3,7 @@ project(EX2)
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -lpthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 #add_subdirectory(lib/googletest-master)
 #include_directories(lib/googletest-master/googletest/include)
 #include_directories(lib/googletest-master/googlemock/include)

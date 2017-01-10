@@ -19,6 +19,7 @@
  */
 class TaxiCenter {
 private:
+    vector<pthread_t*> threads;
     TcpServer * tcpServer;
     map<int, int> driverIdToDescriptor;
     map<int, Cab *> idToCab;
