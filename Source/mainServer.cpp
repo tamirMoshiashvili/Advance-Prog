@@ -9,17 +9,77 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <pthread.h>
 
 using namespace std;
 using namespace boost;
 
+struct Param {
+    TcpServer *tcp;
+    int socket;
+};
+
+struct Param1 {
+    Param param;
+    string str;
+};
+
 static void operate(uint16_t port);
 
+void *receiveSignal(void *p);
+
+void *sendString(void *p);
 
 int main(int argc, char **argv) {
+    pthread_t t1, t2;
     string port = argv[1];
-    operate((uint16_t) atoi(port.c_str()));
+    TcpServer *tcpServer = new TcpServer((uint16_t) atoi(port.c_str()), 2);
+    tcpServer->initialize();
+    vector<int> *clients = tcpServer->getClientDescriptors();
+    Param p;
+    p.tcp = tcpServer;
+    p.socket = (*clients)[0];
+    int status = pthread_create(&t1, NULL, receiveSignal, (void *) &p);
+    if (status) {
+        cout << "ERROR\n";
+    }
+    // send hello to first client.
+    Param1 p1;
+    p1.param = p;
+    p1.str = "hello first client\n";
+    status = pthread_create(&t1, NULL, sendString, (void *) &p1);
+    if (status) {
+        cout << "ERROR\n";
+    }
+    Param p2;
+    p2.tcp = tcpServer;
+    p2.socket = (*clients)[1];
+    Param1 param2;
+    param2.param = p2;
+    param2.str = "hello second client\n";
+    status = pthread_create(&t1, NULL, sendString, (void *) &param2);
+    if (status) {
+        cout << "ERROR\n";
+    }
+
+    delete tcpServer;
+//    operate((uint16_t) atoi(port.c_str()));
     return 0;
+}
+
+void *receiveSignal(void *p) {
+    Param *param = (Param *) p;
+    char buffer[64] = {0};
+    cout << "waiting for message\n";
+    param->tcp->receiveData(buffer, sizeof(buffer), param->socket);
+    cout << "message received\n";
+    string str(buffer);
+    cout << str;
+}
+
+void *sendString(void *p) {
+    Param1 *param1 = (Param1 *) p;
+    param1->param.tcp->sendData(param1->str, param1->param.socket);
 }
 
 /**
