@@ -6,10 +6,11 @@
 #include "../Socket/Tcp/TcpServer.h"
 #include "../Basic/Point.h"
 
-extern map<int,int> g_socketToDriver;
+
+extern map<int, DriverInfo> g_driverIdToInfo;
 
 struct SocketInfo {
-    TcpServer Serversocket;
+    TcpServer* serverSocket;
     int socketDescriptor;
 };
 
@@ -17,6 +18,7 @@ struct DriverInfo{
     bool isAvailable;
     Point location;
     int socketDescriptor;
+    int cabId;
 };
 
 struct ConnectionInfo{
@@ -24,7 +26,7 @@ struct ConnectionInfo{
     int socketDescriptor;
 };
 
-void* receiveDriverId(void*);
+void* receiveDriverId(void* param);
 
 
 #endif //EX2_TAXICENTERHELP_H
