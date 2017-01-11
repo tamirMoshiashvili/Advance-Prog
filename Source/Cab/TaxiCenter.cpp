@@ -46,21 +46,37 @@ TaxiCenter::~TaxiCenter() {
  * @param numDrivers number of drivers.
  * @param port port number.
  */
-void TaxiCenter::initializeSocketsList(int numDrivers, uint16_t port) {
+void TaxiCenter::initialize(int numDrivers, uint16_t port) {
     // Create the main server socket.
     tcpServer = new TcpServer(port, numDrivers);
     tcpServer->initialize();
     vector<int> *clients = tcpServer->getClientDescriptors();
     vector<ConnectionInfo *> connections;
-    for (int i = 0; i < numDrivers; ++i) {
-        pthread_t *p = new pthread_t;
-        ConnectionInfo *connectionInfo1 = new ConnectionInfo;
+    int driverId = 0, i = 0, status;
+    ConnectionInfo *connectionInfo1 = new ConnectionInfo;
+    pthread_t *p = new pthread_t;
+    for (i = 0; i < numDrivers; ++i) {
         connectionInfo1->pthread = p;
-        connectionInfo1->socketDescriptor = (*clients)[i];
+        connectionInfo1->socketInfo->socketDescriptor = (*clients)[i];
+        connectionInfo1->socketInfo->serverSocket = tcpServer;
         connections.push_back(connectionInfo1);
+        status = pthread_create(p, NULL, receiveDriverId,
+                                    (void *) connectionInfo1->socketInfo);
+        if (status) {
+            cout << "ERROR\n";
+        }
     }
-    // Connect drivers to their connection info.
-//    addDrivers();
+    for (i = 0; i < numDrivers; ++i) {
+        pthread_join(*connections[i]->pthread, NULL);
+        driverId = g_descriptorToDriverId.at((*clients)[i]);
+        ParamToSendCab paramToSendCab = {connectionInfo1->socketInfo,
+                                         idToCab.at(driverId)};
+        status = pthread_create(p, NULL, sendCab,
+                                (void *) &paramToSendCab);
+        if (status) {
+            cout << "ERROR\n";
+        }
+    }
 }
 
 /**

@@ -34,7 +34,7 @@ Point MainFlow::requestDriverLocation(int id) {
  * @param port port number.
  */
 void MainFlow::addDrivers(int numDrivers, uint16_t port) {
-    taxiCenter->initializeSocketsList(numDrivers, port);
+    taxiCenter->initialize(numDrivers, port);
 }
 
 /**

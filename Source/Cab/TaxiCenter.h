@@ -22,7 +22,6 @@ class TaxiCenter {
 private:
     TcpServer *tcpServer;
     map<int, ConnectionInfo*> driverToConnection;
-    map<int, int> driverIdToDescriptor;
     map<int, Cab *> idToCab;
     map<int, Ride *> idToRides;
     CityMap *cityMap;
@@ -57,7 +56,7 @@ public:
 
     Point askDriverLocation(int driverId);
 
-    void initializeSocketsList(int numDrivers, uint16_t port);
+    void initialize(int numDrivers, uint16_t port);
 
     void operate();
 
