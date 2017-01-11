@@ -61,7 +61,7 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         #Tests/LocationDetectorTest.cpp
         #Tests/InputParserTest.cpp
         #Tests/MainFlowTest.cpp
-        )
+        Source/Cab/TaxiCenterHelp.cpp Source/Cab/TaxiCenterHelp.h)
 
 set(BOOST_ROOT CHACHE PATH "/usr/include/boost/")
 find_package(Boost 1.58.0 COMPONENTS serialization system REQUIRED)

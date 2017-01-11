@@ -13,14 +13,15 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <boost/archive/binary_iarchive.hpp>
+#include "TaxiCenterHelp.h"
 
 /**
  * Represents a taxi center that control the drivers and the cabs.
  */
 class TaxiCenter {
 private:
-    vector<pthread_t*> threads;
-    TcpServer * tcpServer;
+    TcpServer *tcpServer;
+    map<int, ConnectionInfo*> driverToConnection;
     map<int, int> driverIdToDescriptor;
     map<int, Cab *> idToCab;
     map<int, Ride *> idToRides;

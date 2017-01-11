@@ -50,8 +50,17 @@ void TaxiCenter::initializeSocketsList(int numDrivers, uint16_t port) {
     // Create the main server socket.
     tcpServer = new TcpServer(port, numDrivers);
     tcpServer->initialize();
-    // Connect drivers to their sockets.
-    addDrivers();
+    vector<int> *clients = tcpServer->getClientDescriptors();
+    vector<ConnectionInfo *> connections;
+    for (int i = 0; i < numDrivers; ++i) {
+        pthread_t *p = new pthread_t;
+        ConnectionInfo *connectionInfo1 = new ConnectionInfo;
+        connectionInfo1->pthread = p;
+        connectionInfo1->socketDescriptor = (*clients)[i];
+        connections.push_back(connectionInfo1);
+    }
+    // Connect drivers to their connection info.
+//    addDrivers();
 }
 
 /**
