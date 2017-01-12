@@ -6,19 +6,21 @@
 
 using namespace std;
 using namespace boost;
+map<int, int> g_descriptorToDriverId;
+map<int, DriverInfo*> g_driverIdToInfo;
 
 int main(int argc, char **argv) {
-    Socket *socket = new TcpClient(argv[1], std::atoi(argv[2]));
-    socket->initialize();
-    socket->sendData("hello\n");
-    char buffer[32] = {0};
-    socket->receiveData(buffer, sizeof(buffer));
-    string str(buffer);
-    cout << str;
-
-    delete socket;
-//    Client *client = InputManager::readClient(argv[1], std::atoi(argv[2]));
-//    client->operate();
-//    delete client;
+//    Socket *socket = new TcpClient(argv[1], std::atoi(argv[2]));
+//    socket->initialize();
+//    socket->sendData("hello\n");
+//    char buffer[32] = {0};
+//    socket->receiveData(buffer, sizeof(buffer));
+//    string str(buffer);
+//    cout << str;
+//
+//    delete socket;
+    Client *client = InputManager::readClient(argv[1], std::atoi(argv[2]));
+    client->operate();
+    delete client;
     return 0;
 }

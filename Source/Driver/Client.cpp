@@ -93,6 +93,7 @@ void Client::connectToCab() {
     // Get a cab from the server.
     char buffer[1024];
     receiveData(buffer, sizeof(buffer));
+    cout << "driver with the id: " << this->getId() << " got the cab\n";
     // De-serialize the cab.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);

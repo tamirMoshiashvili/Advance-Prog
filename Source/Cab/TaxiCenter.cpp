@@ -53,15 +53,20 @@ void TaxiCenter::initialize(int numDrivers, uint16_t port) {
     vector<int> *clients = tcpServer->getClientDescriptors();
     vector<ConnectionInfo *> connections;
     int driverId = 0, i = 0, status;
-    ConnectionInfo *connectionInfo1 = new ConnectionInfo;
-    pthread_t *p = new pthread_t;
+    ConnectionInfo *connectionInfo1;
+    pthread_t *p;
     for (i = 0; i < numDrivers; ++i) {
+        p = new pthread_t;
+        connectionInfo1 = new ConnectionInfo;
         connectionInfo1->pthread = p;
-        connectionInfo1->socketInfo->socketDescriptor = (*clients)[i];
-        connectionInfo1->socketInfo->serverSocket = tcpServer;
+        SocketInfo *socketInfo = new SocketInfo;
+        socketInfo->socketDescriptor = (*clients)[i];
+        socketInfo->serverSocket = tcpServer;
+        connectionInfo1->socketInfo = socketInfo;
         connections.push_back(connectionInfo1);
+        cout << "open pthread " << i << " to get driver id\n";
         status = pthread_create(p, NULL, receiveDriverId,
-                                    (void *) connectionInfo1->socketInfo);
+                                (void *) connectionInfo1->socketInfo);
         if (status) {
             cout << "ERROR\n";
         }
@@ -69,7 +74,12 @@ void TaxiCenter::initialize(int numDrivers, uint16_t port) {
     for (i = 0; i < numDrivers; ++i) {
         pthread_join(*connections[i]->pthread, NULL);
         driverId = g_descriptorToDriverId.at((*clients)[i]);
-        ParamToSendCab paramToSendCab = {connectionInfo1->socketInfo,
+        cout << "got the driver id: " << driverId << " from global map\n";
+        // TODO: delete this line below.
+        driverIdToDescriptor.insert(pair<int, int>(driverId, (*clients)[i]));
+//        cout << "printing map of driver id to socket: " << driverId << "->"
+//             << driverIdToDescriptor.at(driverId) << "\n";
+        ParamToSendCab paramToSendCab = {connections[i]->socketInfo,
                                          idToCab.at(driverId)};
         status = pthread_create(p, NULL, sendCab,
                                 (void *) &paramToSendCab);
@@ -77,37 +87,15 @@ void TaxiCenter::initialize(int numDrivers, uint16_t port) {
             cout << "ERROR\n";
         }
     }
+    for (i = 0; i < numDrivers; ++i) {
+        pthread_join(*connections[i]->pthread, NULL);
+    }
+    cout << "printing map of driver id to socket: 0 ->"
+         << driverIdToDescriptor.at(0) << "\n";
+    cout << "printing map of driver id to socket: 1 ->"
+         << driverIdToDescriptor.at(1) << "\n";
 }
 
-/**
- * Add a driver to the taxi center.
- */
-void TaxiCenter::addDrivers() {
-    char buffer[128];
-    int driverId = 0, cabId = 0;
-    // Connect each socket to a driver.
-    vector<int> *clients = tcpServer->getClientDescriptors();
-    for (int i = 0; i < clients->size(); ++i) {
-        // Wait for data (Ids) from a driver.
-        tcpServer->receiveData(buffer, sizeof(buffer), (*clients)[i]);
-        // Parse the id of driver and its cab.
-        string str(buffer);
-        unsigned long j = str.find(",");
-        driverId = atoi(str.substr(0, j).c_str());
-        cabId = atoi(str.substr(j + 1, str.length()).c_str());
-        // Add a driver and its socket descriptor to the map.
-        driverIdToDescriptor.insert(pair<int, int>(driverId, (*clients)[i]));
-        // Serialize the cab of the driver.
-        string serial_str;
-        iostreams::back_insert_device<string> inserter(serial_str);
-        iostreams::stream<iostreams::back_insert_device<string> > s2(inserter);
-        archive::binary_oarchive oa(s2);
-        oa << idToCab.at(cabId);
-        s2.flush();
-        // Send the cab of the driver.
-        tcpServer->sendData(serial_str, (*clients)[i]);
-    }
-}
 
 /**
  * Remove a driver from the taxi center.
@@ -238,6 +226,7 @@ Point TaxiCenter::askDriverLocation(int driverId) {
     // Send the driver a message which acknowledge him that
     // he need to send his location to the server.
     int driverDescriptor = driverIdToDescriptor.at(driverId);
+    cout << "ask for driver location\n";
     tcpServer->sendData(SEND_LOCATION, driverDescriptor);
     Point driverLocation;
     // De-serialize the location.
