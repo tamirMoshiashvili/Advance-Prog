@@ -13,6 +13,11 @@
 #include <unistd.h>
 #include <boost/archive/binary_iarchive.hpp>
 
+struct DriverInfo{
+    bool isAvailable;
+    Point location;
+    int cabId;
+};
 
 extern map<int, int> g_descriptorToDriverId;
 extern map<int, DriverInfo*> g_driverIdToInfo;
@@ -25,11 +30,7 @@ struct SocketInfo {
     int socketDescriptor;
 };
 
-struct DriverInfo{
-    bool isAvailable;
-    Point location;
-    int cabId;
-};
+
 
 struct ConnectionInfo{
     pthread_t* pthread;

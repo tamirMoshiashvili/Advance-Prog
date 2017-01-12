@@ -22,6 +22,7 @@ class TaxiCenter {
 private:
     TcpServer *tcpServer;
     map<int, ConnectionInfo*> driverToConnection;
+    map<int,int> driverIdToDescriptor;
     map<int, Cab *> idToCab;
     map<int, Ride *> idToRides;
     CityMap *cityMap;
@@ -62,8 +63,6 @@ public:
 
 private:
     Navigation *produceNavigation(Ride *ride, Point srcDriverPoint);
-
-    void addDrivers();
 
     int findAvailableDriver();
 

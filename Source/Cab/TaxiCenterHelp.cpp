@@ -15,13 +15,14 @@ void *receiveDriverId(void *param) {
                                           socketDescriptor);
     // Parse the id of driver and its cab.
     string str(buffer);
+    cout << "got driver and cab id " << str  << "\n";
     unsigned long j = str.find(",");
     driverId = atoi(str.substr(0, j).c_str());
     cabId = atoi(str.substr(j + 1, str.length()).c_str());
     // Add a driver and its socket descriptor to the map.
     DriverInfo *driverInfo = new DriverInfo;
     driverInfo->cabId = cabId;
-    g_driverIdToInfo.insert(pair<int, DriverInfo*>(driverId, driverInfo));
+    g_driverIdToInfo.insert(pair<int, DriverInfo *>(driverId, driverInfo));
     g_descriptorToDriverId.insert(pair<int, int>(socketDescriptor, driverId));
 }
 
@@ -35,6 +36,8 @@ void *sendCab(void *param) {
     oa << paramToSendCab->cab;
     s2.flush();
     // Send the cab of the driver.
+    cout << "about to send cab to driver\n";
     paramToSendCab->socketInfo->serverSocket->
             sendData(serial_str, paramToSendCab->socketInfo->socketDescriptor);
+    cout << "cab sent to driver\n";
 }
