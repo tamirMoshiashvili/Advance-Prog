@@ -37,6 +37,8 @@ public:
 
     void setDriverFinishCommand(int driverSocket);
 
+    bool isDriverFinished(int driverSocket);
+
     void setNotNewCommand();
 
     bool getIsNewCommand();

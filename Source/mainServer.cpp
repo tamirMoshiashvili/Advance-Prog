@@ -55,16 +55,20 @@ static void operate(uint16_t port) {
                 break;
             case 4:
                 globalInfo->setAllDriversToNotFinish();
-                cout << "set all drivers to not finish command\n";
                 cin >> driverId;
                 globalInfo->updateCommand(mission, driverId);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
-                cout<<"all drivers finish command\n";
+                cout << "all drivers finish command\n";
                 break;
-//            case 9:
-//                mainFlow.operateTaxiCenter();
-//                break;
+            case 9:
+                globalInfo->setAllDriversToNotFinish();
+                globalInfo->updateCommand(mission);
+                while (!globalInfo->areAllDriversFinishedCommand()) {
+                }
+                mainFlow.advanceClock();
+                cout << "all drivers finish command\n";
+                break;
             default:
                 break;
         }

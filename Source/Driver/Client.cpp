@@ -122,6 +122,7 @@ void Client::operate() {
             // Server asks for availability only when ride need to be handled,
             // since we are available, take the ride.
             handleRide();
+            cout << "driver got a ride\n";
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for the location, send the location of the driver.
             sendLocationToServer();
@@ -147,6 +148,7 @@ void Client::handleRide() {
         // Handle the navigation.
         handleNavigation();
         // Start the loop which means the driver is in the middle of a ride.
+        cout << "driver got the ride\n";
         drive();
     }
 }
@@ -230,6 +232,7 @@ void Client::drive() {
             sendData(NO);
         } else if (!strcmp(buffer, GO)) {
             // Driver got a sign to continue the ride.
+            cout << "driver should move one step\n";
             moveOneStep();
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for location, send the location of the driver.

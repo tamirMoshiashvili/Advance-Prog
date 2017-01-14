@@ -73,4 +73,8 @@ bool GlobalInfo::getIsNewCommand() {
     return isNewCommand;
 }
 
+bool GlobalInfo::isDriverFinished(int driverSocket) {
+    return isDriverFinishedCommand.at(driverSocket);
+}
+
 
