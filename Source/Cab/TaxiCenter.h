@@ -13,16 +13,16 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <boost/archive/binary_iarchive.hpp>
-#include "TaxiCenterHelp.h"
+#include "../GlobalInfo.h"
+#include <mutex>
 
 /**
  * Represents a taxi center that control the drivers and the cabs.
  */
 class TaxiCenter {
 private:
+    int numOfDrivers;
     TcpServer *tcpServer;
-    map<int, ConnectionInfo*> driverToConnection;
-    map<int,int> driverIdToDescriptor;
     map<int, Cab *> idToCab;
     map<int, Ride *> idToRides;
     CityMap *cityMap;
@@ -53,24 +53,28 @@ public:
 
     LocationDetector *getLocationDetector();
 
-    void sendRide(int driverId, Ride *ride);
+    void identifyDriver(int driverSocket, GlobalInfo* globalInfo);
+//
+//    void sendRide(int driverId, Ride *ride);
+//
+    Point askDriverLocation(int driverSocket);
 
-    Point askDriverLocation(int driverId);
-
-    void initialize(int numDrivers, uint16_t port);
+    void initialize(int numDrivers, uint16_t port, GlobalInfo* globalInfo);
 
     void operate();
+
+
 
 private:
     Navigation *produceNavigation(Ride *ride, Point srcDriverPoint);
 
-    int findAvailableDriver();
-
-    void sendNavigation(int driverId, Ride *ride);
-
-    void makeDriversWork();
-
-    void assignRidesToDrivers();
+//    int findAvailableDriver();
+//
+//    void sendNavigation(int driverId, Ride *ride);
+//
+//    void makeDriversWork();
+//
+//    void assignRidesToDrivers();
 
     void advanceClock();
 };

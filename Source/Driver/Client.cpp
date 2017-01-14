@@ -182,6 +182,7 @@ void Client::sendLocationToServer() {
     stream.flush();
     // Send it to server.
     sendData(serial_str);
+    cout << "location sent\n";
 }
 
 /**
