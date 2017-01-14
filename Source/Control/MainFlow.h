@@ -19,13 +19,13 @@ public:
 
     ~MainFlow();
 
-    void addDrivers(int numDrivers, uint16_t port);
+    void addDrivers(int numDrivers, uint16_t port, GlobalInfo* globalInfo);
 
     void addCab(Cab *cab);
 
     void addRide(Ride *ride);
 
-    Point requestDriverLocation(int id);
+//    Point requestDriverLocation(int id);
 
     void operateTaxiCenter();
 };

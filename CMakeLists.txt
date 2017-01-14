@@ -43,7 +43,8 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         Source/Socket/Tcp/Tcp.cpp Source/Socket/Tcp/Tcp.h
         Source/Socket/Tcp/TcpServer.cpp Source/Socket/Tcp/TcpServer.h
         Source/Socket/Tcp/TcpClient.cpp Source/Socket/Tcp/TcpClient.h
-
+        Source/GlobalInfo.cpp Source/GlobalInfo.h
+        Source/ThreadManagement.cpp Source/ThreadManagement.h
         #Tests/PointTest.cpp
         #Tests/RecognizableTest.cpp
         #Tests/WayPasserTest.cpp
@@ -61,13 +62,13 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         #Tests/LocationDetectorTest.cpp
         #Tests/InputParserTest.cpp
         #Tests/MainFlowTest.cpp
-        Source/Cab/TaxiCenterHelp.cpp Source/Cab/TaxiCenterHelp.h)
+        )
 
 set(BOOST_ROOT CHACHE PATH "/usr/include/boost/")
 find_package(Boost 1.58.0 COMPONENTS serialization system REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 add_executable(server ${SOURCE_FILES} Source/mainServer.cpp)
-add_executable(client ${SOURCE_FILES} Source/mainClient.cpp)
+add_executable(client ${SOURCE_FILES} Source/mainClient.cpp Source/GlobalInfo.cpp Source/GlobalInfo.h Source/ThreadManagement.cpp Source/ThreadManagement.h)
 target_link_libraries(server ${Boost_LIBRARIES})
 target_link_libraries(client ${Boost_LIBRARIES})
 

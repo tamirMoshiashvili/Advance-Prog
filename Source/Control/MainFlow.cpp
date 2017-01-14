@@ -19,22 +19,22 @@ MainFlow::~MainFlow() {
     delete taxiCenter;
 }
 
-/**
- * Get location of a driver with the diven id
- * @param id id-number of a certain driver.
- * @return point, which is the location of the driver.
- */
-Point MainFlow::requestDriverLocation(int id) {
-    return taxiCenter->askDriverLocation(id);
-}
+///**
+// * Get location of a driver with the diven id
+// * @param id id-number of a certain driver.
+// * @return point, which is the location of the driver.
+// */
+//Point MainFlow::requestDriverLocation(int id) {
+//    return taxiCenter->askDriverLocation(id);
+//}
 
 /**
  * Add number of drivers to the taxi center.
  * @param numDrivers number of drivers.
  * @param port port number.
  */
-void MainFlow::addDrivers(int numDrivers, uint16_t port) {
-    taxiCenter->initialize(numDrivers, port);
+void MainFlow::addDrivers(int numDrivers, uint16_t port, GlobalInfo* globalInfo) {
+    taxiCenter->initialize(numDrivers, port, globalInfo);
 }
 
 /**
