@@ -27,7 +27,7 @@ public:
 
 //    Point requestDriverLocation(int id);
 
-    void operateTaxiCenter();
+    void advanceClock();
 };
 
 

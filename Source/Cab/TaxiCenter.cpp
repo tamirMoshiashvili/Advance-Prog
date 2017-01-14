@@ -69,6 +69,7 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
         clientThreadInfo->socket = (*clients)[i];
         map_locker = new pthread_mutex_t;
         clientThreadInfo->map_insertion_locker = map_locker;
+        clientThreadInfo->map_itearation_locker = new pthread_mutex_t;
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
                                 (void *) clientThreadInfo);
         if (status) {
@@ -156,49 +157,48 @@ LocationDetector *TaxiCenter::getLocationDetector() {
 }
 
 
-///**
-// * Send the given ride to the driver with the given id.
-// * @param driverId id number of the driver.
-// * @param ride pointer to ride object.
-// */
-//void TaxiCenter::sendRide(int driverId, Ride *ride) {
-//    // Serialize the ride.
-//    string serial_str;
-//    iostreams::back_insert_device<string> inserter(serial_str);
-//    iostreams::stream<iostreams::back_insert_device<string> > stream(inserter);
-//    archive::binary_oarchive oa(stream);
-//    oa << ride;
-//    stream.flush();
-//    // Send the ride to the driver.
-//    tcpServer->sendData(serial_str, driverIdToDescriptor.at(driverId));
-//    // Send a navigation-system of the given ride to the driver.
-//    sendNavigation(driverId, ride);
-//}
-//
-///**
-// * Send a navigation system of the given ride, to the driver with the given id.
-// * @param driverId id number of the driver.
-// * @param ride pointer to ride object.
-// */
-//void TaxiCenter::sendNavigation(int driverId, Ride *ride) {
-//    // Ask the driver for its location.
-//    Point driverLocation = askDriverLocation(driverId);
-//    // Create the navigation-system according to the driver's location.
-//    Navigation *navigation = produceNavigation(ride, driverLocation);
-//    // Create opposite stack of blocks ids which represents the path.
-//    deque<int> oppositePath = navigation->getOppositePath();
-//    // Serialize the navigation-path.
-//    string serial_str;
-//    iostreams::back_insert_device<string> inserter(serial_str);
-//    iostreams::stream<iostreams::back_insert_device<string> > stream(inserter);
-//    archive::binary_oarchive oa(stream);
-//    oa << oppositePath;
-//    stream.flush();
-//    // Send the navigation-path to the driver.
-//    tcpServer->sendData(serial_str, driverIdToDescriptor.at(driverId));
-//    delete navigation;
-//}
+/**
+ * Send the given ride to the driver with the given id.
+ * @param driverId id number of the driver.
+ * @param ride pointer to ride object.
+ */
+void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
+    // Serialize the ride.
+    string serial_str;
+    iostreams::back_insert_device<string> inserter(serial_str);
+    iostreams::stream<iostreams::back_insert_device<string> > stream(inserter);
+    archive::binary_oarchive oa(stream);
+    oa << ride;
+    stream.flush();
+    // Send the ride to the driver.
+    tcpServer->sendData(serial_str, driverSocket);
+    // Send a navigation-system of the given ride to the driver.
+    sendNavigation(driverSocket, ride);
+}
 
+/**
+ * Send a navigation system of the given ride, to the driver with the given id.
+ * @param driverId id number of the driver.
+ * @param ride pointer to ride object.
+ */
+void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
+    // Ask the driver for its location.
+    Point driverLocation = askDriverLocation(driverSocket);
+    // Create the navigation-system according to the driver's location.
+    Navigation *navigation = produceNavigation(ride, driverLocation);
+    // Create opposite stack of blocks ids which represents the path.
+    deque<int> oppositePath = navigation->getOppositePath();
+    // Serialize the navigation-path.
+    string serial_str;
+    iostreams::back_insert_device<string> inserter(serial_str);
+    iostreams::stream<iostreams::back_insert_device<string> > stream(inserter);
+    archive::binary_oarchive oa(stream);
+    oa << oppositePath;
+    stream.flush();
+    // Send the navigation-path to the driver.
+    tcpServer->sendData(serial_str, driverSocket);
+    delete navigation;
+}
 
 
 /**
@@ -229,84 +229,44 @@ Navigation *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
 }
 
 /**
- * Tell drivers to work, handle the rides and advance the clock.
+ * Assign the rides that need to be taken at the current tome to drivers.
  */
-void TaxiCenter::operate() {
-//    makeDriversWork();
-//    assignRidesToDrivers();
-//    advanceClock();
+void TaxiCenter::makeDriverWork(int driverSocket,
+                                pthread_mutex_t *map_iteration_lock) {
+    char buffer[16] = {0};
+    tcpServer->sendData(GO, driverSocket);
+    Ride *ride = NULL;
+    // Iterate over the rides list.
+    //TODO: check lock because both drivers got the same ride.
+    pthread_mutex_lock(map_iteration_lock);
+    for (list<Ride *>::iterator it = rides.begin(); it != rides.end(); ++it) {
+        if ((*it)->getStartTime() == clock) {
+            // There is a ride we need to take right now,
+            // Check if driver available
+            tcpServer->sendData(IS_AVAILABLE, driverSocket);
+            // Get the driver's answer.
+            tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
+            if (!strcmp(buffer, YES)) {
+                ride = *it;
+                sendRide(driverSocket, ride);
+                break;
+            } else {
+                // There are no available drivers, quit the iteration.
+                break;
+            }
+        }
+    }
+    rides.remove(ride);
+    pthread_mutex_unlock(map_iteration_lock);
 }
-
-///**
-// * Make all the drivers get to their next locations in the ride.
-// */
-//void TaxiCenter::makeDriversWork() {
-//    // Iterate over the drivers.
-//    map<int, int>::iterator it;
-//    for (it = driverIdToDescriptor.begin();
-//         it != driverIdToDescriptor.end(); it++) {
-//        // Send the driver a message which acknowledge him to get to work.
-//        tcpServer->sendData(GO, it->second);
-//    }
-//}
-
-///**
-// * Assign the rides that need to be taken at the current tome to drivers.
-// */
-//void TaxiCenter::assignRidesToDrivers() {
-//    std::list<Ride *> temp;
-//    // Iterate over the rides list.
-//    for (list<Ride *>::iterator it = rides.begin(); it != rides.end(); ++it) {
-//        if ((*it)->getStartTime() == clock) {
-//            // There is a ride we need to take right now,
-//            // search for available driver.
-//            int driverId = findAvailableDriver();
-//            if (driverId != -1) {
-//                // Available driver has been found, give him the ride.
-//                sendRide(driverId, *it);
-//                // Save the handled ride in the temp-list.
-//                temp.push_back(*it);
-//            } else {
-//                // There are no available drivers, quit the iteration.
-//                break;
-//            }
-//        }
-//    }
-//    // Remove all the handled rides.
-//    for (list<Ride *>::iterator it = temp.begin(); it != temp.end(); ++it) {
-//        rides.remove(*it);
-//    }
-//}
 
 /**
  * Advance the clock by one.
  */
 void TaxiCenter::advanceClock() {
     ++clock;
+    cout << "time is: " << clock << "\n";
 }
-
-///**
-// * Find available driver.
-// * @return id of available driver, (-1) if there is no available driver.
-// */
-//int TaxiCenter::findAvailableDriver() {
-//    char buffer[16] = {0};
-//    // Iterate over the drivers sockets.
-//    map<int, int>::iterator it;
-//    for (it = driverIdToDescriptor.begin();
-//         it != driverIdToDescriptor.end(); ++it) {
-//        // Ask the driver for availability.
-//        tcpServer->sendData(IS_AVAILABLE, it->second);
-//        // Get the driver's answer.
-//        tcpServer->receiveData(buffer, sizeof(buffer), it->second);
-//        if (!strcmp(buffer, YES)) {
-//            // Available driver has been found.
-//            return it->first;
-//        }
-//    }
-//    // There is no available driver.
-//    return -1;
-//}
 
 void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     char buffer[128];
@@ -316,7 +276,6 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
                            driverSocket);
     // Parse the id of driver and its cab.
     string str(buffer);
-    cout << "got driver and cab id " << str << "\n";
     unsigned long j = str.find(",");
     driverId = atoi(str.substr(0, j).c_str());
     cabId = atoi(str.substr(j + 1, str.length()).c_str());

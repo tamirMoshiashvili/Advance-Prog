@@ -56,6 +56,6 @@ void MainFlow::addRide(Ride *ride) {
 /**
  * Make taxi-center work, operate the drivers and the cabs to handle rides.
  */
-void MainFlow::operateTaxiCenter() {
-    taxiCenter->operate();
+void MainFlow::advanceClock() {
+    taxiCenter->advanceClock();
 }

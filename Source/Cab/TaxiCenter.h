@@ -53,30 +53,24 @@ public:
 
     LocationDetector *getLocationDetector();
 
-    void identifyDriver(int driverSocket, GlobalInfo* globalInfo);
-//
-//    void sendRide(int driverId, Ride *ride);
-//
+    void identifyDriver(int driverSocket, GlobalInfo *globalInfo);
+
+    void sendRide(int driverSocket, Ride *ride);
+
     Point askDriverLocation(int driverSocket);
 
-    void initialize(int numDrivers, uint16_t port, GlobalInfo* globalInfo);
+    void initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo);
 
-    void operate();
+    void advanceClock();
 
-
+    void makeDriverWork(int driverSocket, pthread_mutex_t *map_iteration_lock);
 
 private:
     Navigation *produceNavigation(Ride *ride, Point srcDriverPoint);
 
-//    int findAvailableDriver();
-//
-//    void sendNavigation(int driverId, Ride *ride);
-//
-//    void makeDriversWork();
-//
-//    void assignRidesToDrivers();
+    void sendNavigation(int driverSocket, Ride *ride);
 
-    void advanceClock();
+
 };
 
 
