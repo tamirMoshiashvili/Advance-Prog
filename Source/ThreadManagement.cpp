@@ -17,6 +17,9 @@ void *ThreadManagement::threadFunction(void *param) {
     pthread_mutex_t *map_insertion_locker = clientThreadInfo->map_insertion_locker;
     pthread_mutex_t *map_iteration_lock = clientThreadInfo->map_itearation_locker;
     pthread_mutex_init(map_insertion_locker, 0);
+    pthread_mutex_init(map_iteration_lock, 0);
+    pthread_mutex_t pthread_mutex;
+    pthread_mutex_init(&pthread_mutex, 0);
     // Get driver id and its cab id.
     center->identifyDriver(driverSocket, globalInfo);
     int command = globalInfo->getCurrentCommand();
@@ -46,7 +49,7 @@ void *ThreadManagement::threadFunction(void *param) {
         command = globalInfo->getCurrentCommand();
     }
     delete map_insertion_locker;
-    delete map_iteration_lock;
+//    delete map_iteration_lock;
     delete clientThreadInfo;
 }
 

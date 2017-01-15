@@ -19,6 +19,7 @@ using namespace boost;
 TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0), tcpServer(NULL),
                                        numOfDrivers(0) {
     detector = new LocationDetector(cityMap);
+    pthread_mutex_init(&locker,0);
 }
 
 /**
@@ -243,7 +244,7 @@ void TaxiCenter::makeDriverWork(int driverSocket,
     // Iterate over the rides list.
     //TODO: check lock because both drivers got the same ride.
     //TODO: the ride doesnt deleted...
-    pthread_mutex_lock(map_iteration_lock);
+    pthread_mutex_lock(&locker);
     for (list<Ride *>::iterator it = rides.begin(); it != rides.end(); ++it) {
         cout << "rides list size:" << rides.size() << "  driver socket is: "
              << driverSocket << "\n";
@@ -265,7 +266,7 @@ void TaxiCenter::makeDriverWork(int driverSocket,
     }
     cout << "ride with id: " << ride->getId() << "  removed";
     rides.remove(ride);
-    pthread_mutex_unlock(map_iteration_lock);
+    pthread_mutex_unlock(&locker);
 }
 
 /**
