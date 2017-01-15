@@ -79,5 +79,9 @@ static void operate(uint16_t port) {
                 break;
         }
     } while (mission != 7);
-    //TODO: wait for all threads to terminate.
+    pthread_mutex_lock(&locker);
+    globalInfo->setAllDriversToNotFinish();
+    globalInfo->updateCommand(mission);
+    pthread_mutex_unlock(&locker);
+    pthread_exit(0);
 }

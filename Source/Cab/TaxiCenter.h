@@ -29,8 +29,9 @@ private:
     list<Ride *> rides;
     LocationDetector *detector;
     int clock;
-    pthread_mutex_t locker;
     vector<pthread_t *> threads;
+    pthread_mutex_t locker;
+
 
 public:
     TaxiCenter(CityMap *map);
