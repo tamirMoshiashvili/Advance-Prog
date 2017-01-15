@@ -12,6 +12,7 @@ private:
     int driverId;
     map<int, bool> isNewCommandPerDriver;
     map<int, int> descriptorToDriverId;
+    // descriptor to bool
     map<int, bool> isDriverFinishedCommand;
     static bool instanceFlag;
     static GlobalInfo *globalInfo;

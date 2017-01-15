@@ -26,6 +26,10 @@ TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0), tcpServer(NULL),
  * Destructor.
  */
 TaxiCenter::~TaxiCenter() {
+    for(unsigned long i = 0; i<threads.size(); i++){
+        pthread_join(*threads[i], NULL);
+        delete threads[i];
+    }
     //delete cityMap;
     delete detector;
     // Delete drivers.
@@ -49,8 +53,7 @@ TaxiCenter::~TaxiCenter() {
  * @param numDrivers number of drivers.
  * @param port port number.
  */
-void
-TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
+void TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
     // Create the main server socket.
     numOfDrivers = numDrivers;
     tcpServer = new TcpServer(port, numDrivers);
@@ -58,7 +61,6 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
     vector<int> *clients = tcpServer->getClientDescriptors();
     int i = 0, status;
     ClientThreadInfo *clientThreadInfo;
-    vector<pthread_t *> threads;
     pthread_mutex_t *map_locker = new pthread_mutex_t;
     pthread_t *p;
     for (i = 0; i < numDrivers; ++i) {
