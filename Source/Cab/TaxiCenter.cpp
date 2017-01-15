@@ -58,7 +58,7 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
     int i = 0, status;
     ClientThreadInfo *clientThreadInfo;
     vector<pthread_t *> threads;
-    pthread_mutex_t *map_locker;
+    pthread_mutex_t *map_locker, *map_iteration_locker;
     pthread_t *p;
     for (i = 0; i < numDrivers; ++i) {
         p = new pthread_t;
@@ -69,7 +69,9 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
         clientThreadInfo->socket = (*clients)[i];
         map_locker = new pthread_mutex_t;
         clientThreadInfo->map_insertion_locker = map_locker;
-        clientThreadInfo->map_itearation_locker = new pthread_mutex_t;
+        map_iteration_locker = new pthread_mutex_t;
+        pthread_mutex_init(map_iteration_locker, 0);
+        clientThreadInfo->map_itearation_locker = map_iteration_locker;
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
                                 (void *) clientThreadInfo);
         if (status) {
@@ -261,6 +263,7 @@ void TaxiCenter::makeDriverWork(int driverSocket,
             }
         }
     }
+    cout << "ride with id: " << ride->getId() << "  removed";
     rides.remove(ride);
     pthread_mutex_unlock(map_iteration_lock);
 }
