@@ -25,8 +25,6 @@ public:
 
     void addRide(Ride *ride);
 
-//    Point requestDriverLocation(int id);
-
     void advanceClock();
 };
 

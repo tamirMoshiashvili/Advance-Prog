@@ -1,11 +1,14 @@
-
 #ifndef EX2_GLOBALINFO_H
 #define EX2_GLOBALINFO_H
 
 #include <clocale>
 #include <map>
+
 using namespace std;
 
+/**
+ * Singleton class which contain all global data that every thread needs.
+ */
 class GlobalInfo {
 private:
     int command;

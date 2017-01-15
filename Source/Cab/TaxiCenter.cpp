@@ -5,7 +5,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include "TaxiCenter.h"
 #include "../Ride/Navigation/BFS.h"
-#include "../ThreadManagement.h"
+#include "../ThreadControl/ThreadManagement.h"
 
 
 using namespace std;
@@ -26,7 +26,8 @@ TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0), tcpServer(NULL),
  * Destructor.
  */
 TaxiCenter::~TaxiCenter() {
-    for(unsigned long i = 0; i<threads.size(); i++){
+    // Wait for all the threads to end.
+    for (unsigned long i = 0; i < threads.size(); i++) {
         pthread_join(*threads[i], NULL);
         delete threads[i];
     }
@@ -53,7 +54,8 @@ TaxiCenter::~TaxiCenter() {
  * @param numDrivers number of drivers.
  * @param port port number.
  */
-void TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
+void TaxiCenter::initialize(int numDrivers, uint16_t port,
+                            GlobalInfo *globalInfo) {
     // Create the main-server socket.
     numOfDrivers = numDrivers;
     tcpServer = new TcpServer(port, numDrivers);
@@ -63,6 +65,7 @@ void TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInf
     ClientThreadInfo *clientThreadInfo;
     pthread_mutex_t *map_locker = new pthread_mutex_t;
     pthread_t *p;
+    // Start connection with each client
     for (i = 0; i < numDrivers; ++i) {
         p = new pthread_t;
         threads.push_back(p);
@@ -70,7 +73,6 @@ void TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInf
         clientThreadInfo->globalInfo = globalInfo;
         clientThreadInfo->taxiCenter = this;
         clientThreadInfo->socket = (*clients)[i];
-//        map_locker = new pthread_mutex_t;
         clientThreadInfo->map_insertion_locker = map_locker;
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
                                 (void *) clientThreadInfo);
@@ -232,19 +234,20 @@ Navigation *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
 }
 
 /**
- * Assign the rides that need to be taken at the current time to driver if
- * available.
+ * Assign the rides that need to be taken,
+ * at the current time to driver if available.
+ * @param driverSocket socket-descriptor of the driver.
  */
 void TaxiCenter::makeDriverWork(int driverSocket) {
     char buffer[16] = {0};
     tcpServer->sendData(GO, driverSocket);
     Ride *ride = NULL;
-    // Iterate over the rides list
+    // Iterate over the rides list.
     pthread_mutex_lock(&locker);
     for (list<Ride *>::iterator it = rides.begin(); it != rides.end(); ++it) {
         if ((*it)->getStartTime() == clock) {
             // There is a ride we need to take right now,
-            // Check if driver available
+            // Check if driver available.
             tcpServer->sendData(IS_AVAILABLE, driverSocket);
             // Get the driver's answer.
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
@@ -261,6 +264,7 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
             }
         }
     }
+    // Ride has been handled.
     if (ride != NULL) {
         cout << "ride with id: " << ride->getId() << "  removed\n";
         rides.remove(ride);
@@ -279,7 +283,7 @@ void TaxiCenter::advanceClock() {
 /**
  * Get driver's id and its cab id and send him his cab.
  * @param driverSocket driver's socket descriptor.
- * @param globalInfo
+ * @param globalInfo global information.
  */
 void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     char buffer[128];
@@ -312,8 +316,8 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
  * @return point which is the location of the driver on the map.
  */
 Point TaxiCenter::askDriverLocation(int driverSocket) {
-    // Send the driver a message which acknowledge him that
-    // he need to send his location to the server.
+    // Send the driver a message,
+    // which acknowledge him that he need to send his location to the server.
     tcpServer->sendData(SEND_LOCATION, driverSocket);
     Point driverLocation;
     // De-serialize the location.

@@ -16,7 +16,6 @@ using namespace std;
 #define NO            "no"
 #define GO            "go"
 #define SEND_LOCATION "send location"
-#define CLOSE        "close"
 
 // Return values to each function if error happened.
 #define CORRECT           0
