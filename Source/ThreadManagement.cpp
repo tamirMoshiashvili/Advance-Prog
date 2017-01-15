@@ -44,8 +44,6 @@ void *ThreadManagement::threadFunction(void *param) {
         // Get new command.
         command = globalInfo->getCurrentCommand();
     }
-//    delete map_insertion_locker;
-//    delete map_iteration_lock;
     delete clientThreadInfo;
 }
 
