@@ -24,7 +24,7 @@ void *ThreadManagement::threadFunction(void *param) {
             case 4:
                 if (globalInfo->isDriverLocationRequested(driverSocket)) {
                     Point point = center->askDriverLocation(driverSocket);
-                    cout << point << "\n";
+                    cout << point << endl;
                 }
                 break;
             case 9:

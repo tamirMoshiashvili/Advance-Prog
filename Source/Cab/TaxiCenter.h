@@ -30,6 +30,7 @@ private:
     LocationDetector *detector;
     int clock;
     pthread_mutex_t locker;
+    vector<pthread_t *> threads;
 
 public:
     TaxiCenter(CityMap *map);
