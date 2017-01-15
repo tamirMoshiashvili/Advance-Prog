@@ -16,7 +16,7 @@ void *ThreadManagement::threadFunction(void *param) {
     GlobalInfo *globalInfo = clientThreadInfo->globalInfo;
     pthread_mutex_t *map_insertion_locker = clientThreadInfo->map_insertion_locker;
     pthread_mutex_init(map_insertion_locker, 0);
-    // Get driver id and its cab id.
+    // Get driver-id and its cab id.
     center->identifyDriver(driverSocket, globalInfo);
     int command = globalInfo->getCurrentCommand();
     while (command != 7) {
