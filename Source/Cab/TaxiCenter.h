@@ -13,7 +13,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <boost/archive/binary_iarchive.hpp>
-#include "../GlobalInfo.h"
+#include "../ThreadControl/GlobalInfo.h"
 #include <mutex>
 
 /**

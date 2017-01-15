@@ -46,16 +46,20 @@ static void operate(uint16_t port) {
         // Determine which mission needed to be executed.
         switch (mission) {
             case 1:
+                // Connect with drivers.
                 cin >> numDrivers;
                 mainFlow.addDrivers(numDrivers, port, globalInfo);
                 break;
             case 2:
+                // Add new ride.
                 mainFlow.addRide(InputManager::readRide());
                 break;
             case 3:
+                // Add new cab.
                 mainFlow.addCab(InputManager::readCab(taxiCenter));
                 break;
             case 4:
+                // Ask for driver location.
                 pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
                 cin >> driverId;
@@ -66,6 +70,7 @@ static void operate(uint16_t port) {
                 cout << "all drivers finish command\n";
                 break;
             case 9:
+                // Advance.
                 pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
                 globalInfo->updateCommand(mission);
@@ -76,12 +81,14 @@ static void operate(uint16_t port) {
                 cout << "all drivers finish command\n";
                 break;
             default:
+                // Invalid option.
                 break;
         }
     } while (mission != 7);
+    // Announce about end of program.
     pthread_mutex_lock(&locker);
     globalInfo->setAllDriversToNotFinish();
     globalInfo->updateCommand(mission);
     pthread_mutex_unlock(&locker);
-    pthread_exit(0);
+    pthread_exit(NULL);
 }
