@@ -15,8 +15,10 @@ void *ThreadManagement::threadFunction(void *param) {
     TaxiCenter *center = clientThreadInfo->taxiCenter;
     GlobalInfo *globalInfo = clientThreadInfo->globalInfo;
     pthread_mutex_t *map_insertion_locker = clientThreadInfo->map_insertion_locker;
+    pthread_mutex_t *map_iteration_lock = clientThreadInfo->map_itearation_locker;
     pthread_mutex_init(map_insertion_locker, 0);
-    cout << "enter thread with socket descriptor: " << driverSocket << "\n";
+    pthread_mutex_init(map_iteration_lock, 0);
+    // Get driver id and its cab id.
     center->identifyDriver(driverSocket, globalInfo);
     int command = globalInfo->getCurrentCommand();
     while (command != 7) {
@@ -28,24 +30,25 @@ void *ThreadManagement::threadFunction(void *param) {
                 }
                 break;
             case 9:
-                cout << "make driver with socket: " << driverSocket
-                     << " work\n";
-                center->makeDriverWork(driverSocket,
-                                       clientThreadInfo->map_itearation_locker);
+                center->makeDriverWork(driverSocket, map_iteration_lock);
                 break;
             default:
                 break;
         }
         pthread_mutex_lock(map_insertion_locker);
         globalInfo->setDriverFinishCommand(driverSocket);
-        globalInfo->setNotNewCommand();
+        globalInfo->setNotNewCommand(driverSocket);
         cout << "driver with the num of socket: " << driverSocket
              << " finished\n";
-        while (!globalInfo->getIsNewCommand()) {
-        }
         pthread_mutex_unlock(map_insertion_locker);
+        while (!globalInfo->getIsNewCommand(driverSocket)) {
+        }
+        // Get new command.
         command = globalInfo->getCurrentCommand();
     }
+    delete map_insertion_locker;
+    delete map_iteration_lock;
+    delete clientThreadInfo;
 }
 
 

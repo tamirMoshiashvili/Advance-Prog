@@ -32,14 +32,16 @@ static void operate(uint16_t port) {
     CityMap *map = InputManager::readCityMap();
     TaxiCenter *taxiCenter = new TaxiCenter(map);
     MainFlow mainFlow(taxiCenter);
+    // Create the object that will hold the mutual info for all drivers.
     GlobalInfo *globalInfo = GlobalInfo::getInstance();
+    pthread_mutex_t locker;
+    pthread_mutex_init(&locker, 0);
     // Run the loop.
     int mission, driverId;
     int numDrivers = 0;
     do {
         // Get input.
         cin >> mission;
-//        globalInfo->updateCommand(mission);
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         // Determine which mission need to be executed.
         switch (mission) {
@@ -54,16 +56,20 @@ static void operate(uint16_t port) {
                 mainFlow.addCab(InputManager::readCab(taxiCenter));
                 break;
             case 4:
+                pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
                 cin >> driverId;
                 globalInfo->updateCommand(mission, driverId);
+                pthread_mutex_unlock(&locker);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
                 cout << "all drivers finish command\n";
                 break;
             case 9:
+                pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
                 globalInfo->updateCommand(mission);
+                pthread_mutex_unlock(&locker);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
                 mainFlow.advanceClock();
@@ -74,5 +80,4 @@ static void operate(uint16_t port) {
         }
     } while (mission != 7);
     //TODO: wait for all threads to terminate.
-    cout << "exit program\n";
 }

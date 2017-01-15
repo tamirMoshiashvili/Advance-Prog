@@ -25,13 +25,18 @@ GlobalInfo::~GlobalInfo() {
 
 void GlobalInfo::addDriverToMap(int driverId, int socket) {
     descriptorToDriverId.insert(pair<int, int>(socket, driverId));
-    isDriverFinishedCommand.insert(pair<int,bool>(socket,false));
+    isDriverFinishedCommand.insert(pair<int, bool>(socket, false));
+    isNewCommandPerDriver.insert(pair<int, bool>(socket, false));
 }
 
 void GlobalInfo::updateCommand(int mission, int clientId) {
     command = mission;
     driverId = clientId;
-    isNewCommand = true;
+    map<int, bool>::iterator it;
+    for (it = isNewCommandPerDriver.begin();
+         it != isNewCommandPerDriver.end(); ++it) {
+        it->second = true;
+    }
 }
 
 int GlobalInfo::getCurrentCommand() {
@@ -65,16 +70,15 @@ void GlobalInfo::setDriverFinishCommand(int driverSocket) {
     isDriverFinishedCommand.at(driverSocket) = true;
 }
 
-void GlobalInfo::setNotNewCommand() {
-    isNewCommand = false;
+bool GlobalInfo::getIsNewCommand(int driverSocket) {
+    return isNewCommandPerDriver.at(driverSocket);
 }
 
-bool GlobalInfo::getIsNewCommand() {
-    return isNewCommand;
+void GlobalInfo::setNotNewCommand(int driverSocket) {
+    isNewCommandPerDriver.at(driverSocket) = false;
 }
 
-bool GlobalInfo::isDriverFinished(int driverSocket) {
+bool GlobalInfo::isDriverFinishCommand(int driverSocket) {
     return isDriverFinishedCommand.at(driverSocket);
 }
-
 

@@ -9,8 +9,8 @@ using namespace std;
 class GlobalInfo {
 private:
     int command;
-    bool isNewCommand;
     int driverId;
+    map<int, bool> isNewCommandPerDriver;
     map<int, int> descriptorToDriverId;
     map<int, bool> isDriverFinishedCommand;
     static bool instanceFlag;
@@ -37,11 +37,11 @@ public:
 
     void setDriverFinishCommand(int driverSocket);
 
-    bool isDriverFinished(int driverSocket);
+    void setNotNewCommand(int driverSocket);
 
-    void setNotNewCommand();
+    bool getIsNewCommand(int driverSocket);
 
-    bool getIsNewCommand();
+    bool isDriverFinishCommand(int driverSocket);
 };
 
 #endif //EX2_GLOBALINFO_H
