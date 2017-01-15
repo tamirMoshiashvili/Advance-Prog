@@ -9,7 +9,6 @@ struct ClientThreadInfo {
     TaxiCenter *taxiCenter;
     int socket;
     pthread_mutex_t* map_insertion_locker;
-    pthread_mutex_t* map_itearation_locker;
 };
 
 class ThreadManagement {
