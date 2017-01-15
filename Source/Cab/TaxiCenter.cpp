@@ -76,6 +76,7 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
             cout << "ERROR\n";
         }
     }
+    // TODO: delete all threads.
 }
 
 
@@ -229,7 +230,8 @@ Navigation *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
 }
 
 /**
- * Assign the rides that need to be taken at the current tome to drivers.
+ * Assign the rides that need to be taken at the current time to driver if
+ * available.
  */
 void TaxiCenter::makeDriverWork(int driverSocket,
                                 pthread_mutex_t *map_iteration_lock) {
@@ -238,8 +240,11 @@ void TaxiCenter::makeDriverWork(int driverSocket,
     Ride *ride = NULL;
     // Iterate over the rides list.
     //TODO: check lock because both drivers got the same ride.
+    //TODO: the ride doesnt deleted...
     pthread_mutex_lock(map_iteration_lock);
     for (list<Ride *>::iterator it = rides.begin(); it != rides.end(); ++it) {
+        cout << "rides list size:" << rides.size() << "  driver socket is: "
+             << driverSocket << "\n";
         if ((*it)->getStartTime() == clock) {
             // There is a ride we need to take right now,
             // Check if driver available
@@ -251,7 +256,7 @@ void TaxiCenter::makeDriverWork(int driverSocket,
                 sendRide(driverSocket, ride);
                 break;
             } else {
-                // There are no available drivers, quit the iteration.
+                // Driver isn't available, quit the iteration.
                 break;
             }
         }
@@ -268,6 +273,11 @@ void TaxiCenter::advanceClock() {
     cout << "time is: " << clock << "\n";
 }
 
+/**
+ * Get driver's id and its cab id and send him his cab.
+ * @param driverSocket driver's socket descriptor.
+ * @param globalInfo
+ */
 void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     char buffer[128];
     int driverId = 0, cabId = 0;
@@ -299,11 +309,10 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
 Point TaxiCenter::askDriverLocation(int driverSocket) {
     // Send the driver a message which acknowledge him that
     // he need to send his location to the server.
-    cout << "ask for driver location\n";
     tcpServer->sendData(SEND_LOCATION, driverSocket);
     Point driverLocation;
     // De-serialize the location.
-    char buffer[128];
+    char buffer[128] = {0};
     tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<iostreams::basic_array_source<char> > stream(device);
