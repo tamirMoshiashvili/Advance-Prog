@@ -19,7 +19,7 @@ using namespace boost;
 TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0), tcpServer(NULL),
                                        numOfDrivers(0) {
     detector = new LocationDetector(cityMap);
-    pthread_mutex_init(&locker,0);
+    pthread_mutex_init(&locker, 0);
 }
 
 /**
@@ -59,7 +59,7 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
     int i = 0, status;
     ClientThreadInfo *clientThreadInfo;
     vector<pthread_t *> threads;
-    pthread_mutex_t *map_locker, *map_iteration_locker;
+    pthread_mutex_t *map_locker = new pthread_mutex_t;
     pthread_t *p;
     for (i = 0; i < numDrivers; ++i) {
         p = new pthread_t;
@@ -68,11 +68,8 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
         clientThreadInfo->globalInfo = globalInfo;
         clientThreadInfo->taxiCenter = this;
         clientThreadInfo->socket = (*clients)[i];
-        map_locker = new pthread_mutex_t;
+//        map_locker = new pthread_mutex_t;
         clientThreadInfo->map_insertion_locker = map_locker;
-        map_iteration_locker = new pthread_mutex_t;
-        pthread_mutex_init(map_iteration_locker, 0);
-        clientThreadInfo->map_itearation_locker = map_iteration_locker;
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
                                 (void *) clientThreadInfo);
         if (status) {
@@ -236,18 +233,13 @@ Navigation *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
  * Assign the rides that need to be taken at the current time to driver if
  * available.
  */
-void TaxiCenter::makeDriverWork(int driverSocket,
-                                pthread_mutex_t *map_iteration_lock) {
+void TaxiCenter::makeDriverWork(int driverSocket) {
     char buffer[16] = {0};
     tcpServer->sendData(GO, driverSocket);
     Ride *ride = NULL;
-    // Iterate over the rides list.
-    //TODO: check lock because both drivers got the same ride.
-    //TODO: the ride doesnt deleted...
+    // Iterate over the rides list
     pthread_mutex_lock(&locker);
     for (list<Ride *>::iterator it = rides.begin(); it != rides.end(); ++it) {
-        cout << "rides list size:" << rides.size() << "  driver socket is: "
-             << driverSocket << "\n";
         if ((*it)->getStartTime() == clock) {
             // There is a ride we need to take right now,
             // Check if driver available
@@ -255,6 +247,9 @@ void TaxiCenter::makeDriverWork(int driverSocket,
             // Get the driver's answer.
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             if (!strcmp(buffer, YES)) {
+                cout << "rides list size:" << rides.size()
+                     << "  driver socket is: "
+                     << driverSocket << "\n";
                 ride = *it;
                 sendRide(driverSocket, ride);
                 break;
@@ -264,8 +259,10 @@ void TaxiCenter::makeDriverWork(int driverSocket,
             }
         }
     }
-    cout << "ride with id: " << ride->getId() << "  removed";
-    rides.remove(ride);
+    if (ride != NULL) {
+        cout << "ride with id: " << ride->getId() << "  removed\n";
+        rides.remove(ride);
+    }
     pthread_mutex_unlock(&locker);
 }
 
@@ -294,7 +291,9 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     driverId = atoi(str.substr(0, j).c_str());
     cabId = atoi(str.substr(j + 1, str.length()).c_str());
     // Add a driver and its socket descriptor to the map.
+    pthread_mutex_lock(&locker);
     globalInfo->addDriverToMap(driverId, driverSocket);
+    pthread_mutex_unlock(&locker);
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);
     iostreams::stream<iostreams::back_insert_device<string> > s2(inserter);

@@ -64,7 +64,7 @@ public:
 
     void advanceClock();
 
-    void makeDriverWork(int driverSocket, pthread_mutex_t *map_iteration_lock);
+    void makeDriverWork(int driverSocket);
 
 private:
     Navigation *produceNavigation(Ride *ride, Point srcDriverPoint);

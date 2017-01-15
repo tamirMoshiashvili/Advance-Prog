@@ -9,7 +9,7 @@ bool GlobalInfo::instanceFlag = false;
  * @return
  */
 GlobalInfo::GlobalInfo() {
-
+    command = 0;
 }
 
 /**
