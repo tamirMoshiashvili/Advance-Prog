@@ -54,7 +54,7 @@ TaxiCenter::~TaxiCenter() {
  * @param port port number.
  */
 void TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
-    // Create the main server socket.
+    // Create the main-server socket.
     numOfDrivers = numDrivers;
     tcpServer = new TcpServer(port, numDrivers);
     tcpServer->initialize();

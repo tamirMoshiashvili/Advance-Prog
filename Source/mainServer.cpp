@@ -43,7 +43,7 @@ static void operate(uint16_t port) {
         // Get input.
         cin >> mission;
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        // Determine which mission need to be executed.
+        // Determine which mission needed to be executed.
         switch (mission) {
             case 1:
                 cin >> numDrivers;
