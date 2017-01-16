@@ -183,8 +183,8 @@ void Client::sendLocationToServer() {
     oa << location;
     stream.flush();
     // Send it to server.
+    cout << "Sent location, ";
     sendData(serial_str);
-    cout << "location sent" << endl;
 }
 
 /**
@@ -229,10 +229,11 @@ void Client::drive() {
             break;
         } else if (!strcmp(buffer, IS_AVAILABLE)) {
             // Server asked for availability, Send no.
+            cout << "Sent NO-response, ";
             sendData(NO);
         } else if (!strcmp(buffer, GO)) {
             // Driver got a sign to continue the ride.
-            cout << "driver should move one step\n";
+            cout << "driver should move one step" << endl;
             moveOneStep();
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for location, send the location of the driver.
