@@ -41,7 +41,7 @@ int Tcp::initialize() {
  */
 int Tcp::sendData(string data, int sockDescriptor) {
     unsigned long data_len = data.size() + 1;
-    cout << "data length: " << data_len << "\n";
+    cout << "data length: " << data_len << endl;
     const char *datas = data.c_str();
     // Check for socket descriptor, is server or client.
     if (sockDescriptor == -1) {
