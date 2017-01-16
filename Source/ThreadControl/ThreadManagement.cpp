@@ -11,8 +11,7 @@ void *ThreadManagement::threadFunction(void *param) {
     int driverSocket = clientThreadInfo->socket;
     TaxiCenter *center = clientThreadInfo->taxiCenter;
     GlobalInfo *globalInfo = clientThreadInfo->globalInfo;
-    pthread_mutex_t *map_insertion_locker =
-            clientThreadInfo->map_insertion_locker;
+    pthread_mutex_t *map_insertion_locker = clientThreadInfo->map_insertion_locker;
     pthread_mutex_init(map_insertion_locker, 0);
     // Get driver-id and its cab id.
     center->identifyDriver(driverSocket, globalInfo);
