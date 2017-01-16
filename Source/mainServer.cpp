@@ -72,7 +72,7 @@ static void operate(uint16_t port) {
                 cout << "all drivers finish command\n";
                 break;
             case 9:
-                BOOST_LOG_TRIVIAL(debug) << " My name is eden shukaaaaaa";
+                BOOST_LOG_TRIVIAL(debug) << " My name is eden shukaaaaa";
                 // Advance.
                 pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
