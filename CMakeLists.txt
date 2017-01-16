@@ -4,10 +4,14 @@ project(EX2)
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -lpthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(BOOST_ROOT CHACHE PATH "/usr/include/boost/")
+find_package(Boost 1.58.0 COMPONENTS serialization log system REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+
 #add_subdirectory(lib/googletest-master)
 #include_directories(lib/googletest-master/googletest/include)
 #include_directories(lib/googletest-master/googlemock/include)
-
+ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         Source/Ride/Passenger.cpp Source/Ride/Passenger.h
         Source/Basic/Block/Block.cpp Source/Basic/Block/Block.h
@@ -64,9 +68,6 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         #Tests/MainFlowTest.cpp
         )
 
-set(BOOST_ROOT CHACHE PATH "/usr/include/boost/")
-find_package(Boost 1.58.0 COMPONENTS serialization system REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS})
 add_executable(server ${SOURCE_FILES} Source/mainServer.cpp)
 add_executable(client ${SOURCE_FILES} Source/mainClient.cpp Source/ThreadControl/GlobalInfo.cpp Source/ThreadControl/GlobalInfo.h Source/ThreadControl/ThreadManagement.cpp Source/ThreadControl/ThreadManagement.h)
 target_link_libraries(server ${Boost_LIBRARIES})

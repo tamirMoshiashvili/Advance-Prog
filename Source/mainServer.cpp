@@ -10,7 +10,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
-
+#include <boost/log/trivial.hpp>
 using namespace std;
 using namespace boost;
 
@@ -57,6 +57,8 @@ static void operate(uint16_t port) {
             case 3:
                 // Add new cab.
                 mainFlow.addCab(InputManager::readCab(taxiCenter));
+                //TODO: wait for all command 1,2,3 to execute before updating
+                //TODO: commands to threads.
                 break;
             case 4:
                 // Ask for driver location.
@@ -70,6 +72,7 @@ static void operate(uint16_t port) {
                 cout << "all drivers finish command\n";
                 break;
             case 9:
+                BOOST_LOG_TRIVIAL(debug) << " My name is eden shukaaaaaa";
                 // Advance.
                 pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
