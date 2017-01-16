@@ -90,9 +90,8 @@ void Client::sendIds() {
  */
 void Client::connectToCab() {
     // Get a cab from the server.
-    char buffer[1024];
+    char buffer[32768];
     receiveData(buffer, sizeof(buffer));
-    cout << "driver with the id: " << this->getId() << " got the cab\n";
     // De-serialize the cab.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
@@ -101,6 +100,7 @@ void Client::connectToCab() {
     ia >> cab;
     // Set the given cab to the client.
     setCab(cab);
+    cout << "driver with the id: " << this->getId() << " got the cab\n";
 }
 
 /**
@@ -190,7 +190,7 @@ void Client::sendLocationToServer() {
  */
 void Client::handleNavigation() {
     // Get navigation from server.
-    char buffer[2048];
+    char buffer[8192];
     receiveData(buffer, sizeof(buffer));
     // De-serialize the navigation-path.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));

@@ -80,7 +80,6 @@ void TaxiCenter::initialize(int numDrivers, uint16_t port,
             cout << "ERROR\n";
         }
     }
-    // TODO: delete all threads.
 }
 
 
