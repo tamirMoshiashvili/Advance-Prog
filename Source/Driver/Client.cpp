@@ -82,6 +82,7 @@ void Client::sendIds() {
     out << getId() << "," << getCabId();
     string str = out.str();
     // Send to the server.
+    cout << "Send IDs, ";
     sendData(str);
 }
 
@@ -100,7 +101,7 @@ void Client::connectToCab() {
     ia >> cab;
     // Set the given cab to the client.
     setCab(cab);
-    cout << "driver with the id: " << this->getId() << " got the cab\n";
+    cout << "driver with the id: " << this->getId() << " got the cab" << endl;
 }
 
 /**
@@ -117,6 +118,7 @@ void Client::operate() {
             break;
         } else if (!strcmp(buffer, IS_AVAILABLE)) {
             // Server asked if the driver is available, send yes.
+            cout << "Sent YES-response, ";
             sendData(YES);
             // Server asks for availability only when ride need to be handled,
             // since we are available, take the ride.
@@ -163,7 +165,7 @@ void Client::getRideFromServer() {
     archive::binary_iarchive ia(s1);
     Ride *ride = NULL;
     ia >> ride;
-    cout << "driver got the ride with id: " << ride->getId() << "\n";
+    cout << "driver got the ride with id: " << ride->getId() << endl;
     // Add listeners to the client according to the ride.
     addListeners(ride);
 }
@@ -182,7 +184,7 @@ void Client::sendLocationToServer() {
     stream.flush();
     // Send it to server.
     sendData(serial_str);
-    cout << "location sent\n";
+    cout << "location sent" << endl;
 }
 
 /**
