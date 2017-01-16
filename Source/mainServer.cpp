@@ -69,7 +69,7 @@ static void operate(uint16_t port) {
                 pthread_mutex_unlock(&locker);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
-                cout << "all drivers finish command\n";
+                cout << "all drivers finish command" << endl;
                 break;
             case 9:
                 BOOST_LOG_TRIVIAL(debug) << " My name is eden shukaaaaa";
@@ -81,7 +81,7 @@ static void operate(uint16_t port) {
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
                 mainFlow.advanceClock();
-                cout << "all drivers finish command\n";
+                cout << "all drivers finish command" << endl;
                 break;
             default:
                 // Invalid option.

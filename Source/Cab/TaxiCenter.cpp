@@ -76,7 +76,7 @@ void TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInf
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
                                 (void *) clientThreadInfo);
         if (status) {
-            cout << "ERROR\n";
+            cout << "ERROR" << endl;
         }
     }
 }
@@ -174,6 +174,7 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
     oa << ride;
     stream.flush();
     // Send the ride to the driver.
+    cout << "Sent ride, ";
     tcpServer->sendData(serial_str, driverSocket);
     // Send a navigation-system of the given ride to the driver.
     sendNavigation(driverSocket, ride);
@@ -199,6 +200,7 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     oa << oppositePath;
     stream.flush();
     // Send the navigation-path to the driver.
+    cout << "Sent navigation, ";
     tcpServer->sendData(serial_str, driverSocket);
     delete navigation;
 }
@@ -238,6 +240,7 @@ Navigation *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
  */
 void TaxiCenter::makeDriverWork(int driverSocket) {
     char buffer[16] = {0};
+    cout << "Sent GO-msg, ";
     tcpServer->sendData(GO, driverSocket);
     Ride *ride = NULL;
     // Iterate over the rides list.
@@ -246,13 +249,14 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
         if ((*it)->getStartTime() == clock) {
             // There is a ride we need to take right now,
             // Check if driver available.
+            cout << "Sent IS-AVAILABLE msg, ";
             tcpServer->sendData(IS_AVAILABLE, driverSocket);
             // Get the driver's answer.
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             if (!strcmp(buffer, YES)) {
                 cout << "rides list size:" << rides.size()
                      << "  driver socket is: "
-                     << driverSocket << "\n";
+                     << driverSocket << endl;
                 ride = *it;
                 sendRide(driverSocket, ride);
                 break;
@@ -305,6 +309,7 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     oa << idToCab.at(cabId);
     s2.flush();
     // send cab to driver
+    cout << "Sent Cab, ";
     tcpServer->sendData(serial_str, driverSocket);
 }
 
@@ -316,6 +321,7 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
 Point TaxiCenter::askDriverLocation(int driverSocket) {
     // Send the driver a message,
     // which acknowledge him that he need to send his location to the server.
+    cout << "Sent SEND-LOCATION msg, ";
     tcpServer->sendData(SEND_LOCATION, driverSocket);
     Point driverLocation;
     // De-serialize the location.
