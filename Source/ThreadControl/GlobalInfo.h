@@ -46,6 +46,8 @@ public:
     bool getIsNewCommand(int driverSocket);
 
     bool isDriverFinishCommand(int driverSocket);
+
+    unsigned long getNumClients();
 };
 
 #endif //EX2_GLOBALINFO_H

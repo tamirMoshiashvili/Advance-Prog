@@ -79,6 +79,10 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
             cout << "ERROR" << endl;
         }
     }
+    // Wait for all the drivers to connect with their cabs.
+    while (numDrivers != globalInfo->getNumClients()) {
+        while (!globalInfo->areAllDriversFinishedCommand()) {}
+    }
 }
 
 

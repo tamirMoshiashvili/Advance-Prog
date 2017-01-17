@@ -148,3 +148,11 @@ void GlobalInfo::setNotNewCommand(int driverSocket) {
 bool GlobalInfo::isDriverFinishCommand(int driverSocket) {
     return isDriverFinishedCommand.at(driverSocket);
 }
+
+/**
+ * Get the number of clients.
+ * @return number.
+ */
+unsigned long GlobalInfo::getNumClients() {
+    return descriptorToDriverId.size();
+}
