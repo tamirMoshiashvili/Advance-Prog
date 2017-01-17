@@ -3,7 +3,7 @@
 
 #include <clocale>
 #include <map>
-
+#include <mutex>
 using namespace std;
 
 /**
@@ -17,11 +17,11 @@ private:
     map<int, int> descriptorToDriverId;
     // descriptor to bool
     map<int, bool> isDriverFinishedCommand;
+    pthread_mutex_t lock;
     static bool instanceFlag;
     static GlobalInfo *globalInfo;
 
     GlobalInfo();
-
 public:
     static GlobalInfo *getInstance();
 

@@ -9,6 +9,7 @@ bool GlobalInfo::instanceFlag = false;
  */
 GlobalInfo::GlobalInfo() {
     command = 0;
+    pthread_mutex_init(&lock,0);
 }
 
 /**
@@ -39,9 +40,11 @@ GlobalInfo::~GlobalInfo() {
  * @param socket socket-descriptor of the driver.
  */
 void GlobalInfo::addDriverToMap(int driverId, int socket) {
+    pthread_mutex_lock(&lock);
     descriptorToDriverId.insert(pair<int, int>(socket, driverId));
     isDriverFinishedCommand.insert(pair<int, bool>(socket, false));
     isNewCommandPerDriver.insert(pair<int, bool>(socket, false));
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -50,6 +53,7 @@ void GlobalInfo::addDriverToMap(int driverId, int socket) {
  * @param clientId optional (if the command is 4)
  */
 void GlobalInfo::updateCommand(int mission, int clientId) {
+    pthread_mutex_lock(&lock);
     command = mission;
     driverId = clientId;
     map<int, bool>::iterator it;
@@ -57,6 +61,7 @@ void GlobalInfo::updateCommand(int mission, int clientId) {
          it != isNewCommandPerDriver.end(); ++it) {
         it->second = true;
     }
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -96,11 +101,13 @@ bool GlobalInfo::areAllDriversFinishedCommand() {
  * Set all the drivers to the state of "not-finished-command".
  */
 void GlobalInfo::setAllDriversToNotFinish() {
+    pthread_mutex_lock(&lock);
     map<int, bool>::iterator it;
     for (it = isDriverFinishedCommand.begin();
          it != isDriverFinishedCommand.end(); ++it) {
         it->second = false;
     }
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -108,7 +115,9 @@ void GlobalInfo::setAllDriversToNotFinish() {
  * @param driverSocket socket-descriptor.
  */
 void GlobalInfo::setDriverFinishCommand(int driverSocket) {
+    pthread_mutex_lock(&lock);
     isDriverFinishedCommand.at(driverSocket) = true;
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -125,7 +134,9 @@ bool GlobalInfo::getIsNewCommand(int driverSocket) {
  * @param driverSocket socket-descriptor.
  */
 void GlobalInfo::setNotNewCommand(int driverSocket) {
+    pthread_mutex_lock(&lock);
     isNewCommandPerDriver.at(driverSocket) = false;
+    pthread_mutex_unlock(&lock);
 }
 
 /**

@@ -34,8 +34,6 @@ static void operate(uint16_t port) {
     MainFlow mainFlow(taxiCenter);
     // Create the object that will hold the mutual info for all drivers.
     GlobalInfo *globalInfo = GlobalInfo::getInstance();
-    pthread_mutex_t locker;
-    pthread_mutex_init(&locker, 0);
     // Run the loop.
     int mission, driverId;
     int numDrivers = 0;
@@ -62,26 +60,21 @@ static void operate(uint16_t port) {
                 break;
             case 4:
                 // Ask for driver location.
-                pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
                 cin >> driverId;
                 globalInfo->updateCommand(mission, driverId);
-                pthread_mutex_unlock(&locker);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
-                cout << "all drivers finish command" << endl;
+                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command" << endl;
                 break;
             case 9:
-                BOOST_LOG_TRIVIAL(debug) << " My name is eden shukaaaaa";
                 // Advance.
-                pthread_mutex_lock(&locker);
                 globalInfo->setAllDriversToNotFinish();
                 globalInfo->updateCommand(mission);
-                pthread_mutex_unlock(&locker);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
                 mainFlow.advanceClock();
-                cout << "all drivers finish command" << endl;
+                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command" << endl;
                 break;
             default:
                 // Invalid option.
@@ -89,9 +82,7 @@ static void operate(uint16_t port) {
         }
     } while (mission != 7);
     // Announce about end of program.
-    pthread_mutex_lock(&locker);
     globalInfo->setAllDriversToNotFinish();
     globalInfo->updateCommand(mission);
-    pthread_mutex_unlock(&locker);
     pthread_exit(NULL);
 }
