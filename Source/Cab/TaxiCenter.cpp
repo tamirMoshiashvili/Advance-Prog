@@ -181,7 +181,7 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     Point driverLocation = askDriverLocation(driverSocket);
     // Create the pathCalculator-system according to the driver's location.
     PathCalculator *pathCalculator = produceNavigation(ride, driverLocation);
-    cout<<"calculated path, ";
+    cout << "calculated path, ";
     // Create opposite stack of blocks ids which represents the path.
     deque<string> *string_path = pathCalculator->getPathAsString();
     // Serialize the path.

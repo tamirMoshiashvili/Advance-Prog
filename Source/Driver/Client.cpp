@@ -93,7 +93,7 @@ void Client::sendIds() {
  */
 void Client::connectToCab() {
     // Get a cab from the server.
-    char buffer[1024]={0};
+    char buffer[1024] = {0};
     receiveData(buffer, sizeof(buffer));
     // De-serialize the cab.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
@@ -143,7 +143,7 @@ void Client::handleRide() {
     // Get a ride from the server and add the needed listeners.
     getRideFromServer();
     // Handle the navigation-process.
-    char buffer[64]={0};
+    char buffer[64] = {0};
     // Get message from server.
     receiveData(buffer, sizeof(buffer));
     if (!strcmp(buffer, SEND_LOCATION)) {
@@ -161,7 +161,7 @@ void Client::handleRide() {
  */
 void Client::getRideFromServer() {
     // Get ride from server.
-    char buffer[4096]={0};
+    char buffer[4096] = {0};
     receiveData(buffer, sizeof(buffer));
     // De-serialize the ride.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
@@ -196,7 +196,7 @@ void Client::sendLocationToServer() {
  */
 void Client::handleNavigation() {
     // Get navigation from server.
-    char buffer[65536]={0};
+    char buffer[65536] = {0};
     receiveData(buffer, sizeof(buffer));
     // De-serialize the navigation-path.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
