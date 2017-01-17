@@ -2,13 +2,13 @@
 #define EX2_BFS_H
 
 #include <boost/serialization/base_object.hpp>
-#include "Navigation.h"
+#include "PathCalculator.h"
 #include <boost/serialization/deque.hpp>
 
 /**
  * Navigation system that work with BFS algorithm.
  */
-class BFS : public Navigation {
+class BFS : public PathCalculator {
 private:
     deque<Block *> *bfsQueue;
 
@@ -16,7 +16,7 @@ private:
 
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
-        ar & boost::serialization::base_object<Navigation>(*this);
+        ar & boost::serialization::base_object<PathCalculator>(*this);
         ar & bfsQueue;
     }
 

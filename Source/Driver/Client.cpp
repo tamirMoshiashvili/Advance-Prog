@@ -212,7 +212,7 @@ void Client::handleNavigation() {
         oppositePath.pop_back();
     }
     // Create new navigation out of this path.
-    Navigation *navigation = new BFS(path);
+    PathCalculator *navigation = new BFS(path);
     // Take a ride.
     takeRide(navigation);
 }

@@ -5,7 +5,7 @@
  * @param sourcePoint source point of the way.
  * @return BFS object.
  */
-BFS::BFS(Block *sourcePoint) : Navigation(sourcePoint) {
+BFS::BFS(Block *sourcePoint) : PathCalculator(sourcePoint) {
     bfsQueue = new deque<Block *>();
 }
 
@@ -13,7 +13,7 @@ BFS::BFS(Block *sourcePoint) : Navigation(sourcePoint) {
  * Default constructor.
  * @return BFS object.
  */
-BFS::BFS() : Navigation(), bfsQueue(NULL) {
+BFS::BFS() : PathCalculator(), bfsQueue(NULL) {
 
 }
 
@@ -22,7 +22,7 @@ BFS::BFS() : Navigation(), bfsQueue(NULL) {
  * @param pathFromIds stack that represents the path of the navigation.
  * @return BFS object.
  */
-BFS::BFS(deque<Block *> *pathFromIds) : Navigation(pathFromIds),
+BFS::BFS(deque<Block *> *pathFromIds) : PathCalculator(pathFromIds),
                                         bfsQueue(NULL) {
 
 }

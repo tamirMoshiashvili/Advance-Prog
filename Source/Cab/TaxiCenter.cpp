@@ -189,7 +189,7 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     // Ask the driver for its location.
     Point driverLocation = askDriverLocation(driverSocket);
     // Create the navigation-system according to the driver's location.
-    Navigation *navigation = produceNavigation(ride, driverLocation);
+    PathCalculator *navigation = produceNavigation(ride, driverLocation);
     // Create opposite stack of blocks ids which represents the path.
     deque<int> oppositePath = navigation->getOppositePath();
     // Serialize the navigation-path.
@@ -212,7 +212,7 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
  * @param srcDriverPoint start point of driver.
  * @return pointer to navigation.
  */
-Navigation *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
+PathCalculator *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
     // Find source of the ride.
     Point srcRidePoint = ride->getSourcePoint();
     Block *src =

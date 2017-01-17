@@ -18,7 +18,7 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         Source/Basic/Block/MatrixBlock.cpp Source/Basic/Block/MatrixBlock.h
         Source/Map/CityMap.cpp Source/Map/CityMap.h
         Source/Ride/Ride.cpp Source/Ride/Ride.h
-        Source/Ride/Navigation/Navigation.cpp Source/Ride/Navigation/Navigation.h
+        Source/Ride/Navigation/PathCalculator.cpp Source/Ride/Navigation/PathCalculator.h
         Source/Cab/Vehicle/Cab.cpp Source/Cab/Vehicle/Cab.h
         Source/Cab/Vehicle/StandardCab.cpp Source/Cab/Vehicle/StandardCab.h
         Source/Cab/Vehicle/LuxuryCab.cpp Source/Cab/Vehicle/LuxuryCab.h
@@ -66,7 +66,7 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         #Tests/LocationDetectorTest.cpp
         #Tests/InputParserTest.cpp
         #Tests/MainFlowTest.cpp
-        )
+        Source/Ride/Navigation/Navigation.cpp Source/Ride/Navigation/Navigation.h)
 
 add_executable(server ${SOURCE_FILES} Source/mainServer.cpp)
 add_executable(client ${SOURCE_FILES} Source/mainClient.cpp Source/ThreadControl/GlobalInfo.cpp Source/ThreadControl/GlobalInfo.h Source/ThreadControl/ThreadManagement.cpp Source/ThreadControl/ThreadManagement.h)

@@ -69,7 +69,7 @@ public:
     void makeDriverWork(int driverSocket);
 
 private:
-    Navigation *produceNavigation(Ride *ride, Point srcDriverPoint);
+    PathCalculator *produceNavigation(Ride *ride, Point srcDriverPoint);
 
     void sendNavigation(int driverSocket, Ride *ride);
 

@@ -64,7 +64,7 @@ public:
     int getAvgSatisfaction();
 
 protected:
-    void takeRide(Navigation *navigation);
+    void takeRide(PathCalculator *navigation);
 
     void addListeners(Ride *ride);
 };

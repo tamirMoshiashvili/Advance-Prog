@@ -2,7 +2,7 @@
 #define EX2_CAB_H
 
 #include "../../Basic/Point.h"
-#include "../../Ride/Navigation/Navigation.h"
+#include "../../Ride/Navigation/PathCalculator.h"
 #include "../../Basic/Recognizable.h"
 #include "../../Basic/WayPasser.h"
 #include "../../Map/LocationDetector.h"
@@ -30,7 +30,7 @@ private:
     Color color;
     double tariff;
     Point location;
-    Navigation *navigation;
+    PathCalculator *navigation;
     LocationDetector *detector;
 
     friend class boost::serialization::access;
@@ -67,7 +67,7 @@ public:
 
     Manufacturer getManufacturer();
 
-    void setNavigation(Navigation *navigation1);
+    void setNavigation(PathCalculator *navigation1);
 
     virtual int moveOneStep();
 
