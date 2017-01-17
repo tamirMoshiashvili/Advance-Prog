@@ -149,9 +149,7 @@ list<Passenger *> Driver::getPassengers() {
  */
 void Driver::addInspection(int satisfaction) {
     int numinator = avgSatisfaction * totalPassengers + satisfaction;
-
-    avgSatisfaction = numinator
-                      / (++totalPassengers);
+    avgSatisfaction = numinator / (++totalPassengers);
 }
 
 /**
