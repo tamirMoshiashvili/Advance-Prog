@@ -13,6 +13,7 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include <boost/serialization/export.hpp>
+#include <boost/log/trivial.hpp>
 
 BOOST_CLASS_EXPORT_GUID(MatrixBlock, "matrix_block");
 BOOST_CLASS_EXPORT_GUID(BFS, "bfs");
@@ -91,7 +92,7 @@ void Client::sendIds() {
  */
 void Client::connectToCab() {
     // Get a cab from the server.
-    char buffer[32768];
+    char buffer[65536];
     receiveData(buffer, sizeof(buffer));
     // De-serialize the cab.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
@@ -101,7 +102,8 @@ void Client::connectToCab() {
     ia >> cab;
     // Set the given cab to the client.
     setCab(cab);
-    cout << "driver with the id: " << this->getId() << " got the cab" << endl;
+    BOOST_LOG_TRIVIAL(debug) << "driver with the id: " << this->getId()
+                             << " got the cab" << endl;
 }
 
 /**

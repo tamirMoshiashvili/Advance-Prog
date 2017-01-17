@@ -13,7 +13,7 @@ Cab::Cab(int idNum, Manufacturer manufacturer1,
          Color color1, double tariffVal, LocationDetector *locationDetector)
         : Recognizable(idNum), manufacturer(manufacturer1),
           color(color1), tariff(tariffVal),
-          location(Point(0, 0)), detector(locationDetector) {
+          location(Point(0, 0)), detector(locationDetector),navigation(NULL){
 }
 
 /**
@@ -21,7 +21,7 @@ Cab::Cab(int idNum, Manufacturer manufacturer1,
  * @return Cab object.
  */
 Cab::Cab() : Recognizable(0), manufacturer(HONDA), color(RED), tariff(0),
-             location(Point(0, 0)), detector(NULL) {
+             location(Point(0, 0)), detector(NULL), navigation(NULL) {
 
 }
 
