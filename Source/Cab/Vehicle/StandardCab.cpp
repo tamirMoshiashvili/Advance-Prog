@@ -10,8 +10,8 @@
  * @return StandardCab object.
  */
 StandardCab::StandardCab(int idNum, Manufacturer manufacturer1, Color color1,
-                         double tariffVal, LocationDetector *locationDetector)
-        : Cab(idNum, manufacturer1, color1, tariffVal, locationDetector) {
+                         double tariffVal)
+        : Cab(idNum, manufacturer1, color1, tariffVal) {
 
 }
 
@@ -19,7 +19,7 @@ StandardCab::StandardCab(int idNum, Manufacturer manufacturer1, Color color1,
  * Default constructor.
  * @return StandardCab object.
  */
-StandardCab::StandardCab() : Cab(0, HONDA, RED, 0, NULL) {
+StandardCab::StandardCab() : Cab(0, HONDA, RED, 0) {
 
 }
 

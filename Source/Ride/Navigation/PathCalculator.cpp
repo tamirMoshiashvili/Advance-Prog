@@ -1,3 +1,4 @@
+#include <boost/log/trivial.hpp>
 #include "PathCalculator.h"
 
 /**
@@ -72,7 +73,7 @@ bool PathCalculator::hasNextLocation() {
  * @param currentPath stack that describe one path.
  */
 void PathCalculator::calculatePath(Block *block, Block *startBlock,
-                               deque<Block *> *currentPath) {
+                                   deque<Block *> *currentPath) {
     // If block differs from source push it into the path,
     // and calls recursively to the function with the father.
     if (block != startBlock) {
@@ -149,9 +150,10 @@ Block *PathCalculator::getNextStoppingPoint() {
 deque<string> *PathCalculator::getPathAsString() {
     //TODO: delete after use in taxi center.
     deque<string> *string_path = new deque<string>();
-    while (!path->empty()){
+    while (!path->empty()) {
         Block *block = path->front();
-        if (block == NULL){
+        path->pop_front();
+        if (block == NULL) {
             string_path->push_back("-1,-1");
         } else {
             string_path->push_back(block->getRepresentation());

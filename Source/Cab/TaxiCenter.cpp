@@ -3,6 +3,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../Ride/Navigation/BFS.h"
 #include "../ThreadControl/ThreadManagement.h"
@@ -18,7 +19,6 @@ using namespace boost;
  */
 TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0), tcpServer(NULL),
                                        numOfDrivers(0) {
-    detector = new LocationDetector(cityMap);
     pthread_mutex_init(&locker, 0);
 }
 
@@ -31,8 +31,6 @@ TaxiCenter::~TaxiCenter() {
         pthread_join(*threads[i], NULL);
         delete threads[i];
     }
-    //delete cityMap;
-    delete detector;
     // Delete drivers.
     delete tcpServer;
     // Delete cabs.
@@ -46,6 +44,7 @@ TaxiCenter::~TaxiCenter() {
          it != idToRides.end(); ++it) {
         delete it->second;
     }
+    pthread_mutex_destroy(&locker);
 }
 
 /**
@@ -54,7 +53,8 @@ TaxiCenter::~TaxiCenter() {
  * @param numDrivers number of drivers.
  * @param port port number.
  */
-void TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
+void
+TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
     // Create the main-server socket.
     numOfDrivers = numDrivers;
     tcpServer = new TcpServer(port, numDrivers);
@@ -152,15 +152,6 @@ int TaxiCenter::getNumRides() {
 }
 
 /**
- * Get the location detector.
- * @return pointer to location detector.
- */
-LocationDetector *TaxiCenter::getLocationDetector() {
-    return detector;
-}
-
-
-/**
  * Send the given ride to the driver with the given id.
  * @param driverId id number of the driver.
  * @param ride pointer to ride object.
@@ -190,6 +181,7 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     Point driverLocation = askDriverLocation(driverSocket);
     // Create the pathCalculator-system according to the driver's location.
     PathCalculator *pathCalculator = produceNavigation(ride, driverLocation);
+    cout<<"calculated path, ";
     // Create opposite stack of blocks ids which represents the path.
     deque<string> *string_path = pathCalculator->getPathAsString();
     // Serialize the path.
@@ -200,8 +192,8 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     oa << string_path;
     stream.flush();
     // Send the path to the driver.
-    cout << "Sent path, ";
     tcpServer->sendData(serial_str, driverSocket);
+    cout << "Sent path, ";
     delete string_path;
     delete pathCalculator;
 }
@@ -213,7 +205,8 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
  * @param srcDriverPoint start point of driver.
  * @return pointer to navigation.
  */
-PathCalculator *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
+PathCalculator *
+TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
     // Find source of the ride.
     Point srcRidePoint = ride->getSourcePoint();
     Block *src =

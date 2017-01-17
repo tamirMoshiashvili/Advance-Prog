@@ -125,13 +125,12 @@ Cab *InputManager::readCab(TaxiCenter *taxiCenter) {
     Manufacturer manufacturer = InputManager::parseManufacturer(subStr);
     subStr = parseWord(str);
     Color color = InputManager::parseColor(subStr);
-    LocationDetector *locationDetector = taxiCenter->getLocationDetector();
     // Create a cab of type according to the input.
     Cab *cab = NULL;
     if (type == 1) {
-        cab = new StandardCab(id, manufacturer, color, 1, locationDetector);
+        cab = new StandardCab(id, manufacturer, color, 1);
     } else if (type == 2) {
-        cab = new LuxuryCab(id, manufacturer, color, 2, locationDetector);
+        cab = new LuxuryCab(id, manufacturer, color, 2);
     }
     return cab;
 }

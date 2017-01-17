@@ -50,7 +50,7 @@ public:
 
     list<Block *> getNeighbors();
 
-    bool operator==(Block other);
+    bool operator==(Block* other);
 
     virtual string getRepresentation()=0;
 };

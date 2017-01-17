@@ -18,7 +18,7 @@ class LuxuryCab : public Cab {
 
 public:
     LuxuryCab(int idNum, Manufacturer manufacturer1, Color color1,
-              double tariffVal, LocationDetector *locationDetector);
+              double tariffVal);
 
     LuxuryCab();
 

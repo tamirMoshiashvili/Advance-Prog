@@ -35,7 +35,6 @@ Driver::Driver() : Recognizable(0), age(0), maritalStatus(SINGLE),
  * Destructor.
  */
 Driver::~Driver() {
-    delete cab->getLocationDetector();
     delete cab;
 }
 

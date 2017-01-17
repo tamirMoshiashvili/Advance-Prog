@@ -10,8 +10,8 @@
  * @return LuxuryCab object.
  */
 LuxuryCab::LuxuryCab(int idNum, Manufacturer manufacturer1, Color color1,
-                     double tariffVal, LocationDetector *locationDetector)
-        : Cab(idNum, manufacturer1, color1, tariffVal, locationDetector) {
+                     double tariffVal)
+        : Cab(idNum, manufacturer1, color1, tariffVal) {
 
 }
 
@@ -19,7 +19,7 @@ LuxuryCab::LuxuryCab(int idNum, Manufacturer manufacturer1, Color color1,
  * Default constructor.
  * @return LuxuryCab object.
  */
-LuxuryCab::LuxuryCab() : Cab(0, HONDA, RED, 0, NULL) {
+LuxuryCab::LuxuryCab() : Cab(0, HONDA, RED, 0) {
 
 }
 

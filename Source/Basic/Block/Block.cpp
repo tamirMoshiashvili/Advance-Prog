@@ -78,6 +78,6 @@ list<Block *> Block::getNeighbors() {
     return neighbors;
 }
 
-bool Block::operator==(Block other) {
-    return this->getId() == other.getId();
+bool Block::operator==(Block* other) {
+    return this->getId() == other->getId();
 }

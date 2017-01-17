@@ -27,7 +27,6 @@ private:
     map<int, Ride *> idToRides;
     CityMap *cityMap;
     list<Ride *> rides;
-    LocationDetector *detector;
     int clock;
     vector<pthread_t *> threads;
     pthread_mutex_t locker;
@@ -53,8 +52,6 @@ public:
     int getNumCabs();
 
     int getNumRides();
-
-    LocationDetector *getLocationDetector();
 
     void identifyDriver(int driverSocket, GlobalInfo *globalInfo);
 

@@ -9,6 +9,9 @@ Navigation::Navigation(deque<string> *blockPath) {
     }
 }
 
+Navigation::Navigation(): path(NULL) {
+}
+
 /**
  * Destructor.
  */
@@ -41,3 +44,5 @@ bool Navigation::hasNextLocation() {
     }
     return false;
 }
+
+

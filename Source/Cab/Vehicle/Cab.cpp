@@ -10,10 +10,10 @@
  * @return Cab object.
  */
 Cab::Cab(int idNum, Manufacturer manufacturer1,
-         Color color1, double tariffVal, LocationDetector *locationDetector)
+         Color color1, double tariffVal)
         : Recognizable(idNum), manufacturer(manufacturer1),
           color(color1), tariff(tariffVal),
-          location(Point(0, 0)), detector(locationDetector),navigation(NULL){
+          location(Point(0, 0)), navigation(NULL){
 }
 
 /**
@@ -21,7 +21,7 @@ Cab::Cab(int idNum, Manufacturer manufacturer1,
  * @return Cab object.
  */
 Cab::Cab() : Recognizable(0), manufacturer(HONDA), color(RED), tariff(0),
-             location(Point(0, 0)), detector(NULL), navigation(NULL) {
+             location(Point(0, 0)),navigation(NULL) {
 
 }
 
@@ -93,6 +93,7 @@ void Cab::setNavigation(Navigation *navigation1) {
  * @return number of kilometers passed in this step.
  */
 int Cab::moveOneStep() {
+    Point newLocation;
     if (!navigation->hasNextLocation()) {
         // Cab is already at destination point so no movement occurs,
         // means this ride is over so reset the navigation.
@@ -100,7 +101,6 @@ int Cab::moveOneStep() {
     } else {
         // Cab need to reach the destination location.
         int step = getSizeOfStep();
-        Block *destBlock = NULL;
         int i;
         // Get the next location of the cab.
         for (i = 0; i < step; ++i) {
@@ -108,12 +108,10 @@ int Cab::moveOneStep() {
                 // Path ended, there are no more locations to be in.
                 break;
             }
-            destBlock = navigation->getNextLocation();
+            newLocation = navigation->getNextLocation();
         }
         // Find its coordinates on the matrix.
-        Point newLocation = detector->getLocation(destBlock);
         setLocation(newLocation);
-        //delete destBlock;
         // Return the number of kilometers passed.
         return i;
     }
@@ -135,12 +133,4 @@ void Cab::resetNavigation() {
  */
 bool Cab::isArrivedToDestination() {
     return navigation == NULL || !navigation->hasNextLocation();
-}
-
-/**
- * Get the location detector of the cab.
- * @return pointer to location detector.
- */
-LocationDetector *Cab::getLocationDetector() {
-    return detector;
 }

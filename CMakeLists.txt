@@ -31,7 +31,6 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         Source/Basic/Recognizable.cpp Source/Basic/Recognizable.h
         Source/Basic/WayPasser.cpp Source/Basic/WayPasser.h
         Source/Basic/Block/MatrixBlock.cpp Source/Basic/Block/MatrixBlock.h
-        Source/Map/LocationDetector.cpp Source/Map/LocationDetector.h
         Source/Control/MainFlow.cpp Source/Control/MainFlow.h
         Source/Input/InputManager.cpp Source/Input/InputManager.h
         Source/Ride/Navigation/BFS.cpp Source/Ride/Navigation/BFS.h

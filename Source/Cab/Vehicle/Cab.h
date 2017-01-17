@@ -5,7 +5,6 @@
 #include "../../Ride/Navigation/PathCalculator.h"
 #include "../../Basic/Recognizable.h"
 #include "../../Basic/WayPasser.h"
-#include "../../Map/LocationDetector.h"
 #include "../../Ride/Navigation/Navigation.h"
 
 /**
@@ -32,7 +31,6 @@ private:
     double tariff;
     Point location;
     Navigation *navigation;
-    LocationDetector *detector;
 
     friend class boost::serialization::access;
 
@@ -45,12 +43,11 @@ private:
         ar & tariff;
         ar & location;
         ar & navigation;
-        ar & detector;
     }
 
 public:
     Cab(int idNum, Manufacturer manufacturer1,
-        Color color1, double tariffVal, LocationDetector *locationDetector);
+        Color color1, double tariffVal);
 
     Cab();
 
@@ -78,7 +75,6 @@ public:
 
     void resetNavigation();
 
-    LocationDetector *getLocationDetector();
 };
 
 

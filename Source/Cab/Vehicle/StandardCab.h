@@ -17,7 +17,7 @@ class StandardCab : public Cab {
 
 public:
     StandardCab(int idNum, Manufacturer manufacturer1, Color color1,
-                double tariffVal, LocationDetector *locationDetector);
+                double tariffVal);
 
     StandardCab();
 
