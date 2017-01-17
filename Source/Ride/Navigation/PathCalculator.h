@@ -45,6 +45,8 @@ public:
 
     deque<int> getOppositePath();
 
+    deque<string> *getPathAsString();
+
 private:
     virtual void applyToBlock(Block *block, Block *father)=0;
 

@@ -150,3 +150,20 @@ deque<int> PathCalculator::getOppositePath() {
     }
     return oppositePath;
 }
+
+/**
+ * Create a deque of strings which contain the path as string.
+ * @return deque of strings.
+ */
+deque<string> *PathCalculator::getPathAsString() {
+    deque<string> *string_path = new deque<string>();
+    while (!path->empty()){
+        Block *block = path->front();
+        if (block == NULL){
+            string_path->push_back("-1,-1");
+        } else {
+            string_path->push_back(block->getRepresentation());
+        }
+    }
+    return string_path;
+}
