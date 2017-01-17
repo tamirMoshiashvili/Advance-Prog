@@ -87,6 +87,11 @@ string Point::getRepresentation() {
     return out.str();
 }
 
+/**
+ * Create a point out of the string.
+ * @param str representation of point.
+ * @return point.
+ */
 Point Point::strToPoint(string str) {
     unsigned long j = str.find(",");
     int x = atoi(str.substr(0, j).c_str());

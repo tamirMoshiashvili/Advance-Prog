@@ -33,8 +33,10 @@ public:
 
     virtual ~PathCalculator();
 
+    //TODO: delete.
     Block *getNextLocation();
 
+    //TODO: delete.
     bool hasNextLocation();
 
     virtual void applyAlgorithm()=0;
