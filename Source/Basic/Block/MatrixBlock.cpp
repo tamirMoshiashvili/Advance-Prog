@@ -31,3 +31,11 @@ MatrixBlock::~MatrixBlock() {
 Point MatrixBlock::getPoint() {
     return point;
 }
+
+/**
+ * Get representation of the block as a string.
+ * @return string in format of "x,y" where x,y are coordinates.
+ */
+string MatrixBlock::getRepresentation() {
+    return point.getRepresentation();
+}

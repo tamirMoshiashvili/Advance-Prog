@@ -1,4 +1,5 @@
 #include "Point.h"
+#include <boost/lexical_cast.hpp>
 
 /**
  * Constructor.
@@ -64,7 +65,7 @@ bool Point::operator!=(Point other) {
  * Print the point in the form of ( x , y ).
  */
 ostream &operator<<(ostream &os, const Point &point) {
-    return os << "(" << point.x << "," << point.y << ")\n";
+    return os << "(" << point.x << "," << point.y << ")" << endl;
 }
 
 /**
@@ -74,4 +75,14 @@ ostream &operator<<(ostream &os, const Point &point) {
 void Point::operator=(const Point &point) {
     x = point.x;
     y = point.y;
+}
+
+/**
+ * Get a string-representation of the point.
+ * @return string in format "x,y".
+ */
+string Point::getRepresentation() {
+    stringstream out;
+    out << x << "," << y;
+    return out.str();
 }

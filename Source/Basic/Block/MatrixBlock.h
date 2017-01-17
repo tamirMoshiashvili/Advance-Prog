@@ -27,6 +27,8 @@ public:
     ~MatrixBlock();
 
     Point getPoint();
+
+    string getRepresentation();
 };
 
 

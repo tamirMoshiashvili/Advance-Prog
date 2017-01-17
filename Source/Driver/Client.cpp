@@ -79,7 +79,7 @@ ssize_t Client::receiveData(char *buffer, size_t size) {
  */
 void Client::sendIds() {
     // Create the string that represents the ids.
-    std::stringstream out;
+    stringstream out;
     out << getId() << "," << getCabId();
     string str = out.str();
     // Send to the server.

@@ -39,6 +39,8 @@ public:
     friend ostream &operator<<(ostream &os, const Point &point);
 
     void operator=(const Point &point);
+
+    string getRepresentation();
 };
 
 
