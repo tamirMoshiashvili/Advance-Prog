@@ -204,10 +204,10 @@ void Client::handleNavigation() {
     ia >> oppositePath;
     // Create path of blocks from the path of ids.
     std::deque<Block *> *path = new deque<Block *>();
+    LocationDetector *detector = getCab()->getLocationDetector();
     while (!oppositePath.empty()) {
         // Get the block with the id that on the top of the stack.
-        Block *block =
-                getCab()->getLocationDetector()->getBlock(oppositePath.back());
+        Block *block = detector->getBlock(oppositePath.back());
         path->push_back(block);
         oppositePath.pop_back();
     }

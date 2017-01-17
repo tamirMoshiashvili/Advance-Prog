@@ -291,8 +291,7 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     char buffer[128];
     int driverId = 0, cabId = 0;
     // Wait for data (Ids) from a driver.
-    tcpServer->receiveData(buffer, sizeof(buffer),
-                           driverSocket);
+    tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
     // Parse the id of driver and its cab.
     string str(buffer);
     unsigned long j = str.find(",");
