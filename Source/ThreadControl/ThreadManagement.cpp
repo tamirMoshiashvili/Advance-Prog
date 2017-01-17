@@ -37,7 +37,7 @@ void *ThreadManagement::threadFunction(void *param) {
         globalInfo->setDriverFinishCommand(driverSocket);
         globalInfo->setNotNewCommand(driverSocket);
         cout << "driver with the num of socket: " << driverSocket
-             << " finished\n";
+             << " finished" << endl;
         pthread_mutex_unlock(map_insertion_locker);
         // Wait for new mission.
         while (!globalInfo->getIsNewCommand(driverSocket)) {

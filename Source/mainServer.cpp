@@ -68,6 +68,10 @@ static void operate(uint16_t port) {
                 BOOST_LOG_TRIVIAL(debug) << "all drivers finish command" << endl;
                 break;
             case 9:
+                // Wait for all the drivers to connect with their cabs.
+                while (numDrivers != globalInfo->getNumClients()) {
+                    while (!globalInfo->areAllDriversFinishedCommand()) {}
+                }
                 // Advance.
                 globalInfo->setAllDriversToNotFinish();
                 globalInfo->updateCommand(mission);
