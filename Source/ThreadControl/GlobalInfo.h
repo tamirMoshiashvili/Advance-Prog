@@ -4,7 +4,6 @@
 #include <clocale>
 #include <map>
 #include <mutex>
-
 using namespace std;
 
 /**
@@ -23,7 +22,6 @@ private:
     static GlobalInfo *globalInfo;
 
     GlobalInfo();
-
 public:
     static GlobalInfo *getInstance();
 
