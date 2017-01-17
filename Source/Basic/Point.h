@@ -41,6 +41,8 @@ public:
     void operator=(const Point &point);
 
     string getRepresentation();
+
+    static Point strToPoint(string str);
 };
 
 

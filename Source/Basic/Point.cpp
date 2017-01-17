@@ -86,3 +86,11 @@ string Point::getRepresentation() {
     out << x << "," << y;
     return out.str();
 }
+
+Point Point::strToPoint(string str) {
+    unsigned long j = str.find(",");
+    int x = atoi(str.substr(0, j).c_str());
+    int y = atoi(str.substr(j + 1, str.length()).c_str());
+    return Point(x, y);
+}
+
