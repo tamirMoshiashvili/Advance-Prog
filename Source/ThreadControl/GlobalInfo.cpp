@@ -156,3 +156,4 @@ bool GlobalInfo::isDriverFinishCommand(int driverSocket) {
 unsigned long GlobalInfo::getNumClients() {
     return descriptorToDriverId.size();
 }
+
