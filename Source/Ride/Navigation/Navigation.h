@@ -13,7 +13,7 @@ private:
     deque<Point> *path;
 
 public:
-    Navigation(deque<Block *> *blockPath);
+    Navigation(deque<string> *blockPath);
 
     ~Navigation();
 
