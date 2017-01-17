@@ -1,9 +1,9 @@
 #include "Navigation.h"
 
-Navigation::Navigation(deque<Block *> *blockPath) {
+Navigation::Navigation(deque<string> *blockPath) {
     path = new deque<Point>();
     while (!blockPath->empty()){
-        string point_str = blockPath->front()->getRepresentation();
+        string point_str = blockPath->front();
         blockPath->pop_front();
         path->push_back(Point::strToPoint(point_str));
     }
