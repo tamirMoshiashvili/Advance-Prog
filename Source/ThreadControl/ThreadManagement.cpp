@@ -16,7 +16,7 @@ void *ThreadManagement::threadFunction(void *param) {
     // Get driver-id and its cab id.
     center->identifyDriver(driverSocket, globalInfo);
     int command = globalInfo->getCurrentCommand();
-    while (command!=7) {
+    while (command != 7) {
         switch (command) {
             case 4:
                 // Check if client's location is needed.
