@@ -9,7 +9,7 @@ bool GlobalInfo::instanceFlag = false;
  */
 GlobalInfo::GlobalInfo() {
     command = 0;
-    pthread_mutex_init(&lock,0);
+    pthread_mutex_init(&lock, 0);
 }
 
 /**

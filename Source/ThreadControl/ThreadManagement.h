@@ -20,6 +20,7 @@ struct ClientThreadInfo {
  */
 class ThreadManagement {
 public:
+
     static void *threadFunction(void *param);
 };
 
