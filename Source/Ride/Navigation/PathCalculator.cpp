@@ -142,20 +142,12 @@ Block *PathCalculator::getNextStoppingPoint() {
     return block;
 }
 
-deque<int> PathCalculator::getOppositePath() {
-    deque<int> oppositePath = deque<int>();
-    while (hasNextLocation()) {
-        oppositePath.push_back(path->back()->getId());
-        path->pop_back();
-    }
-    return oppositePath;
-}
-
 /**
  * Create a deque of strings which contain the path as string.
  * @return deque of strings.
  */
 deque<string> *PathCalculator::getPathAsString() {
+    //TODO: delete after use in taxi center.
     deque<string> *string_path = new deque<string>();
     while (!path->empty()){
         Block *block = path->front();

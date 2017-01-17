@@ -6,6 +6,7 @@
 #include "../Movement/MovementNotifier.h"
 #include "../Ride/Passenger.h"
 #include "../Cab/TaxiCenter.h"
+#include "../Ride/Navigation/Navigation.h"
 
 /**
  * Represents a marital status of a person.
@@ -64,7 +65,7 @@ public:
     int getAvgSatisfaction();
 
 protected:
-    void takeRide(PathCalculator *navigation);
+    void takeRide(Navigation *navigation);
 
     void addListeners(Ride *ride);
 };

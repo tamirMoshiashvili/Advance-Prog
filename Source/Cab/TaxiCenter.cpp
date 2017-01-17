@@ -188,21 +188,22 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
 void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     // Ask the driver for its location.
     Point driverLocation = askDriverLocation(driverSocket);
-    // Create the navigation-system according to the driver's location.
-    PathCalculator *navigation = produceNavigation(ride, driverLocation);
+    // Create the pathCalculator-system according to the driver's location.
+    PathCalculator *pathCalculator = produceNavigation(ride, driverLocation);
     // Create opposite stack of blocks ids which represents the path.
-    deque<int> oppositePath = navigation->getOppositePath();
-    // Serialize the navigation-path.
+    deque<string> *string_path = pathCalculator->getPathAsString();
+    // Serialize the path.
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);
     iostreams::stream<iostreams::back_insert_device<string> > stream(inserter);
     archive::binary_oarchive oa(stream);
-    oa << oppositePath;
+    oa << string_path;
     stream.flush();
-    // Send the navigation-path to the driver.
-    cout << "Sent navigation, ";
+    // Send the path to the driver.
+    cout << "Sent path, ";
     tcpServer->sendData(serial_str, driverSocket);
-    delete navigation;
+    delete string_path;
+    delete pathCalculator;
 }
 
 

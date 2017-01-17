@@ -1,5 +1,5 @@
-#ifndef EX2_NAVIGATION_H
-#define EX2_NAVIGATION_H
+#ifndef EX2_PATHCALCULATOR_H
+#define EX2_PATHCALCULATOR_H
 
 #include <queue>
 #include <deque>
@@ -43,8 +43,6 @@ public:
 
     void addStoppingPoint(Block *block);
 
-    deque<int> getOppositePath();
-
     deque<string> *getPathAsString();
 
 private:
@@ -64,4 +62,4 @@ protected:
 };
 
 
-#endif //EX2_NAVIGATION_H
+#endif //EX2_PATHCALCULATOR_H

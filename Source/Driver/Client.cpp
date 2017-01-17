@@ -4,6 +4,7 @@
 #include "../Ride/Navigation/BFS.h"
 #include "../Basic/Block/MatrixBlock.h"
 #include "../Socket/Tcp/TcpClient.h"
+#include "../Ride/Navigation/Navigation.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -194,27 +195,19 @@ void Client::sendLocationToServer() {
  */
 void Client::handleNavigation() {
     // Get navigation from server.
-    char buffer[8192];
+    char buffer[65536];
     receiveData(buffer, sizeof(buffer));
     // De-serialize the navigation-path.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<iostreams::basic_array_source<char> > stream(device);
     archive::binary_iarchive ia(stream);
-    deque<int> oppositePath;
-    ia >> oppositePath;
-    // Create path of blocks from the path of ids.
-    std::deque<Block *> *path = new deque<Block *>();
-    LocationDetector *detector = getCab()->getLocationDetector();
-    while (!oppositePath.empty()) {
-        // Get the block with the id that on the top of the stack.
-        Block *block = detector->getBlock(oppositePath.back());
-        path->push_back(block);
-        oppositePath.pop_back();
-    }
+    deque<string> *string_path;
+    ia >> string_path;
     // Create new navigation out of this path.
-    PathCalculator *navigation = new BFS(path);
+    Navigation *navigation = new Navigation(string_path);
     // Take a ride.
     takeRide(navigation);
+    delete string_path;
 }
 
 /**

@@ -6,6 +6,7 @@
 #include "../../Basic/Recognizable.h"
 #include "../../Basic/WayPasser.h"
 #include "../../Map/LocationDetector.h"
+#include "../../Ride/Navigation/Navigation.h"
 
 /**
  * Represents a manufacturer of cars.
@@ -30,7 +31,7 @@ private:
     Color color;
     double tariff;
     Point location;
-    PathCalculator *navigation;
+    Navigation *navigation;
     LocationDetector *detector;
 
     friend class boost::serialization::access;
@@ -67,7 +68,7 @@ public:
 
     Manufacturer getManufacturer();
 
-    void setNavigation(PathCalculator *navigation1);
+    void setNavigation(Navigation *navigation1);
 
     virtual int moveOneStep();
 

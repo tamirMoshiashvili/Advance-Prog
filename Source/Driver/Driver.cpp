@@ -84,7 +84,7 @@ void Driver::setLocation(Point point) {
  * Notify the driver of a certain ride he must take.
  * @param navigation pointer to navigation, will contain the ride details.
  */
-void Driver::takeRide(PathCalculator *navigation) {
+void Driver::takeRide(Navigation *navigation) {
     available = false;
     cab->setNavigation(navigation);
 }

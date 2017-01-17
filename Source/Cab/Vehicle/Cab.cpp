@@ -84,7 +84,7 @@ Manufacturer Cab::getManufacturer() {
  * Set the navigation of the cab to the given one.
  * @param navigation1 pointer to navigation object.
  */
-void Cab::setNavigation(PathCalculator *navigation1) {
+void Cab::setNavigation(Navigation *navigation1) {
     navigation = navigation1;
 }
 
