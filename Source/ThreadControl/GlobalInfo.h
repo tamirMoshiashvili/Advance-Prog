@@ -54,3 +54,4 @@ public:
 };
 
 #endif //EX2_GLOBALINFO_H
+
