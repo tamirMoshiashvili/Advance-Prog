@@ -83,7 +83,6 @@ void Client::sendIds() {
     out << getId() << "," << getCabId();
     string str = out.str();
     // Send to the server.
-    cout << "Send IDs, ";
     sendData(str);
 }
 
