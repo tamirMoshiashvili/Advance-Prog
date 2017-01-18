@@ -1,4 +1,4 @@
-all: server.out client.out
+all: client.out server.out
 
 server_files = mainServer.o Block.o MatrixBlock.o Point.o Recognizable.o \
                WayPasser.o Cab.o LuxuryCab.o StandardCab.o \
@@ -20,13 +20,13 @@ client_files = mainClient.o Block.o MatrixBlock.o Point.o Recognizable.o \
                TcpServer.o Socket.o Navigation.o ThreadManagement.o GlobalInfo.o
 
 client.out: $(client_files)
-	g++ -g -o $(client_files) -lboost_serialization -pthread
+	g++ -g -o client.out $(client_files) -lboost_serialization -pthread
 
-mainServer.o: mainServer.cpp
-	g++ -g  -c mainServer.cpp
+mainServer.o: Source/mainServer.cpp
+	g++ -g  -c Source/mainServer.cpp
 
-mainClient.o: mainClient.cpp
-	g++ -g  -c mainClient.cpp
+mainClient.o: Source/mainClient.cpp
+	g++ -g  -c Source/mainClient.cpp
 
 Block.o: Source/Basic/Block/Block.cpp Source/Basic/Block/Block.h
 	g++ -Wall -c Source/Basic/Block/Block.cpp
@@ -110,10 +110,10 @@ Socket.o: Source/Socket/Socket.cpp Source/Socket/Socket.h
 	g++ -Wall -c Source/Socket/Socket.cpp
 
 GlobalInfo.o: ThreadControl/GlobalInfo.cpp ThreadControl/GlobalInfo.h
-    g++ -Wall -c ThreadControl/GlobalInfo.cpp
+	g++ -Wall -c ThreadControl/GlobalInfo.cpp
 
 ThreadManagement.o: ThreadControl/ThreadManagement.cpp ThreadControl/ThreadManagement.h
-    g++ -Wall -c ThreadControl/ThreadManagement.cpp
+	g++ -Wall -c ThreadControl/ThreadManagement.cpp
 
 clean:
 	rm -f *.o *.out
