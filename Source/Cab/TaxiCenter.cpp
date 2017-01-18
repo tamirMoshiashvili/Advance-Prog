@@ -28,11 +28,9 @@ TaxiCenter::~TaxiCenter() {
     // Delete drivers.
     delete tcpServer;
     // Wait for all the threads to end.
-    cout<<"destructor taxiCenter\n";
     for (unsigned long i = 0; i < threads.size(); i++) {
         pthread_join(*threads[i], NULL);
         delete threads[i];
-        cout << "delete driver thread\n";
     }
     // Delete cabs.
     for (map<int, Cab *>::iterator it = idToCab.begin();
@@ -48,7 +46,6 @@ TaxiCenter::~TaxiCenter() {
     for (unsigned long i = 0; i < rideThreads.size(); i++) {
         pthread_join(*rideThreads[i], NULL);
         delete rideThreads[i];
-        cout << "delete ride thread\n";
     }
     delete cityMap;
     pthread_mutex_destroy(&locker);
