@@ -10,7 +10,7 @@ void *ThreadManagement::threadFunction(void *param) {
     // Initialization.
     ClientThreadInfo *clientThreadInfo = (ClientThreadInfo *) param;
     int driverSocket = clientThreadInfo->socket;
-    BOOST_LOG_TRIVIAL(debug) << "Start THREAD FUNC with driver: " << driverSocket;
+    BOOST_LOG_TRIVIAL(debug) << "Start THREAD FUNC with driver: " << driverSocket << endl;
     TaxiCenter *center = clientThreadInfo->taxiCenter;
     GlobalInfo *globalInfo = clientThreadInfo->globalInfo;
     pthread_mutex_t *map_insertion_locker =
@@ -26,7 +26,7 @@ void *ThreadManagement::threadFunction(void *param) {
                 // Check if client's location is needed.
                 if (globalInfo->isDriverLocationRequested(driverSocket)) {
                     Point point = center->askDriverLocation(driverSocket);
-                    BOOST_LOG_TRIVIAL(debug) << point << endl;
+                    BOOST_LOG_TRIVIAL(debug) << point;
                 }
                 BOOST_LOG_TRIVIAL(debug) << "End THREAD FUNC-case 4 with driver: " << driverSocket << endl;
                 break;

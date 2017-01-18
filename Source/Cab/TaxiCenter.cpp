@@ -201,7 +201,7 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     BOOST_LOG_TRIVIAL(debug) << "Sent path, ";
     delete string_path;
     delete pathCalculator;
-    BOOST_LOG_TRIVIAL(debug) << "END send-navigation with driver: " << driverSocket << endl;
+    BOOST_LOG_TRIVIAL(debug) << "END send-navigation with driver: " << driverSocket;
 }
 
 
@@ -230,7 +230,7 @@ PathCalculator *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) 
     Block *dest = cityMap->getBlock(destPoint.getX(), destPoint.getY());
     bfs->addStoppingPoint(dest);
     bfs->applyAlgorithm();
-    BOOST_LOG_TRIVIAL(debug) << "END produce-navigation\n";
+    BOOST_LOG_TRIVIAL(debug) << "END produce-navigation";
     return bfs;
 }
 
@@ -257,6 +257,7 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
             BOOST_LOG_TRIVIAL(debug) << "Wait for driver answer of: " << driverSocket;
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             BOOST_LOG_TRIVIAL(debug) << "Receive for driver answer of: " << driverSocket;
+            BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
             if (!strcmp(buffer, YES)) {
                 BOOST_LOG_TRIVIAL(debug) << "rides list size:" << rides.size()
                      << "  driver socket is: " << driverSocket << endl;
@@ -299,6 +300,7 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     BOOST_LOG_TRIVIAL(debug) << "Wait for driver IDs answer of: " << driverSocket;
     tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
     BOOST_LOG_TRIVIAL(debug) << "Receive for driver IDs answer of: " << driverSocket;
+    BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
     // Parse the id of driver and its cab.
     string str(buffer);
     unsigned long j = str.find(",");
@@ -339,6 +341,6 @@ Point TaxiCenter::askDriverLocation(int driverSocket) {
     iostreams::stream<iostreams::basic_array_source<char> > stream(device);
     archive::binary_iarchive ia(stream);
     ia >> driverLocation;
-    BOOST_LOG_TRIVIAL(debug) << "END ask-location with driver: " << driverSocket << endl;
+    BOOST_LOG_TRIVIAL(debug) << "END ask-location with driver: " << driverSocket;
     return driverLocation;
 }

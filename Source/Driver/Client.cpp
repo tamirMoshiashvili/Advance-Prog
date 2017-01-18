@@ -99,7 +99,8 @@ void Client::connectToCab() {
     char buffer[1024] = {0};
     BOOST_LOG_TRIVIAL(debug) << "Wait for cab with client: " << getId();
     receiveData(buffer, sizeof(buffer));
-    BOOST_LOG_TRIVIAL(debug) << "Wait for cab with client: " << getId() << endl;
+    BOOST_LOG_TRIVIAL(debug) << "Receive for cab with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
     // De-serialize the cab.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
@@ -108,7 +109,7 @@ void Client::connectToCab() {
     ia >> cab;
     // Set the given cab to the client.
     setCab(cab);
-    BOOST_LOG_TRIVIAL(debug) << "driver with the id: " << this->getId() << " got the cab" << endl;
+    BOOST_LOG_TRIVIAL(debug) << "driver with the id: " << this->getId() << " got the cab";
 }
 
 /**
@@ -122,13 +123,13 @@ void Client::operate() {
         // Get a message from the server.
         BOOST_LOG_TRIVIAL(debug) << "Wait for msg with client: " << getId();
         receiveData(buffer, sizeof(buffer));
-        BOOST_LOG_TRIVIAL(debug) << "Receive for msg with client: " << getId() << endl;
+        BOOST_LOG_TRIVIAL(debug) << "Receive for msg with client: " << getId();
+        BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
         if (!strcmp(buffer, END)) {
             // End-message has been sent, end of the client.
             break;
         } else if (!strcmp(buffer, IS_AVAILABLE)) {
             // Server asked if the driver is available, send yes.
-            BOOST_LOG_TRIVIAL(debug) << buffer;
             BOOST_LOG_TRIVIAL(debug) << "Sent YES-response, ";
             sendData(YES);
             // Server asks for availability only when ride need to be handled,
@@ -157,6 +158,7 @@ void Client::handleRide() {
     BOOST_LOG_TRIVIAL(debug) << "Wait for msg of snd-location with client: " << getId();
     receiveData(buffer, sizeof(buffer));
     BOOST_LOG_TRIVIAL(debug) << "Receive for msg of snd-location with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
     if (!strcmp(buffer, SEND_LOCATION)) {
         // Server asked for location, send location.
         sendLocationToServer();
@@ -165,7 +167,7 @@ void Client::handleRide() {
         // Start the loop which means the driver is in the middle of a ride.
         drive();
     }
-    BOOST_LOG_TRIVIAL(debug) << "END handle-ride of client with id: " << getId() << endl;
+    BOOST_LOG_TRIVIAL(debug) << "END handle-ride of client with id: " << getId();
 }
 
 /**
@@ -175,9 +177,10 @@ void Client::getRideFromServer() {
     BOOST_LOG_TRIVIAL(debug) << "start get-ride of client with id: " << getId();
     // Get ride from server.
     char buffer[4096] = {0};
-    BOOST_LOG_TRIVIAL(debug) << "Wait for msg of snd-location with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "Wait for ride with client: " << getId();
     receiveData(buffer, sizeof(buffer));
-    BOOST_LOG_TRIVIAL(debug) << "Receive for msg of snd-location with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "Receive ride with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
     // De-serialize the ride.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<iostreams::basic_array_source<char> > s1(device);
@@ -187,7 +190,7 @@ void Client::getRideFromServer() {
     BOOST_LOG_TRIVIAL(debug) << "driver got the ride with id: " << ride->getId();
     // Add listeners to the client according to the ride.
     addListeners(ride);
-    BOOST_LOG_TRIVIAL(debug) << "END get-ride of client with id: " << getId() << endl;
+    BOOST_LOG_TRIVIAL(debug) << "END get-ride of client with id: " << getId();
 }
 
 /**
@@ -206,7 +209,7 @@ void Client::sendLocationToServer() {
     // Send it to server.
     BOOST_LOG_TRIVIAL(debug) << "Sent location, ";
     sendData(serial_str);
-    BOOST_LOG_TRIVIAL(debug) << "END send-location of client with id: " << getId() << endl;
+    BOOST_LOG_TRIVIAL(debug) << "END send-location of client with id: " << getId();
 }
 
 /**
@@ -216,9 +219,10 @@ void Client::handleNavigation() {
     BOOST_LOG_TRIVIAL(debug) << "start handle-navigation of client with id: " << getId();
     // Get navigation from server.
     char buffer[65536] = {0};
-    BOOST_LOG_TRIVIAL(debug) << "Wait for msg of snd-location with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "Wait for navigation with client: " << getId();
     receiveData(buffer, sizeof(buffer));
-    BOOST_LOG_TRIVIAL(debug) << "Receive for msg of snd-location with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "Receive for navigation with client: " << getId();
+    BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
     // De-serialize the navigation-path.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<iostreams::basic_array_source<char> > stream(device);
@@ -245,6 +249,7 @@ void Client::drive() {
         BOOST_LOG_TRIVIAL(debug) << "WAIT for data with id: " << getId();
         receiveData(buffer, sizeof(buffer));
         BOOST_LOG_TRIVIAL(debug) << "RECEIVE for data with id: " << getId();
+        BOOST_LOG_TRIVIAL(debug) << "The msg: " << buffer;
         if (!strcmp(buffer, END)) {
             // End-message sent, end of client.
             break;
