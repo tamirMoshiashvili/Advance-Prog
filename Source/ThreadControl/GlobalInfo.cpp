@@ -8,7 +8,7 @@ bool GlobalInfo::instanceFlag = false;
  * @return GlobalInfo object.
  */
 GlobalInfo::GlobalInfo() {
-    command = 0;
+    flag = false;
     pthread_mutex_init(&lock, 0);
 }
 
@@ -35,16 +35,19 @@ GlobalInfo::~GlobalInfo() {
     pthread_mutex_destroy(&lock);
 }
 
+void GlobalInfo::addDriverToMap(int socket) {
+    commandPerDriver.insert(pair<int, int>(socket, -1));
+    driverToFlag.insert(pair<int, bool>(socket, true));
+}
+
 /**
  * Add driver to the maps which contain info on this driver.
  * @param driverId id number of the driver.
  * @param socket socket-descriptor of the driver.
  */
-void GlobalInfo::addDriverToMap(int driverId, int socket) {
+void GlobalInfo::addToSocketToIdMap(int driverId, int socket) {
     pthread_mutex_lock(&lock);
     descriptorToDriverId.insert(pair<int, int>(socket, driverId));
-    isDriverFinishedCommand.insert(pair<int, bool>(socket, false));
-    isNewCommandPerDriver.insert(pair<int, bool>(socket, false));
     pthread_mutex_unlock(&lock);
 }
 
@@ -55,12 +58,11 @@ void GlobalInfo::addDriverToMap(int driverId, int socket) {
  */
 void GlobalInfo::updateCommand(int mission, int clientId) {
     pthread_mutex_lock(&lock);
-    command = mission;
     driverId = clientId;
-    map<int, bool>::iterator it;
-    for (it = isNewCommandPerDriver.begin();
-         it != isNewCommandPerDriver.end(); ++it) {
-        it->second = true;
+    map<int, int>::iterator it;
+    for (it = commandPerDriver.begin();
+         it != commandPerDriver.end(); ++it) {
+        it->second = mission;
     }
     pthread_mutex_unlock(&lock);
 }
@@ -69,8 +71,8 @@ void GlobalInfo::updateCommand(int mission, int clientId) {
  * Get the current command.
  * @return command.
  */
-int GlobalInfo::getCurrentCommand() {
-    return command;
+int GlobalInfo::getCurrentCommand(int driverSocket) {
+    return commandPerDriver.at(driverSocket);
 }
 
 /**
@@ -88,38 +90,18 @@ bool GlobalInfo::isDriverLocationRequested(int driverSocket) {
  * @return true if all finished, false otherwise.
  */
 bool GlobalInfo::areAllDriversFinishedCommand() {
-    map<int, bool>::iterator it;
-    for (it = isDriverFinishedCommand.begin();
-         it != isDriverFinishedCommand.end(); ++it) {
-        if (!it->second) {
+//    pthread_mutex_lock(&lock);
+    map<int, int>::iterator it;
+    for (it = commandPerDriver.begin();
+         it != commandPerDriver.end(); ++it) {
+        if (it->second != -1) {
             return false;
         }
     }
+//    pthread_mutex_unlock(&lock);
     return true;
 }
 
-/**
- * Set all the drivers to the state of "not-finished-command".
- */
-void GlobalInfo::setAllDriversToNotFinish() {
-    pthread_mutex_lock(&lock);
-    map<int, bool>::iterator it;
-    for (it = isDriverFinishedCommand.begin();
-         it != isDriverFinishedCommand.end(); ++it) {
-        it->second = false;
-    }
-    pthread_mutex_unlock(&lock);
-}
-
-/**
- * Set the driver with the given socket-descriptor to "finished-command".
- * @param driverSocket socket-descriptor.
- */
-void GlobalInfo::setDriverFinishCommand(int driverSocket) {
-    pthread_mutex_lock(&lock);
-    isDriverFinishedCommand.at(driverSocket) = true;
-    pthread_mutex_unlock(&lock);
-}
 
 /**
  * Check if there is a new command.
@@ -127,7 +109,7 @@ void GlobalInfo::setDriverFinishCommand(int driverSocket) {
  * @return true if the driver has new command, false otherwise.
  */
 bool GlobalInfo::getIsNewCommand(int driverSocket) {
-    return isNewCommandPerDriver.at(driverSocket);
+    return commandPerDriver.at(driverSocket) != -1;
 }
 
 /**
@@ -136,17 +118,8 @@ bool GlobalInfo::getIsNewCommand(int driverSocket) {
  */
 void GlobalInfo::setNotNewCommand(int driverSocket) {
     pthread_mutex_lock(&lock);
-    isNewCommandPerDriver.at(driverSocket) = false;
+    commandPerDriver.at(driverSocket) = -1;
     pthread_mutex_unlock(&lock);
-}
-
-/**
- * Check if the driver finished the last command.
- * @param driverSocket socket-descriptor.
- * @return true if he did, false otherwise.
- */
-bool GlobalInfo::isDriverFinishCommand(int driverSocket) {
-    return isDriverFinishedCommand.at(driverSocket);
 }
 
 /**
@@ -156,4 +129,36 @@ bool GlobalInfo::isDriverFinishCommand(int driverSocket) {
 unsigned long GlobalInfo::getNumClients() {
     return descriptorToDriverId.size();
 }
+
+bool GlobalInfo::isFlagTurnOn() {
+    pthread_mutex_lock(&lock);
+    map<int, bool>::iterator it;
+    for (it = driverToFlag.begin(); it != driverToFlag.end(); ++it) {
+        if (it->second) {
+            return true;
+        }
+    }
+    pthread_mutex_unlock(&lock);
+    return false;
+}
+
+void GlobalInfo::turnOnFlag() {
+    pthread_mutex_lock(&lock);
+    map<int, bool>::iterator it;
+    for (it = driverToFlag.begin(); it != driverToFlag.end(); ++it) {
+        it->second = true;
+    }
+    pthread_mutex_unlock(&lock);
+}
+
+void GlobalInfo::turnOffFlag(int driverSocket) {
+    pthread_mutex_lock(&lock);
+    driverToFlag.at(driverSocket) = false;
+    pthread_mutex_unlock(&lock);
+}
+
+pthread_mutex_t *GlobalInfo::getLocker() {
+    return &lock;
+}
+
 

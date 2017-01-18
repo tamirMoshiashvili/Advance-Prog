@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <boost/log/trivial.hpp>
 #include "Tcp.h"
 
 /**
@@ -41,13 +42,14 @@ int Tcp::initialize() {
  */
 int Tcp::sendData(string data, int sockDescriptor) {
     unsigned long data_len = data.size() + 1;
-    cout << "data length: " << data_len << endl;
     const char *datas = data.c_str();
     // Check for socket descriptor, is server or client.
     if (sockDescriptor == -1) {
         sockDescriptor = socketDescriptor;
     }
     ssize_t sent_bytes = send(sockDescriptor, datas, data_len, 0);
+    BOOST_LOG_TRIVIAL(debug) << "Sent msg: " << data << " from "
+                             << sockDescriptor << " success: " << sent_bytes;
     if (sent_bytes < 0) {
         // Return an error represent error at this method.
         return ERROR_SEND;
@@ -68,6 +70,8 @@ ssize_t Tcp::receiveData(char *buffer, size_t size, int sockDescriptor) {
         sockDescriptor = socketDescriptor;
     }
     ssize_t read_bytes = recv(sockDescriptor, buffer, size, 0);
+    BOOST_LOG_TRIVIAL(debug) << "received msg: " << buffer << " bytes: "
+                             << read_bytes;
     // Check the errors.
     if (read_bytes == 0) {
         return CONNECTION_CLOSED;

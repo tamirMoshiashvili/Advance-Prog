@@ -104,7 +104,7 @@ void Client::connectToCab() {
     // Set the given cab to the client.
     setCab(cab);
     BOOST_LOG_TRIVIAL(debug) << "driver with the id: " << this->getId()
-                             << " got the cab" << endl;
+                             << " got the cab";
 }
 
 /**
@@ -116,13 +116,13 @@ void Client::operate() {
     while (true) {
         // Get a message from the server.
         receiveData(buffer, sizeof(buffer));
+        BOOST_LOG_TRIVIAL(debug) << "in func 'operate' got" << buffer;
         if (!strcmp(buffer, END)) {
             // End-message has been sent, end of the client.
             break;
         } else if (!strcmp(buffer, IS_AVAILABLE)) {
             // Server asked if the driver is available, send yes.
             BOOST_LOG_TRIVIAL(debug) << buffer;
-            cout << "Sent YES-response, ";
             sendData(YES);
             // Server asks for availability only when ride need to be handled,
             // since we are available, take the ride.
@@ -152,6 +152,7 @@ void Client::handleRide() {
         // Handle the navigation.
         handleNavigation();
         // Start the loop which means the driver is in the middle of a ride.
+        BOOST_LOG_TRIVIAL(debug) <<"move to 'drive' func";
         drive();
     }
 }
@@ -169,7 +170,7 @@ void Client::getRideFromServer() {
     archive::binary_iarchive ia(s1);
     Ride *ride = NULL;
     ia >> ride;
-    cout << "driver got the ride with id: " << ride->getId() << endl;
+    BOOST_LOG_TRIVIAL(debug) << "driver got the ride with id: " << ride->getId() << endl;
     // Add listeners to the client according to the ride.
     addListeners(ride);
 }
@@ -187,7 +188,6 @@ void Client::sendLocationToServer() {
     oa << location;
     stream.flush();
     // Send it to server.
-    cout << "Sent location, ";
     sendData(serial_str);
 }
 
@@ -220,16 +220,16 @@ void Client::drive() {
         // Driver is in the middle of a ride.
         // Get message from server.
         receiveData(buffer, sizeof(buffer));
+        BOOST_LOG_TRIVIAL(debug) << "in func 'drive' got: " << buffer;
         if (!strcmp(buffer, END)) {
             // End-message sent, end of client.
             break;
         } else if (!strcmp(buffer, IS_AVAILABLE)) {
             // Server asked for availability, Send no.
-            cout << "Sent NO-response, ";
             sendData(NO);
         } else if (!strcmp(buffer, GO)) {
             // Driver got a sign to continue the ride.
-            cout << "driver should move one step" << endl;
+            BOOST_LOG_TRIVIAL(debug) << "driver should move one step";
             moveOneStep();
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for location, send the location of the driver.

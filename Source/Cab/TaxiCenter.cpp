@@ -78,6 +78,7 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
         if (status) {
             cout << "ERROR" << endl;
         }
+        globalInfo->addDriverToMap((*clients)[i]);
     }
 }
 
@@ -165,7 +166,6 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
     oa << ride;
     stream.flush();
     // Send the ride to the driver.
-    cout << "Sent ride, ";
     tcpServer->sendData(serial_str, driverSocket);
     // Send a navigation-system of the given ride to the driver.
     sendNavigation(driverSocket, ride);
@@ -181,7 +181,6 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     Point driverLocation = askDriverLocation(driverSocket);
     // Create the pathCalculator-system according to the driver's location.
     PathCalculator *pathCalculator = produceNavigation(ride, driverLocation);
-    cout << "calculated path, ";
     // Create opposite stack of blocks ids which represents the path.
     deque<string> *string_path = pathCalculator->getPathAsString();
     // Serialize the path.
@@ -193,7 +192,6 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     stream.flush();
     // Send the path to the driver.
     tcpServer->sendData(serial_str, driverSocket);
-    cout << "Sent path, ";
     delete string_path;
     delete pathCalculator;
 }
@@ -234,7 +232,6 @@ TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
  */
 void TaxiCenter::makeDriverWork(int driverSocket) {
     char buffer[16] = {0};
-    cout << "Sent GO-msg, ";
     tcpServer->sendData(GO, driverSocket);
     Ride *ride = NULL;
     // Iterate over the rides list.
@@ -243,12 +240,11 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
         if ((*it)->getStartTime() == clock) {
             // There is a ride we need to take right now,
             // Check if driver available.
-            cout << "Sent IS-AVAILABLE msg, ";
             tcpServer->sendData(IS_AVAILABLE, driverSocket);
             // Get the driver's answer.
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             if (!strcmp(buffer, YES)) {
-                cout << "rides list size:" << rides.size()
+                BOOST_LOG_TRIVIAL(debug)<< "rides list size:" << rides.size()
                      << "  driver socket is: "
                      << driverSocket << endl;
                 ride = *it;
@@ -262,7 +258,6 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
     }
     // Ride has been handled.
     if (ride != NULL) {
-        cout << "ride with id: " << ride->getId() << "  removed\n";
         rides.remove(ride);
     }
     pthread_mutex_unlock(&locker);
@@ -273,7 +268,7 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
  */
 void TaxiCenter::advanceClock() {
     ++clock;
-    cout << "time is: " << clock << "\n";
+    BOOST_LOG_TRIVIAL(debug)<< "time is: " << clock << "\n";
 }
 
 /**
@@ -293,7 +288,7 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     cabId = atoi(str.substr(j + 1, str.length()).c_str());
     // Add a driver and its socket descriptor to the map.
     pthread_mutex_lock(&locker);
-    globalInfo->addDriverToMap(driverId, driverSocket);
+    globalInfo->addToSocketToIdMap(driverId, driverSocket);
     pthread_mutex_unlock(&locker);
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);
@@ -302,7 +297,6 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     oa << idToCab.at(cabId);
     s2.flush();
     // send cab to driver
-    cout << "Sent Cab, ";
     tcpServer->sendData(serial_str, driverSocket);
 }
 
@@ -314,7 +308,6 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
 Point TaxiCenter::askDriverLocation(int driverSocket) {
     // Send the driver a message,
     // which acknowledge him that he need to send his location to the server.
-    cout << "Sent SEND-LOCATION msg, ";
     tcpServer->sendData(SEND_LOCATION, driverSocket);
     Point driverLocation;
     // De-serialize the location.

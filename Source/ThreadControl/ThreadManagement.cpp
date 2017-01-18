@@ -1,3 +1,4 @@
+#include <boost/log/trivial.hpp>
 #include "ThreadManagement.h"
 
 /**
@@ -11,11 +12,13 @@ void *ThreadManagement::threadFunction(void *param) {
     int driverSocket = clientThreadInfo->socket;
     TaxiCenter *center = clientThreadInfo->taxiCenter;
     GlobalInfo *globalInfo = clientThreadInfo->globalInfo;
-    pthread_mutex_t *map_insertion_locker = clientThreadInfo->map_insertion_locker;
+//    pthread_mutex_t *map_insertion_locker = clientThreadInfo->map_insertion_locker;
+    pthread_mutex_t *map_insertion_locker =globalInfo->getLocker();
     pthread_mutex_init(map_insertion_locker, 0);
     // Get driver-id and its cab id.
     center->identifyDriver(driverSocket, globalInfo);
-    int command = globalInfo->getCurrentCommand();
+    globalInfo->turnOffFlag(driverSocket);
+    int command = globalInfo->getCurrentCommand(driverSocket);
     while (command != 7) {
         switch (command) {
             case 4:
@@ -26,24 +29,28 @@ void *ThreadManagement::threadFunction(void *param) {
                 }
                 break;
             case 9:
+                BOOST_LOG_TRIVIAL(debug) << "driver " << driverSocket
+                                         << " enter 9";
                 // Operate the driver.
                 center->makeDriverWork(driverSocket);
                 break;
             default:
                 break;
         }
-        // Get ready for the next mission.
-        pthread_mutex_lock(map_insertion_locker);
-        globalInfo->setDriverFinishCommand(driverSocket);
-        globalInfo->setNotNewCommand(driverSocket);
-        cout << "driver with the num of socket: " << driverSocket
-             << " finished" << endl;
-        pthread_mutex_unlock(map_insertion_locker);
-        // Wait for new mission.
-        while (!globalInfo->getIsNewCommand(driverSocket)) {
+        if (globalInfo->getIsNewCommand(driverSocket)) {
+            // Get ready for the next mission.
+//            pthread_mutex_lock(map_insertion_locker);
+            BOOST_LOG_TRIVIAL(debug) << "driver with the num of socket: "
+                                     << driverSocket
+                                     << " finished";
+            globalInfo->setNotNewCommand(driverSocket);
+//            pthread_mutex_unlock(map_insertion_locker);
+            // Wait for new mission.
+            while (!globalInfo->getIsNewCommand(driverSocket)) {
+            }
         }
         // Get new command.
-        command = globalInfo->getCurrentCommand();
+        command = globalInfo->getCurrentCommand(driverSocket);
     }
     delete clientThreadInfo;
 }

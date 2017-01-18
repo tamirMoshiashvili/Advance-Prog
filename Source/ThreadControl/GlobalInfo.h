@@ -4,7 +4,6 @@
 #include <clocale>
 #include <map>
 #include <mutex>
-
 using namespace std;
 
 /**
@@ -12,42 +11,44 @@ using namespace std;
  */
 class GlobalInfo {
 private:
-    int command;
     int driverId;
-    map<int, bool> isNewCommandPerDriver;
+    bool flag;
+    map<int, int> commandPerDriver;
     map<int, int> descriptorToDriverId;
-    // descriptor to bool
-    map<int, bool> isDriverFinishedCommand;
+    map<int, bool> driverToFlag;
     pthread_mutex_t lock;
     static bool instanceFlag;
     static GlobalInfo *globalInfo;
 
     GlobalInfo();
-
 public:
     static GlobalInfo *getInstance();
 
     ~GlobalInfo();
 
-    void addDriverToMap(int driverId, int socket);
+    void addDriverToMap(int socket);
+
+    void addToSocketToIdMap(int driverId, int socket);
 
     void updateCommand(int mission, int clientId = -1);
 
-    int getCurrentCommand();
+    int getCurrentCommand(int driverSocket);
 
     bool isDriverLocationRequested(int driverSocket);
 
     bool areAllDriversFinishedCommand();
 
-    void setAllDriversToNotFinish();
-
-    void setDriverFinishCommand(int driverSocket);
-
     void setNotNewCommand(int driverSocket);
 
     bool getIsNewCommand(int driverSocket);
 
-    bool isDriverFinishCommand(int driverSocket);
+    pthread_mutex_t* getLocker();
+
+    void turnOnFlag();
+
+    void turnOffFlag(int driverSocket);
+
+    bool isFlagTurnOn();
 
     unsigned long getNumClients();
 };

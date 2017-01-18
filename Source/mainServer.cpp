@@ -11,6 +11,7 @@
 #include <boost/algorithm/string.hpp>
 
 #include <boost/log/trivial.hpp>
+
 using namespace std;
 using namespace boost;
 
@@ -47,6 +48,9 @@ static void operate(uint16_t port) {
                 // Connect with drivers.
                 cin >> numDrivers;
                 mainFlow.addDrivers(numDrivers, port, globalInfo);
+                globalInfo->updateCommand(mission);
+                while (!globalInfo->areAllDriversFinishedCommand()) {
+                }
                 break;
             case 2:
                 // Add new ride.
@@ -55,38 +59,32 @@ static void operate(uint16_t port) {
             case 3:
                 // Add new cab.
                 mainFlow.addCab(InputManager::readCab(taxiCenter));
-                //TODO: wait for all command 1,2,3 to execute before updating
-                //TODO: commands to threads.
                 break;
             case 4:
                 // Ask for driver location.
-                globalInfo->setAllDriversToNotFinish();
                 cin >> driverId;
                 globalInfo->updateCommand(mission, driverId);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
-                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command" << endl;
                 break;
             case 9:
-                // Wait for all the drivers to connect with their cabs.
-                while (numDrivers != globalInfo->getNumClients()) {
-                    while (!globalInfo->areAllDriversFinishedCommand()) {}
+                while (globalInfo->isFlagTurnOn()){
                 }
+                BOOST_LOG_TRIVIAL(debug) << "main server enter 9";
                 // Advance.
-                globalInfo->setAllDriversToNotFinish();
                 globalInfo->updateCommand(mission);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
                 mainFlow.advanceClock();
-                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command" << endl;
                 break;
             default:
                 // Invalid option.
                 break;
         }
+        BOOST_LOG_TRIVIAL(debug) << "command " << mission
+                                 << " execution finished";
     } while (mission != 7);
     // Announce about end of program.
-    globalInfo->setAllDriversToNotFinish();
     globalInfo->updateCommand(mission);
     pthread_exit(NULL);
 }
