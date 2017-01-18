@@ -158,3 +158,5 @@ void GlobalInfo::turnOffFlag(int driverSocket) {
 pthread_mutex_t *GlobalInfo::getLocker() {
     return &lock;
 }
+
+
