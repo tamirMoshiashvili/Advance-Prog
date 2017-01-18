@@ -6,7 +6,6 @@
 #include "../Ride/Passenger.h"
 #include "../Socket/Socket.h"
 #include "../Socket/Tcp/TcpServer.h"
-
 #include <sys/socket.h>
 #include <stdio.h>
 #include <netinet/in.h>
