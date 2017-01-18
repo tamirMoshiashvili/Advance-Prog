@@ -213,34 +213,6 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     delete string_path;
 }
 
-
-/**
- * Produce a navigation-system that match the ride's data.
- * @param ride pointer to ride.
- * @param srcDriverPoint start point of driver.
- * @return pointer to navigation.
- */
-PathCalculator *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
-    // Find source of the ride.
-    Point srcRidePoint = ride->getSourcePoint();
-    Block *src =
-            cityMap->getBlock(srcDriverPoint.getX(), srcDriverPoint.getY());
-    // Create navigation.
-    BFS *bfs = new BFS(src);
-    // Check for middle stopping-points.
-    if (srcRidePoint != srcDriverPoint) {
-        Block *middle =
-                cityMap->getBlock(srcRidePoint.getX(), srcRidePoint.getY());
-        bfs->addStoppingPoint(middle);
-    }
-    // Find destination.
-    Point destPoint = ride->getDestinationPoint();
-    Block *dest = cityMap->getBlock(destPoint.getX(), destPoint.getY());
-    bfs->addStoppingPoint(dest);
-    bfs->applyAlgorithm();
-    return bfs;
-}
-
 /**
  * Assign the rides that need to be taken,
  * at the current time to driver if available.
