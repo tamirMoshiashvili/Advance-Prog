@@ -36,8 +36,10 @@ GlobalInfo::~GlobalInfo() {
 }
 
 void GlobalInfo::addDriverToMap(int socket) {
+    pthread_mutex_lock(&lock);
     commandPerDriver.insert(pair<int, int>(socket, -1));
     driverToFlag.insert(pair<int, bool>(socket, true));
+    pthread_mutex_unlock(&lock);
 }
 
 /**
@@ -133,6 +135,7 @@ bool GlobalInfo::isFlagTurnOn() {
     map<int, bool>::iterator it;
     for (it = driverToFlag.begin(); it != driverToFlag.end(); ++it) {
         if (it->second) {
+            pthread_mutex_unlock(&lock);
             return true;
         }
     }
@@ -159,4 +162,40 @@ pthread_mutex_t *GlobalInfo::getLocker() {
     return &lock;
 }
 
+/**
+ * Add the pair of the ride-id with the given path to the map.
+ * @param rideId id of ride.
+ * @param string_path deque of strings which represents the path of the ride.
+ */
+void GlobalInfo::addRideToMap(int rideId, deque<string> *string_path) {
+    pthread_mutex_lock(&lock);
+    rideIdToPath.insert(pair<int, deque<string> *>(rideId, string_path));
+    pthread_mutex_unlock(&lock);
+}
 
+/**
+ * Check if the map of rides contains a key rideId.
+ * @param rideId id of ride.
+ * @return true if it exists in the map, false otherwise.
+ */
+bool GlobalInfo::doesRideExist(int rideId) {
+    pthread_mutex_lock(&lock);
+    bool answer = false;
+    map<int, deque<string> *>::iterator it = rideIdToPath.find(rideId);
+    if (it != rideIdToPath.end()) {
+        answer = true;
+    }
+    pthread_mutex_unlock(&lock);
+    return answer;
+}
+
+/**
+ * Get the path of the ride with the given id, and delete it from the map.
+ * @param rideId id of ride.
+ * @return deque of strings, which is the path of the ride.
+ */
+deque<string> *GlobalInfo::popPathOf(int rideId) {
+    deque<string> *path = rideIdToPath.at(rideId);
+    // rideIdToPath.
+    return path;
+}

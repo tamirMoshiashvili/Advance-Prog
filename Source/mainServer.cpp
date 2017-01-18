@@ -88,5 +88,3 @@ static void operate(uint16_t port) {
     globalInfo->updateCommand(mission);
     pthread_exit(NULL);
 }
-
-

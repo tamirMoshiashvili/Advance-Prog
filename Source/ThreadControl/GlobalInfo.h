@@ -3,7 +3,9 @@
 
 #include <clocale>
 #include <map>
+#include <deque>
 #include <mutex>
+
 using namespace std;
 
 /**
@@ -16,11 +18,13 @@ private:
     map<int, int> commandPerDriver;
     map<int, int> descriptorToDriverId;
     map<int, bool> driverToFlag;
+    map<int, deque<string> *> rideIdToPath;
     pthread_mutex_t lock;
     static bool instanceFlag;
     static GlobalInfo *globalInfo;
 
     GlobalInfo();
+
 public:
     static GlobalInfo *getInstance();
 
@@ -42,7 +46,7 @@ public:
 
     bool getIsNewCommand(int driverSocket);
 
-    pthread_mutex_t* getLocker();
+    pthread_mutex_t *getLocker();
 
     void turnOnFlag();
 
@@ -51,6 +55,12 @@ public:
     bool isFlagTurnOn();
 
     unsigned long getNumClients();
+
+    void addRideToMap(int rideId, deque<string> *string_path);
+
+    bool doesRideExist(int rideId);
+
+    deque<string> *popPathOf(int rideId);
 };
 
 #endif //EX2_GLOBALINFO_H

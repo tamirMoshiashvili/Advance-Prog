@@ -203,8 +203,7 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
  * @param srcDriverPoint start point of driver.
  * @return pointer to navigation.
  */
-PathCalculator *
-TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
+PathCalculator *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
     // Find source of the ride.
     Point srcRidePoint = ride->getSourcePoint();
     Block *src =
@@ -321,5 +320,3 @@ Point TaxiCenter::askDriverLocation(int driverSocket) {
     ia >> driverLocation;
     return driverLocation;
 }
-
-
