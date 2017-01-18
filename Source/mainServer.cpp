@@ -44,51 +44,60 @@ static void operate(uint16_t port) {
         // Determine which mission needed to be executed.
         switch (mission) {
             case 1:
+                BOOST_LOG_TRIVIAL(debug) << "start command 1";
                 // Connect with drivers.
                 cin >> numDrivers;
                 mainFlow.addDrivers(numDrivers, port, globalInfo);
+                // Wait for all the drivers to connect with their cabs.
+                while (numDrivers != globalInfo->getNumClients()) {
+                    while (!globalInfo->areAllDriversFinishedCommand()) {}
+                }
+                BOOST_LOG_TRIVIAL(debug) << "end command 1\n";
                 break;
             case 2:
+                BOOST_LOG_TRIVIAL(debug) << "start command 2";
                 // Add new ride.
                 mainFlow.addRide(InputManager::readRide());
+                BOOST_LOG_TRIVIAL(debug) << "end command 2\n";
                 break;
             case 3:
+                BOOST_LOG_TRIVIAL(debug) << "start command 3";
                 // Add new cab.
                 mainFlow.addCab(InputManager::readCab(taxiCenter));
                 //TODO: wait for all command 1,2,3 to execute before updating
                 //TODO: commands to threads.
+                BOOST_LOG_TRIVIAL(debug) << "end command 3\n";
                 break;
             case 4:
+                BOOST_LOG_TRIVIAL(debug) << "start command 4";
                 // Ask for driver location.
                 globalInfo->setAllDriversToNotFinish();
                 cin >> driverId;
                 globalInfo->updateCommand(mission, driverId);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
-                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command" << endl;
+                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command";
+                BOOST_LOG_TRIVIAL(debug) << "end command 4\n";
                 break;
             case 9:
-                // Wait for all the drivers to connect with their cabs.
-                while (numDrivers != globalInfo->getNumClients()) {
-                    while (!globalInfo->areAllDriversFinishedCommand()) {}
-                }
+                BOOST_LOG_TRIVIAL(debug) << "start command 9";
                 // Advance.
                 globalInfo->setAllDriversToNotFinish();
                 globalInfo->updateCommand(mission);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
                 mainFlow.advanceClock();
-                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command" << endl;
+                BOOST_LOG_TRIVIAL(debug) << "all drivers finish command";
+                BOOST_LOG_TRIVIAL(debug) << "end command 9\n";
                 break;
             default:
                 // Invalid option.
                 break;
         }
     } while (mission != 7);
+    BOOST_LOG_TRIVIAL(debug) << "end total";
     // Announce about end of program.
     globalInfo->setAllDriversToNotFinish();
     globalInfo->updateCommand(mission);
     pthread_exit(NULL);
 }
-
-

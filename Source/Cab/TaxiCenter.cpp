@@ -55,6 +55,7 @@ TaxiCenter::~TaxiCenter() {
  */
 void
 TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
+    BOOST_LOG_TRIVIAL(debug) << "Start initialize at taxi-center";
     // Create the main-server socket.
     numOfDrivers = numDrivers;
     tcpServer = new TcpServer(port, numDrivers);
@@ -76,9 +77,10 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
                                 (void *) clientThreadInfo);
         if (status) {
-            cout << "ERROR" << endl;
+            BOOST_LOG_TRIVIAL(debug) << "ERROR" << endl;
         }
     }
+    BOOST_LOG_TRIVIAL(debug) << "END initialize at taxi-center\n";
 }
 
 
@@ -157,6 +159,7 @@ int TaxiCenter::getNumRides() {
  * @param ride pointer to ride object.
  */
 void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
+    BOOST_LOG_TRIVIAL(debug) << "Start send-ride with driver: " << driverSocket;
     // Serialize the ride.
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);
@@ -165,10 +168,11 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
     oa << ride;
     stream.flush();
     // Send the ride to the driver.
-    cout << "Sent ride, ";
+    BOOST_LOG_TRIVIAL(debug) << "Sent ride, ";
     tcpServer->sendData(serial_str, driverSocket);
     // Send a navigation-system of the given ride to the driver.
     sendNavigation(driverSocket, ride);
+    BOOST_LOG_TRIVIAL(debug) << "END send-ride with driver: " << driverSocket << endl;
 }
 
 /**
@@ -177,11 +181,12 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
  * @param ride pointer to ride object.
  */
 void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
+    BOOST_LOG_TRIVIAL(debug) << "Start send-navigation with driver: " << driverSocket;
     // Ask the driver for its location.
     Point driverLocation = askDriverLocation(driverSocket);
     // Create the pathCalculator-system according to the driver's location.
     PathCalculator *pathCalculator = produceNavigation(ride, driverLocation);
-    cout << "calculated path, ";
+    BOOST_LOG_TRIVIAL(debug) << "calculated path, ";
     // Create opposite stack of blocks ids which represents the path.
     deque<string> *string_path = pathCalculator->getPathAsString();
     // Serialize the path.
@@ -193,9 +198,10 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     stream.flush();
     // Send the path to the driver.
     tcpServer->sendData(serial_str, driverSocket);
-    cout << "Sent path, ";
+    BOOST_LOG_TRIVIAL(debug) << "Sent path, ";
     delete string_path;
     delete pathCalculator;
+    BOOST_LOG_TRIVIAL(debug) << "END send-navigation with driver: " << driverSocket << endl;
 }
 
 
@@ -205,8 +211,8 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
  * @param srcDriverPoint start point of driver.
  * @return pointer to navigation.
  */
-PathCalculator *
-TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
+PathCalculator *TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
+    BOOST_LOG_TRIVIAL(debug) << "Start produce-navigation";
     // Find source of the ride.
     Point srcRidePoint = ride->getSourcePoint();
     Block *src =
@@ -224,6 +230,7 @@ TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
     Block *dest = cityMap->getBlock(destPoint.getX(), destPoint.getY());
     bfs->addStoppingPoint(dest);
     bfs->applyAlgorithm();
+    BOOST_LOG_TRIVIAL(debug) << "END produce-navigation\n";
     return bfs;
 }
 
@@ -233,8 +240,9 @@ TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
  * @param driverSocket socket-descriptor of the driver.
  */
 void TaxiCenter::makeDriverWork(int driverSocket) {
+    BOOST_LOG_TRIVIAL(debug) << "Start make-drivers-work with driver: " << driverSocket;
     char buffer[16] = {0};
-    cout << "Sent GO-msg, ";
+    BOOST_LOG_TRIVIAL(debug) << "Sent GO-msg, ";
     tcpServer->sendData(GO, driverSocket);
     Ride *ride = NULL;
     // Iterate over the rides list.
@@ -243,14 +251,15 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
         if ((*it)->getStartTime() == clock) {
             // There is a ride we need to take right now,
             // Check if driver available.
-            cout << "Sent IS-AVAILABLE msg, ";
+            BOOST_LOG_TRIVIAL(debug) << "Sent IS-AVAILABLE msg, ";
             tcpServer->sendData(IS_AVAILABLE, driverSocket);
             // Get the driver's answer.
+            BOOST_LOG_TRIVIAL(debug) << "Wait for driver answer of: " << driverSocket;
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
+            BOOST_LOG_TRIVIAL(debug) << "Receive for driver answer of: " << driverSocket;
             if (!strcmp(buffer, YES)) {
-                cout << "rides list size:" << rides.size()
-                     << "  driver socket is: "
-                     << driverSocket << endl;
+                BOOST_LOG_TRIVIAL(debug) << "rides list size:" << rides.size()
+                     << "  driver socket is: " << driverSocket << endl;
                 ride = *it;
                 sendRide(driverSocket, ride);
                 break;
@@ -262,10 +271,11 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
     }
     // Ride has been handled.
     if (ride != NULL) {
-        cout << "ride with id: " << ride->getId() << "  removed\n";
+        BOOST_LOG_TRIVIAL(debug) << "ride with id: " << ride->getId() << "  removed";
         rides.remove(ride);
     }
     pthread_mutex_unlock(&locker);
+    BOOST_LOG_TRIVIAL(debug) << "END make-drivers-work with driver: " << driverSocket << endl;
 }
 
 /**
@@ -273,7 +283,7 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
  */
 void TaxiCenter::advanceClock() {
     ++clock;
-    cout << "time is: " << clock << "\n";
+    BOOST_LOG_TRIVIAL(debug) << "time is: " << clock << endl;
 }
 
 /**
@@ -282,10 +292,13 @@ void TaxiCenter::advanceClock() {
  * @param globalInfo global information.
  */
 void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
+    BOOST_LOG_TRIVIAL(debug) << "Start identify-driver with driver: " << driverSocket;
     char buffer[128];
     int driverId = 0, cabId = 0;
     // Wait for data (Ids) from a driver.
+    BOOST_LOG_TRIVIAL(debug) << "Wait for driver IDs answer of: " << driverSocket;
     tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
+    BOOST_LOG_TRIVIAL(debug) << "Receive for driver IDs answer of: " << driverSocket;
     // Parse the id of driver and its cab.
     string str(buffer);
     unsigned long j = str.find(",");
@@ -302,8 +315,9 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     oa << idToCab.at(cabId);
     s2.flush();
     // send cab to driver
-    cout << "Sent Cab, ";
+    BOOST_LOG_TRIVIAL(debug) << "Sent Cab, ";
     tcpServer->sendData(serial_str, driverSocket);
+    BOOST_LOG_TRIVIAL(debug) << "END identify-driver with driver: " << driverSocket << endl;
 }
 
 /**
@@ -312,9 +326,10 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
  * @return point which is the location of the driver on the map.
  */
 Point TaxiCenter::askDriverLocation(int driverSocket) {
+    BOOST_LOG_TRIVIAL(debug) << "Start ask-location with driver: " << driverSocket;
     // Send the driver a message,
     // which acknowledge him that he need to send his location to the server.
-    cout << "Sent SEND-LOCATION msg, ";
+    BOOST_LOG_TRIVIAL(debug) << "Sent SEND-LOCATION msg, ";
     tcpServer->sendData(SEND_LOCATION, driverSocket);
     Point driverLocation;
     // De-serialize the location.
@@ -324,5 +339,6 @@ Point TaxiCenter::askDriverLocation(int driverSocket) {
     iostreams::stream<iostreams::basic_array_source<char> > stream(device);
     archive::binary_iarchive ia(stream);
     ia >> driverLocation;
+    BOOST_LOG_TRIVIAL(debug) << "END ask-location with driver: " << driverSocket << endl;
     return driverLocation;
 }

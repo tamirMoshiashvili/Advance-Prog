@@ -70,7 +70,10 @@ void GlobalInfo::updateCommand(int mission, int clientId) {
  * @return command.
  */
 int GlobalInfo::getCurrentCommand() {
-    return command;
+    pthread_mutex_lock(&lock);
+    int com =  command;
+    pthread_mutex_unlock(&lock);
+    return com;
 }
 
 /**
@@ -80,7 +83,10 @@ int GlobalInfo::getCurrentCommand() {
  * @return true if it is requested, false otherwise.
  */
 bool GlobalInfo::isDriverLocationRequested(int driverSocket) {
-    return descriptorToDriverId.at(driverSocket) == driverId;
+    pthread_mutex_lock(&lock);
+    bool answer = descriptorToDriverId.at(driverSocket) == driverId;
+    pthread_mutex_unlock(&lock);
+    return answer;
 }
 
 /**
@@ -88,13 +94,16 @@ bool GlobalInfo::isDriverLocationRequested(int driverSocket) {
  * @return true if all finished, false otherwise.
  */
 bool GlobalInfo::areAllDriversFinishedCommand() {
+    pthread_mutex_lock(&lock);
     map<int, bool>::iterator it;
     for (it = isDriverFinishedCommand.begin();
          it != isDriverFinishedCommand.end(); ++it) {
         if (!it->second) {
+            pthread_mutex_unlock(&lock);
             return false;
         }
     }
+    pthread_mutex_unlock(&lock);
     return true;
 }
 
@@ -127,7 +136,10 @@ void GlobalInfo::setDriverFinishCommand(int driverSocket) {
  * @return true if the driver has new command, false otherwise.
  */
 bool GlobalInfo::getIsNewCommand(int driverSocket) {
-    return isNewCommandPerDriver.at(driverSocket);
+    pthread_mutex_lock(&lock);
+    bool answer = isNewCommandPerDriver.at(driverSocket);
+    pthread_mutex_unlock(&lock);
+    return answer;
 }
 
 /**
@@ -154,6 +166,8 @@ bool GlobalInfo::isDriverFinishCommand(int driverSocket) {
  * @return number.
  */
 unsigned long GlobalInfo::getNumClients() {
-    return descriptorToDriverId.size();
+    pthread_mutex_lock(&lock);
+    unsigned long size = descriptorToDriverId.size();
+    pthread_mutex_unlock(&lock);
+    return size;
 }
-
