@@ -82,3 +82,4 @@ ssize_t Tcp::receiveData(char *buffer, size_t size, int sockDescriptor) {
     // Return correct if there were no problem.
     return read_bytes;
 }
+
