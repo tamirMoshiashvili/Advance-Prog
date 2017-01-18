@@ -57,13 +57,7 @@ public:
 
     void setLocation(Point point);
 
-    Color getColor();
-
-    void setColor(Color color1);
-
     double getTariff();
-
-    Manufacturer getManufacturer();
 
     void setNavigation(Navigation *navigation1);
 

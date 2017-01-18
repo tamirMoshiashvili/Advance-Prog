@@ -48,8 +48,6 @@ int Tcp::sendData(string data, int sockDescriptor) {
         sockDescriptor = socketDescriptor;
     }
     ssize_t sent_bytes = send(sockDescriptor, datas, data_len, 0);
-    BOOST_LOG_TRIVIAL(debug) << "Sent msg: " << data << " from "
-                             << sockDescriptor << " success: " << sent_bytes;
     if (sent_bytes < 0) {
         // Return an error represent error at this method.
         return ERROR_SEND;
@@ -70,8 +68,6 @@ ssize_t Tcp::receiveData(char *buffer, size_t size, int sockDescriptor) {
         sockDescriptor = socketDescriptor;
     }
     ssize_t read_bytes = recv(sockDescriptor, buffer, size, 0);
-    BOOST_LOG_TRIVIAL(debug) << "received msg: " << buffer << " bytes: "
-                             << read_bytes;
     // Check the errors.
     if (read_bytes == 0) {
         return CONNECTION_CLOSED;
@@ -82,5 +78,3 @@ ssize_t Tcp::receiveData(char *buffer, size_t size, int sockDescriptor) {
     // Return correct if there were no problem.
     return read_bytes;
 }
-
-

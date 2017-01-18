@@ -34,19 +34,3 @@ Passenger::~Passenger() {
 int Passenger::getSatisfaction() {
     return (rand() % 5 + 1);
 }
-
-/**
- * Get the source point of the passenger.
- * @return pointer to point.
- */
-Point Passenger::getSourcePoint() {
-    return sourcePoint;
-}
-
-/**
- * Get the destination point of the passenger.
- * @return pointer to point.
- */
-Point Passenger::getDestinationPoint() {
-    return destinationPoint;
-}

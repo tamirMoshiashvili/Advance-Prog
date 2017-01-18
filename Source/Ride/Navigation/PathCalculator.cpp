@@ -38,35 +38,6 @@ PathCalculator::~PathCalculator() {
 }
 
 /**
- * Get the next location in the way.
- * Set the block to "not visited" state.
- * @return pointer to block.
- */
-Block *PathCalculator::getNextLocation() {
-    Block *next = path->back();
-    path->pop_back();
-    // Restore the block's state back to not-visited.
-    next->setNotVisited();
-    return next;
-}
-
-/**
- * Check if need to continue in the path (path is not over).
- * @return true if path is not empty, true otherwise.
- */
-bool PathCalculator::hasNextLocation() {
-    if (!path->empty()) {
-        Block *block = path->back();
-        if (block == NULL) {
-            path->pop_back();
-            return false;
-        }
-        return true;
-    }
-    return false;
-}
-
-/**
  * Calculate and generate the path between two points.
  * @param block current block in the path and in the recursion.
  * @param startBlock one of the start-block-location in the path.
@@ -148,7 +119,6 @@ Block *PathCalculator::getNextStoppingPoint() {
  * @return deque of strings.
  */
 deque<string> *PathCalculator::getPathAsString() {
-    //TODO: delete after use in taxi center.
     deque<string> *string_path = new deque<string>();
     while (!path->empty()) {
         Block *block = path->front();

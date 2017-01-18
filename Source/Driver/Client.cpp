@@ -39,7 +39,6 @@ Client::Client(int idNum, int ageVal, MaritalStatus status, int years,
                int cabID, const string &ip_addr, uint16_t port)
 
         : Driver(idNum, ageVal, status, years, cabID) {
-
     // Handle the socket.
     socket = new TcpClient(ip_addr, port);
     socket->initialize();
@@ -103,8 +102,6 @@ void Client::connectToCab() {
     ia >> cab;
     // Set the given cab to the client.
     setCab(cab);
-    BOOST_LOG_TRIVIAL(debug) << "driver with the id: " << this->getId()
-                             << " got the cab";
 }
 
 /**
@@ -116,13 +113,11 @@ void Client::operate() {
     // Get a message from the server.
     receiveData(buffer, sizeof(buffer));
     while (true) {
-        BOOST_LOG_TRIVIAL(debug) << "in func 'operate' got: " << buffer;
         if (!strcmp(buffer, END)) {
             // End-message has been sent, end of the client.
             break;
         } else if (!strcmp(buffer, IS_AVAILABLE)) {
             // Server asked if the driver is available, send yes.
-            BOOST_LOG_TRIVIAL(debug) << buffer;
             sendData(YES);
             // Server asks for availability only when ride need to be handled,
             // since we are available, take the ride.
@@ -152,7 +147,6 @@ string Client::handleRide() {
     // Handle the navigation-process.
     handleNavigation();
     // Start the loop which means the driver is in the middle of a ride.
-    BOOST_LOG_TRIVIAL(debug) << "move to 'drive' func";
     return drive();
 }
 
@@ -171,8 +165,6 @@ void Client::getRideFromServer() {
     archive::binary_iarchive ia(s1);
     Ride *ride = NULL;
     ia >> ride;
-    BOOST_LOG_TRIVIAL(debug) << "driver got the ride with id: " << ride->getId()
-                             << endl;
     // Add listeners to the client according to the ride.
     addListeners(ride);
 }
@@ -224,7 +216,6 @@ string Client::drive() {
         // Driver is in the middle of a ride.
         // Get message from server.
         receiveData(buffer, sizeof(buffer));
-        BOOST_LOG_TRIVIAL(debug) << "in func 'drive' got: " << buffer;
         if (!strcmp(buffer, END)) {
             // End-message sent, end of client.
             break;
@@ -234,8 +225,6 @@ string Client::drive() {
         } else if (!strcmp(buffer, GO)) {
             sendData(RECEIVED);
             // Driver got a sign to continue the ride.
-            BOOST_LOG_TRIVIAL(debug) << "driver should move, step: "
-                                     << ++num_step;
             moveOneStep();
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for location, send the location of the driver.

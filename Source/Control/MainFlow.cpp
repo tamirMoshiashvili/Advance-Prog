@@ -24,9 +24,8 @@ MainFlow::~MainFlow() {
  * @param numDrivers number of drivers.
  * @param port port number.
  */
-void MainFlow::addDrivers(int numDrivers, uint16_t port,
-                          GlobalInfo *globalInfo) {
-    taxiCenter->initialize(numDrivers, port, globalInfo);
+void MainFlow::addDrivers(int numDrivers, uint16_t port) {
+    taxiCenter->initialize(numDrivers, port);
 }
 
 /**

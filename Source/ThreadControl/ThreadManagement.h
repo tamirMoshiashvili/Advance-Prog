@@ -8,7 +8,6 @@
  * Contains information about a client.
  */
 struct ClientThreadInfo {
-    GlobalInfo *globalInfo;
     TaxiCenter *taxiCenter;
     int socket;
 };

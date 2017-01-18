@@ -25,14 +25,6 @@ MatrixBlock::~MatrixBlock() {
 }
 
 /**
- * Get the point, which is the location of the block in the matrix.
- * @return point.
- */
-Point MatrixBlock::getPoint() {
-    return point;
-}
-
-/**
  * Get representation of the block as a string.
  * @return string in format of "x,y" where x,y are coordinates.
  */

@@ -6,7 +6,7 @@
 #include <boost/serialization/deque.hpp>
 
 /**
- * Navigation system that work with BFS algorithm.
+ * Path calculator with BFS algorithm.
  */
 class BFS : public PathCalculator {
 private:
@@ -25,7 +25,7 @@ public:
 
     BFS();
 
-    BFS(deque<Block*> *pathFromIds);
+    BFS(deque<Block *> *pathFromIds);
 
     ~BFS();
 
@@ -33,7 +33,6 @@ public:
 
 private:
     void applyToBlock(Block *block, Block *father);
-
 };
 
 

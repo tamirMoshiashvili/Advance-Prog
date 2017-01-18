@@ -1,16 +1,24 @@
 #include "Navigation.h"
 
+/**
+ * Constructor.
+ * @param blockPath deque of strings, which represents the path as strings.
+ * @return Navigation object.
+ */
 Navigation::Navigation(deque<string> *blockPath) {
     path = new deque<Point>();
-    while (!blockPath->empty()){
+    while (!blockPath->empty()) {
         string point_str = blockPath->front();
         blockPath->pop_front();
         path->push_back(Point::strToPoint(point_str));
     }
 }
 
-Navigation::Navigation(): path(NULL) {
-}
+/**
+ * Default constructor.
+ * @return Navigation object.
+ */
+Navigation::Navigation() : path(NULL) {}
 
 /**
  * Destructor.
@@ -44,5 +52,3 @@ bool Navigation::hasNextLocation() {
     }
     return false;
 }
-
-

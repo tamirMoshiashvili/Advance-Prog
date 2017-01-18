@@ -49,35 +49,11 @@ void Cab::setLocation(Point point) {
 }
 
 /**
- * Get the color of the cab.
- * @return color color of the cab.
- */
-Color Cab::getColor() {
-    return color;
-}
-
-/**
- * Set the color of the cab to the given color.
- * @param color1 new color.
- */
-void Cab::setColor(Color color1) {
-    color = color1;
-}
-
-/**
  * Get the tariff of the cab.
  * @return number.
  */
 double Cab::getTariff() {
     return tariff;
-}
-
-/**
- * Get the manufacturer of the cab.
- * @return cab's manufacturer.
- */
-Manufacturer Cab::getManufacturer() {
-    return manufacturer;
 }
 
 /**

@@ -27,21 +27,6 @@ void MovementNotifier::addListener(MovementListener *listener) {
 }
 
 /**
- * Remove a listener from this object.
- * @param listener pointer to movement listener.
- */
-void MovementNotifier::removeListener(MovementListener *listener) {
-    for (unsigned int i = 0; i < listeners.size(); ++i) {
-        if (listeners[i] == listener) {
-            MovementListener *temp = listeners[i];
-            listeners.erase(listeners.begin() + i);
-            delete temp;
-            break;
-        }
-    }
-}
-
-/**
  * Delete all the listeners from the old ride.
  */
 void MovementNotifier::clearListeners() {
@@ -85,14 +70,6 @@ bool MovementNotifier::exist(std::vector<Ride *> rides, Ride *ride) {
     }
     // Ride does not exist.
     return false;
-}
-
-/**
- * Get the list of the listeners of this object.
- * @return list of pointers to movement listeners.
- */
-std::vector<MovementListener *> MovementNotifier::getListeners() const {
-    return listeners;
 }
 
 /**

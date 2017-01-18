@@ -12,9 +12,9 @@ void *ThreadManagement::threadFunction(void *param) {
     ClientThreadInfo *clientThreadInfo = (ClientThreadInfo *) param;
     int driverSocket = clientThreadInfo->socket;
     TaxiCenter *center = clientThreadInfo->taxiCenter;
-    GlobalInfo *globalInfo = clientThreadInfo->globalInfo;
+    GlobalInfo *globalInfo = GlobalInfo::getInstance();
     // Get driver-id and its cab id.
-    center->identifyDriver(driverSocket, globalInfo);
+    center->identifyDriver(driverSocket);
     globalInfo->turnOffFlag(driverSocket);
     int command = globalInfo->getCurrentCommand(driverSocket);
     while (command != 7) {
@@ -27,7 +27,6 @@ void *ThreadManagement::threadFunction(void *param) {
                 }
                 break;
             case 9:
-                BOOST_LOG_TRIVIAL(debug) << "driver " << driverSocket << " enter 9";
                 // Operate the driver.
                 center->makeDriverWork(driverSocket);
                 break;
@@ -36,8 +35,6 @@ void *ThreadManagement::threadFunction(void *param) {
         }
         if (globalInfo->getIsNewCommand(driverSocket)) {
             // Get ready for the next mission.
-            BOOST_LOG_TRIVIAL(debug) << "driver with the num of socket: "
-                                     << driverSocket << " finished";
             globalInfo->setNotNewCommand(driverSocket);
             // Wait for new mission.
             while (!globalInfo->getIsNewCommand(driverSocket)) {

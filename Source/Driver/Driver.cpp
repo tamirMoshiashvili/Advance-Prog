@@ -71,37 +71,12 @@ Point Driver::getLocation() {
 }
 
 /**
- * Set the location of the driver.
- * @param point.
- */
-void Driver::setLocation(Point point) {
-    location = point;
-    cab->setLocation(point);
-}
-
-/**
  * Notify the driver of a certain ride he must take.
  * @param navigation pointer to navigation, will contain the ride details.
  */
 void Driver::takeRide(Navigation *navigation) {
     available = false;
     cab->setNavigation(navigation);
-}
-
-/**
- * Check if the driver is available, and has no ride.
- * @return true if he is free, false otherwise.
- */
-bool Driver::isAvailable() {
-    return available;
-}
-
-/**
- * Set the state of the driver to "available".
- * @param state true for available, false for not available.
- */
-void Driver::setAvailability(bool state) {
-    available = state;
 }
 
 /**

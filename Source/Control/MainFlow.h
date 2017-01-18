@@ -19,7 +19,7 @@ public:
 
     ~MainFlow();
 
-    void addDrivers(int numDrivers, uint16_t port, GlobalInfo* globalInfo);
+    void addDrivers(int numDrivers, uint16_t port);
 
     void addCab(Cab *cab);
 

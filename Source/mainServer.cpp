@@ -10,8 +10,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include <boost/log/trivial.hpp>
-
 using namespace std;
 using namespace boost;
 
@@ -47,7 +45,7 @@ static void operate(uint16_t port) {
             case 1:
                 // Connect with drivers.
                 cin >> numDrivers;
-                mainFlow.addDrivers(numDrivers, port, globalInfo);
+                mainFlow.addDrivers(numDrivers, port);
                 globalInfo->updateCommand(mission);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
@@ -68,9 +66,8 @@ static void operate(uint16_t port) {
                 }
                 break;
             case 9:
-                while (globalInfo->isFlagTurnOn()){
-                }
-                BOOST_LOG_TRIVIAL(debug) << "main server enter 9";
+                // Wait for the flag.
+                while (globalInfo->isFlagTurnOn()) {}
                 // Advance.
                 globalInfo->updateCommand(mission);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
@@ -81,8 +78,6 @@ static void operate(uint16_t port) {
                 // Invalid option.
                 break;
         }
-        BOOST_LOG_TRIVIAL(debug) << "command " << mission
-                                 << " execution finished";
     } while (mission != 7);
     // Announce about end of program.
     globalInfo->updateCommand(mission);

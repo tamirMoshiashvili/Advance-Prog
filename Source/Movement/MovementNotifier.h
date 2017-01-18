@@ -18,11 +18,7 @@ public:
 
     virtual ~MovementNotifier();
 
-    std::vector<MovementListener *> getListeners() const;
-
     void addListener(MovementListener *listener);
-
-    void removeListener(MovementListener *listener);
 
     void clearListeners();
 

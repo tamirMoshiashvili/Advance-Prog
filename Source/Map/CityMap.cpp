@@ -81,32 +81,6 @@ void CityMap::checkForNeighbor(Block *block, int x, int y) {
 }
 
 /**
- * Reset the map.
- * Set all of its blocks to "not visited" state.
- */
-void CityMap::resetMap() {
-    // Run through all the blocks in the matrix and set them off.
-    for (int i = 0; i < width; ++i) {
-        for (int j = 0; j < height; ++j) {
-            getBlock(i, j)->setNotVisited();
-        }
-    }
-    // Set the obstacles-state back to visited.
-    turnOnObstacles();
-}
-
-/**
- * Set all obstacle-blocks to visited-state.
- */
-void CityMap::turnOnObstacles() {
-    // Iterate over the list of obstacles.
-    for (list<Block *>::iterator it = obstacles.begin();
-         it != obstacles.end(); it++) {
-        (*it)->setVisited();
-    }
-}
-
-/**
  * Add an obstacle to the map.
  * An obstacle will be a block which will be marked as "visited",
  * by that, when we reach an obstacle, the program will not operate on it.
@@ -120,14 +94,6 @@ void CityMap::addObstacle(int x, int y) {
 }
 
 /**
- * Get the list of obstacles in the map.
- * @return list of pointers to blocks.
- */
-list<Block *> CityMap::getObstacles() const {
-    return obstacles;
-}
-
-/**
  * Get the block which is in the given coordinates.
  * @param x value on the x axis.
  * @param y value on the y axis.
@@ -135,20 +101,4 @@ list<Block *> CityMap::getObstacles() const {
  */
 Block *CityMap::getBlock(int x, int y) {
     return (*grid[x])[y];
-}
-
-/**
- * Get the width of the map.
- * @return number.
- */
-int CityMap::getWidth() {
-    return width;
-}
-
-/**
- * Get the height of the map.
- * @return number.
- */
-int CityMap::getHeight() {
-    return height;
 }

@@ -8,7 +8,6 @@ bool GlobalInfo::instanceFlag = false;
  * @return GlobalInfo object.
  */
 GlobalInfo::GlobalInfo() {
-    flag = false;
     pthread_mutex_init(&lock, 0);
 }
 
@@ -35,6 +34,10 @@ GlobalInfo::~GlobalInfo() {
     pthread_mutex_destroy(&lock);
 }
 
+/**
+ * Add the driver with the given socket-descriptor to the maps.
+ * @param socket socket-descriptor.
+ */
 void GlobalInfo::addDriverToMap(int socket) {
     pthread_mutex_lock(&lock);
     commandPerDriver.insert(pair<int, int>(socket, -1));
@@ -102,7 +105,6 @@ bool GlobalInfo::areAllDriversFinishedCommand() {
     return true;
 }
 
-
 /**
  * Check if there is a new command.
  * @param driverSocket socket-descriptor.
@@ -123,13 +125,9 @@ void GlobalInfo::setNotNewCommand(int driverSocket) {
 }
 
 /**
- * Get the number of clients.
- * @return number.
+ * Check if the flag is turn-on.
+ * @return true if it is, false otherwise.
  */
-unsigned long GlobalInfo::getNumClients() {
-    return descriptorToDriverId.size();
-}
-
 bool GlobalInfo::isFlagTurnOn() {
     pthread_mutex_lock(&lock);
     map<int, bool>::iterator it;
@@ -143,23 +141,14 @@ bool GlobalInfo::isFlagTurnOn() {
     return false;
 }
 
-void GlobalInfo::turnOnFlag() {
-    pthread_mutex_lock(&lock);
-    map<int, bool>::iterator it;
-    for (it = driverToFlag.begin(); it != driverToFlag.end(); ++it) {
-        it->second = true;
-    }
-    pthread_mutex_unlock(&lock);
-}
-
+/**
+ * Turn off the flag.
+ * @param driverSocket socket-descriptor.
+ */
 void GlobalInfo::turnOffFlag(int driverSocket) {
     pthread_mutex_lock(&lock);
     driverToFlag.at(driverSocket) = false;
     pthread_mutex_unlock(&lock);
-}
-
-pthread_mutex_t *GlobalInfo::getLocker() {
-    return &lock;
 }
 
 /**

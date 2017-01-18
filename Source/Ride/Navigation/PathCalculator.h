@@ -7,7 +7,7 @@
 #include <boost/serialization/deque.hpp>
 
 /**
- * Represents a navigation that know the shortest path between two blocks.
+ * Represents an object that know the shortest path between two blocks.
  */
 class PathCalculator {
 private:
@@ -29,15 +29,9 @@ public:
 
     PathCalculator();
 
-    PathCalculator(deque<Block*> *pathFromIds);
+    PathCalculator(deque<Block *> *pathFromIds);
 
     virtual ~PathCalculator();
-
-    //TODO: delete.
-    Block *getNextLocation();
-
-    //TODO: delete.
-    bool hasNextLocation();
 
     virtual void applyAlgorithm()=0;
 

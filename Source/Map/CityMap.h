@@ -37,22 +37,12 @@ public:
 
     void addObstacle(int x, int y);
 
-    list<Block *> getObstacles() const;
-
-    void resetMap();
-
     Block *getBlock(int x, int y);
-
-    int getWidth();
-
-    int getHeight();
 
 private:
     void addNeighborsToEachBlock();
 
     void checkForNeighbor(Block *block, int x, int y);
-
-    void turnOnObstacles();
 };
 
 

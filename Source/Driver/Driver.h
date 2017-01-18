@@ -48,12 +48,6 @@ public:
 
     Point getLocation();
 
-    void setLocation(Point point);
-
-    bool isAvailable();
-
-    void setAvailability(bool state);
-
     void moveOneStep();
 
     void addPassengers(list<Passenger *> passengersList);

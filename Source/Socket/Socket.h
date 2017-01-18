@@ -44,27 +44,10 @@ public:
 
     virtual ~Socket();
 
-    /**
-     * Initialize the Socket object and getting a socket descriptor.
-     * @return number representing the return status.
-     */
     virtual int initialize() = 0;
 
-    /**
-     * Sending the input data to the socket who connect to this socket.
-     * @param data string representing the data to send.
-     * @param sockDescriptor descriptor.
-     * @return number representing the return status.
-     */
     virtual int sendData(string data, int sockDescriptor = -1) = 0;
 
-    /**
-     * Getting data from the other socket and print the data.
-     * @param buffer the place where the data will be stored.
-     * @param size number.
-     * @param sockDescriptor descriptor.
-     * @return number.
-     */
     virtual ssize_t receiveData(char *buffer,
                                 size_t size, int sockDescriptor = -1) = 0;
 };

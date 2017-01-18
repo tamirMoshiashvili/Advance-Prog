@@ -5,7 +5,6 @@
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
-#include "../Ride/Navigation/BFS.h"
 #include "../ThreadControl/ThreadManagement.h"
 
 
@@ -57,8 +56,7 @@ TaxiCenter::~TaxiCenter() {
  * @param numDrivers number of drivers.
  * @param port port number.
  */
-void
-TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
+void TaxiCenter::initialize(int numDrivers, uint16_t port) {
     // Create the main-server socket.
     numOfDrivers = numDrivers;
     tcpServer = new TcpServer(port, numDrivers);
@@ -66,14 +64,13 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
     vector<int> *clients = tcpServer->getClientDescriptors();
     int i = 0, status;
     ClientThreadInfo *clientThreadInfo;
-    pthread_mutex_t *map_locker = new pthread_mutex_t;
     pthread_t *p;
     // Start connection with each client
+    GlobalInfo *globalInfo = GlobalInfo::getInstance();
     for (i = 0; i < numDrivers; ++i) {
         p = new pthread_t;
         threads.push_back(p);
         clientThreadInfo = new ClientThreadInfo;
-        clientThreadInfo->globalInfo = globalInfo;
         clientThreadInfo->taxiCenter = this;
         clientThreadInfo->socket = (*clients)[i];
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
@@ -85,31 +82,12 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
     }
 }
 
-
-/**
- * Remove a driver from the taxi center.
- * @param int driver id.
- */
-void TaxiCenter::removeDriver(int driverID) {
-
-}
-
 /**
  * Add a cab to the taxi center.
  * @param cab pointer to cab.
  */
 void TaxiCenter::addCab(Cab *cab) {
     idToCab.insert(std::pair<int, Cab *>(cab->getId(), cab));
-}
-
-/**
- * Remove a cab from the taxi center.
- * @param cab pointer to cab.
- */
-void TaxiCenter::removeCab(Cab *cab) {
-    Cab *temp = idToCab.at(cab->getId());
-    idToCab.erase(cab->getId());
-    delete temp;
 }
 
 /**
@@ -133,40 +111,6 @@ void TaxiCenter::addRide(Ride *ride) {
 }
 
 /**
- * Remove a ride from the taxi center.
- * @param ride pointer to ride.
- */
-void TaxiCenter::removeRide(Ride *ride) {
-    Ride *temp = idToRides.at(ride->getId());
-    idToRides.erase(ride->getId());
-    delete temp;
-}
-
-/**
- * Get the number of drivers.
- * @return number.
- */
-int TaxiCenter::getNumDrivers() {
-    return numOfDrivers;
-}
-
-/**
- * Get the number of cabs.
- * @return number.
- */
-int TaxiCenter::getNumCabs() {
-    return (int) idToCab.size();
-}
-
-/**
- * Get the number of rides.
- * @return number.
- */
-int TaxiCenter::getNumRides() {
-    return (int) idToRides.size();
-}
-
-/**
  * Send the given ride to the driver with the given id.
  * @param driverId id number of the driver.
  * @param ride pointer to ride object.
@@ -183,7 +127,7 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
     tcpServer->sendData(serial_str, driverSocket);
     char buffer[16] = {0};
     tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
-    if (strcmp(buffer, RECEIVED)){
+    if (strcmp(buffer, RECEIVED)) {
         cout << "ERROR, expected received-msg, got: " << buffer;
     }
     // Send a navigation-system of the given ride to the driver.
@@ -222,7 +166,6 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
     char buffer[16] = {0};
     tcpServer->sendData(GO, driverSocket);
     tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
-    BOOST_LOG_TRIVIAL(debug) << buffer;
     Ride *ride = NULL;
     // Iterate over the rides list.
     pthread_mutex_lock(&locker);
@@ -234,9 +177,6 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
             // Get the driver's answer.
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             if (!strcmp(buffer, YES)) {
-                BOOST_LOG_TRIVIAL(debug) << "rides list size:" << rides.size()
-                                         << "  driver socket is: "
-                                         << driverSocket << endl;
                 ride = *it;
                 sendRide(driverSocket, ride);
                 break;
@@ -258,15 +198,13 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
  */
 void TaxiCenter::advanceClock() {
     ++clock;
-    BOOST_LOG_TRIVIAL(debug) << "time is: " << clock << "\n";
 }
 
 /**
  * Get driver's id and its cab id and send him his cab.
  * @param driverSocket driver's socket descriptor.
- * @param globalInfo global information.
  */
-void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
+void TaxiCenter::identifyDriver(int driverSocket) {
     char buffer[128];
     int driverId = 0, cabId = 0;
     // Wait for data (Ids) from a driver.
@@ -278,6 +216,7 @@ void TaxiCenter::identifyDriver(int driverSocket, GlobalInfo *globalInfo) {
     cabId = atoi(str.substr(j + 1, str.length()).c_str());
     // Add a driver and its socket descriptor to the map.
     pthread_mutex_lock(&locker);
+    GlobalInfo *globalInfo = GlobalInfo::getInstance();
     globalInfo->addToSocketToIdMap(driverId, driverSocket);
     pthread_mutex_unlock(&locker);
     string serial_str;

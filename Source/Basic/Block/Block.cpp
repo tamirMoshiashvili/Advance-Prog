@@ -78,6 +78,11 @@ list<Block *> Block::getNeighbors() {
     return neighbors;
 }
 
+/**
+ * Check if the given block equal to the current.
+ * @param other pointer to block.
+ * @return
+ */
 bool Block::operator==(Block* other) {
     return this->getId() == other->getId();
 }

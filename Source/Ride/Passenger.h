@@ -28,11 +28,6 @@ public:
     ~Passenger();
 
     int getSatisfaction();
-
-    Point getSourcePoint();
-
-    Point getDestinationPoint();
-
 };
 
 

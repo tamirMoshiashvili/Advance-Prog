@@ -9,6 +9,9 @@
 
 using namespace std;
 
+/**
+ * Represents a navigation-system that knows the next location ib the path.
+ */
 class Navigation {
 private:
     deque<Point> *path;
@@ -30,7 +33,6 @@ public:
     Point getNextLocation();
 
     bool hasNextLocation();
-
 };
 
 

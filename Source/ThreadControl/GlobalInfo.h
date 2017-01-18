@@ -14,7 +14,6 @@ using namespace std;
 class GlobalInfo {
 private:
     int driverId;
-    bool flag;
     map<int, int> commandPerDriver;
     map<int, int> descriptorToDriverId;
     map<int, bool> driverToFlag;
@@ -46,15 +45,9 @@ public:
 
     bool getIsNewCommand(int driverSocket);
 
-    pthread_mutex_t *getLocker();
-
-    void turnOnFlag();
-
     void turnOffFlag(int driverSocket);
 
     bool isFlagTurnOn();
-
-    unsigned long getNumClients();
 
     void addRideToMap(int rideId, deque<string> *string_path);
 

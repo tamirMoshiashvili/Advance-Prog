@@ -33,7 +33,6 @@ private:
     static string parseWord(string &input);
 
     static string readLine();
-
 };
 
 

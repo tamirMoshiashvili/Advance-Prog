@@ -62,7 +62,7 @@ bool Point::operator!=(Point other) {
 }
 
 /**
- * Print the point in the form of ( x , y ).
+ * Print the point in the form of (x,y).
  */
 ostream &operator<<(ostream &os, const Point &point) {
     return os << "(" << point.x << "," << point.y << ")";
@@ -98,4 +98,3 @@ Point Point::strToPoint(string str) {
     int y = atoi(str.substr(j + 1, str.length()).c_str());
     return Point(x, y);
 }
-

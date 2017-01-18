@@ -32,7 +32,6 @@ private:
     vector<pthread_t *> rideThreads;
     pthread_mutex_t locker;
 
-
 public:
     TaxiCenter(CityMap *map);
 
@@ -40,27 +39,15 @@ public:
 
     void addRide(Ride *tripInfo);
 
-    void removeRide(Ride *tripInfo);
-
-    void removeDriver(int driverID);
-
     void addCab(Cab *cab);
 
-    void removeCab(Cab *cab);
-
-    int getNumDrivers();
-
-    int getNumCabs();
-
-    int getNumRides();
-
-    void identifyDriver(int driverSocket, GlobalInfo *globalInfo);
+    void identifyDriver(int driverSocket);
 
     void sendRide(int driverSocket, Ride *ride);
 
     Point askDriverLocation(int driverSocket);
 
-    void initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo);
+    void initialize(int numDrivers, uint16_t port);
 
     void advanceClock();
 
@@ -68,8 +55,6 @@ public:
 
 private:
     void sendNavigation(int driverSocket, Ride *ride);
-
-
 };
 
 

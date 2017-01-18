@@ -65,7 +65,6 @@ int TcpServer::initialize() {
     return returnVal;
 }
 
-
 /**
  * Get the client-descriptors vector.
  * @return vector of int.
