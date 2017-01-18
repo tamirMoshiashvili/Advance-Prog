@@ -29,6 +29,7 @@ private:
     list<Ride *> rides;
     int clock;
     vector<pthread_t *> threads;
+    vector<pthread_t *> rideThreads;
     pthread_mutex_t locker;
 
 

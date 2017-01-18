@@ -1,5 +1,6 @@
 #include <boost/log/trivial.hpp>
 #include "ThreadManagement.h"
+#include "../Ride/Navigation/BFS.h"
 
 /**
  * Check for a mission to execute and contact with the needed client,
@@ -46,4 +47,32 @@ void *ThreadManagement::threadFunction(void *param) {
         command = globalInfo->getCurrentCommand(driverSocket);
     }
     delete clientThreadInfo;
+}
+
+/**
+ * Create navigation.
+ * @param param path calc info.
+ */
+void *ThreadManagement::produceNavigation(void *param) {
+    PathCalcInfo *info = (PathCalcInfo *) param;
+    Ride *ride = info->ride;
+    CityMap *cityMap = info->cityMap;
+    // Find source of the ride.
+    pthread_mutex_t locker;
+    pthread_mutex_init(&locker, 0);
+    pthread_mutex_lock(&locker);
+    Point srcRidePoint = ride->getSourcePoint();
+    Block *src =
+            cityMap->getBlock(srcRidePoint.getX(), srcRidePoint.getY());
+    // Create navigation.
+    PathCalculator *bfs = new BFS(src);
+    // Find destination.
+    Point destPoint = ride->getDestinationPoint();
+    Block *dest = cityMap->getBlock(destPoint.getX(), destPoint.getY());
+    bfs->addStoppingPoint(dest);
+    bfs->applyAlgorithm();
+    GlobalInfo *globalInfo = GlobalInfo::getInstance();
+    globalInfo->addRideToMap(ride->getId(), bfs->getPathAsString());
+    pthread_mutex_destroy(&locker);
+    delete bfs;
 }

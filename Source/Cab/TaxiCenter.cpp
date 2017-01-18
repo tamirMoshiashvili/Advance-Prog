@@ -44,6 +44,10 @@ TaxiCenter::~TaxiCenter() {
          it != idToRides.end(); ++it) {
         delete it->second;
     }
+    for (unsigned long i = 0; i < rideThreads.size(); i++) {
+        pthread_join(*rideThreads[i], NULL);
+        delete rideThreads[i];
+    }
     pthread_mutex_destroy(&locker);
 }
 
@@ -72,7 +76,6 @@ TaxiCenter::initialize(int numDrivers, uint16_t port, GlobalInfo *globalInfo) {
         clientThreadInfo->globalInfo = globalInfo;
         clientThreadInfo->taxiCenter = this;
         clientThreadInfo->socket = (*clients)[i];
-        clientThreadInfo->map_insertion_locker = map_locker;
         status = pthread_create(p, NULL, ThreadManagement::threadFunction,
                                 (void *) clientThreadInfo);
         if (status) {
@@ -116,6 +119,17 @@ void TaxiCenter::removeCab(Cab *cab) {
 void TaxiCenter::addRide(Ride *ride) {
     idToRides.insert(std::pair<int, Ride *>(ride->getId(), ride));
     rides.push_back(ride);
+    pthread_t *rideThread = new pthread_t;
+    PathCalcInfo *info = new PathCalcInfo;
+    info->ride = ride;
+    info->cityMap = cityMap;
+    int status = pthread_create(rideThread, NULL,
+                                ThreadManagement::produceNavigation,
+                                (void *) info);
+    if (status) {
+        cout << "ERROR" << endl;
+    }
+    rideThreads.push_back(rideThread);
 }
 
 /**
@@ -167,6 +181,11 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
     stream.flush();
     // Send the ride to the driver.
     tcpServer->sendData(serial_str, driverSocket);
+    char buffer[16] = {0};
+    tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
+    if (strcmp(buffer, RECEIVED)){
+        cout << "ERROR, expected received-msg, got: " << buffer;
+    }
     // Send a navigation-system of the given ride to the driver.
     sendNavigation(driverSocket, ride);
 }
@@ -177,12 +196,11 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
  * @param ride pointer to ride object.
  */
 void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
-    // Ask the driver for its location.
-    Point driverLocation = askDriverLocation(driverSocket);
-    // Create the pathCalculator-system according to the driver's location.
-    PathCalculator *pathCalculator = produceNavigation(ride, driverLocation);
+    GlobalInfo *globalInfo = GlobalInfo::getInstance();
+    int rideId = ride->getId();
+    while (!globalInfo->doesRideExist(rideId)) {}
     // Create opposite stack of blocks ids which represents the path.
-    deque<string> *string_path = pathCalculator->getPathAsString();
+    deque<string> *string_path = globalInfo->popPathOf(rideId);
     // Serialize the path.
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);
@@ -193,7 +211,6 @@ void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
     // Send the path to the driver.
     tcpServer->sendData(serial_str, driverSocket);
     delete string_path;
-    delete pathCalculator;
 }
 
 

@@ -11,7 +11,14 @@ struct ClientThreadInfo {
     GlobalInfo *globalInfo;
     TaxiCenter *taxiCenter;
     int socket;
-    pthread_mutex_t *map_insertion_locker;
+};
+
+/**
+ * Contains information in order to calculate the path.
+ */
+struct PathCalcInfo{
+    Ride *ride;
+    CityMap *cityMap;
 };
 
 /**
@@ -21,6 +28,8 @@ struct ClientThreadInfo {
 class ThreadManagement {
 public:
     static void *threadFunction(void *param);
+
+    static void *produceNavigation(void *param);
 };
 
 

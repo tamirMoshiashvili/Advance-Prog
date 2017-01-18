@@ -196,6 +196,6 @@ bool GlobalInfo::doesRideExist(int rideId) {
  */
 deque<string> *GlobalInfo::popPathOf(int rideId) {
     deque<string> *path = rideIdToPath.at(rideId);
-    // rideIdToPath.
+    rideIdToPath.erase(rideId);
     return path;
 }

@@ -150,20 +150,10 @@ string Client::handleRide() {
     // Get a ride from the server and add the needed listeners.
     getRideFromServer();
     // Handle the navigation-process.
-    char buffer[64] = {0};
-    // Get message from server.
-    receiveData(buffer, sizeof(buffer));
-    string answer(buffer);
-    if (!strcmp(buffer, SEND_LOCATION)) {
-        // Server asked for location, send location.
-        sendLocationToServer();
-        // Handle the navigation.
-        handleNavigation();
-        // Start the loop which means the driver is in the middle of a ride.
-        BOOST_LOG_TRIVIAL(debug) <<"move to 'drive' func";
-        answer = drive();
-    }
-    return answer;
+    handleNavigation();
+    // Start the loop which means the driver is in the middle of a ride.
+    BOOST_LOG_TRIVIAL(debug) << "move to 'drive' func";
+    return drive();
 }
 
 /**
@@ -173,13 +163,16 @@ void Client::getRideFromServer() {
     // Get ride from server.
     char buffer[4096] = {0};
     receiveData(buffer, sizeof(buffer));
+    // Send the server a message.
+    sendData(RECEIVED);
     // De-serialize the ride.
     iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
     iostreams::stream<iostreams::basic_array_source<char> > s1(device);
     archive::binary_iarchive ia(s1);
     Ride *ride = NULL;
     ia >> ride;
-    BOOST_LOG_TRIVIAL(debug) << "driver got the ride with id: " << ride->getId() << endl;
+    BOOST_LOG_TRIVIAL(debug) << "driver got the ride with id: " << ride->getId()
+                             << endl;
     // Add listeners to the client according to the ride.
     addListeners(ride);
 }
@@ -241,7 +234,8 @@ string Client::drive() {
         } else if (!strcmp(buffer, GO)) {
             sendData(RECEIVED);
             // Driver got a sign to continue the ride.
-            BOOST_LOG_TRIVIAL(debug) << "driver should move, step: " << ++num_step;
+            BOOST_LOG_TRIVIAL(debug) << "driver should move, step: "
+                                     << ++num_step;
             moveOneStep();
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for location, send the location of the driver.
