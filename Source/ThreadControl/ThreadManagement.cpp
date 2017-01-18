@@ -1,4 +1,3 @@
-#include <boost/log/trivial.hpp>
 #include "ThreadManagement.h"
 #include "../Ride/Navigation/BFS.h"
 

@@ -1,5 +1,4 @@
 #include <cstdint>
-#include <boost/log/trivial.hpp>
 #include "Tcp.h"
 
 /**
