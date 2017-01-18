@@ -65,7 +65,7 @@ bool Point::operator!=(Point other) {
  * Print the point in the form of ( x , y ).
  */
 ostream &operator<<(ostream &os, const Point &point) {
-    return os << "(" << point.x << "," << point.y << ")" << endl;
+    return os << "(" << point.x << "," << point.y << ")";
 }
 
 /**
