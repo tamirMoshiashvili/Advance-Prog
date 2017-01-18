@@ -1,10 +1,26 @@
 all: server.out client.out
 
-server.out: mainServer.o Block.o MatrixBlock.o Point.o Recognizable.o WayPasser.o Cab.o LuxuryCab.o StandardCab.o KilometersPassedTracker.o SatisfactionTracker.o Client.o Driver.o TaxiCenter.o MainFlow.o InputManager.o CityMap.o LocationDetector.o  MovementListener.o MovementNotifier.o BFS.o PathCalculator.o Passenger.o Ride.o Udp.o UdpClient.o UdpServer.o Socket.o
-	g++ -g -o server.out mainServer.o Block.o MatrixBlock.o Point.o Recognizable.o WayPasser.o Cab.o LuxuryCab.o StandardCab.o KilometersPassedTracker.o SatisfactionTracker.o Client.o Driver.o TaxiCenter.o MainFlow.o InputManager.o CityMap.o LocationDetector.o  MovementListener.o MovementNotifier.o BFS.o PathCalculator.o Passenger.o Ride.o Udp.o UdpClient.o UdpServer.o Socket.o -lboost_serialization
+server_files = mainServer.o Block.o MatrixBlock.o Point.o Recognizable.o \
+               WayPasser.o Cab.o LuxuryCab.o StandardCab.o \
+               KilometersPassedTracker.o SatisfactionTracker.o Client.o \
+               Driver.o TaxiCenter.o MainFlow.o InputManager.o CityMap.o \
+               MovementListener.o MovementNotifier.o BFS.o PathCalculator.o \
+               Passenger.o Ride.o Tcp.o TcpClient.o TcpServer.o Socket.o \
+               Navigation.o ThreadManagement.o GlobalInfo.o
 
-client.out: mainClient.o Block.o MatrixBlock.o Point.o Recognizable.o WayPasser.o Cab.o LuxuryCab.o StandardCab.o KilometersPassedTracker.o SatisfactionTracker.o Client.o Driver.o TaxiCenter.o MainFlow.o InputManager.o CityMap.o LocationDetector.o MovementListener.o MovementNotifier.o BFS.o PathCalculator.o Passenger.o Ride.o Udp.o UdpClient.o UdpServer.o Socket.o
-	g++ -g -o client.out mainClient.o Block.o MatrixBlock.o Point.o Recognizable.o WayPasser.o Cab.o LuxuryCab.o StandardCab.o KilometersPassedTracker.o SatisfactionTracker.o Client.o Driver.o TaxiCenter.o MainFlow.o InputManager.o CityMap.o LocationDetector.o MovementListener.o MovementNotifier.o BFS.o PathCalculator.o Passenger.o Ride.o Udp.o UdpClient.o UdpServer.o Socket.o -lboost_serialization
+server.out: $(server_files)
+	g++ -g -o server.out $(server_files) -lboost_serialization -pthread
+
+client_files = mainClient.o Block.o MatrixBlock.o Point.o Recognizable.o \
+               WayPasser.o Cab.o LuxuryCab.o StandardCab.o \
+               KilometersPassedTracker.o SatisfactionTracker.o Client.o \
+               Driver.o TaxiCenter.o MainFlow.o InputManager.o CityMap.o \
+               MovementListener.o MovementNotifier.o BFS.o \
+               PathCalculator.o Passenger.o Ride.o Tcp.o TcpClient.o \
+               TcpServer.o Socket.o Navigation.o ThreadManagement.o GlobalInfo.o
+
+client.out: $(client_files)
+	g++ -g -o $(client_files) -lboost_serialization -pthread
 
 mainServer.o: mainServer.cpp
 	g++ -g  -c mainServer.cpp
@@ -60,20 +76,20 @@ InputManager.o: Source/Input/InputManager.cpp Source/Input/InputManager.h
 CityMap.o: Source/Map/CityMap.cpp Source/Map/CityMap.h
 	g++ -Wall -c Source/Map/CityMap.cpp
 
-LocationDetector.o: Source/Map/LocationDetector.cpp Source/Map/LocationDetector.h
-	g++ -Wall -c Source/Map/LocationDetector.cpp
-
 MovementListener.o: Source/Movement/MovementListener.cpp Source/Movement/MovementListener.h
 	g++ -Wall -c Source/Movement/MovementListener.cpp
 
 MovementNotifier.o: Source/Movement/MovementNotifier.cpp Source/Movement/MovementNotifier.h
 	g++ -Wall -c Source/Movement/MovementNotifier.cpp
 
-BFS.o: Source/Ride/PathCalculator/BFS.cpp Source/Ride/PathCalculator/BFS.h
-	g++ -Wall -c Source/Ride/PathCalculator/BFS.cpp
+BFS.o: Source/Ride/Navigation/BFS.cpp Source/Ride/Navigation/BFS.h
+	g++ -Wall -c Source/Ride/Navigation/BFS.cpp
 
-PathCalculator.o: Source/Ride/PathCalculator/PathCalculator.cpp Source/Ride/PathCalculator/PathCalculator.h
-	g++ -Wall -c Source/Ride/PathCalculator/PathCalculator.cpp
+PathCalculator.o: Source/Ride/Navigation/PathCalculator.cpp Source/Ride/Navigation/PathCalculator.h
+	g++ -Wall -c Source/Ride/Navigation/PathCalculator.cpp
+
+Navigation.o: Source/Ride/Navigation/Navigation.cpp Source/Ride/Navigation/Navigation.h
+	g++ -Wall -c Source/Ride/Navigation/Navigation.cpp
 
 Passenger.o: Source/Ride/Passenger.cpp Source/Ride/Passenger.h
 	g++ -Wall -c Source/Ride/Passenger.cpp
@@ -81,17 +97,23 @@ Passenger.o: Source/Ride/Passenger.cpp Source/Ride/Passenger.h
 Ride.o: Source/Ride/Ride.cpp Source/Ride/Ride.h
 	g++ -Wall -c Source/Ride/Ride.cpp
 
-Udp.o: Source/Socket/Udp/Udp.cpp Source/Socket/Udp/Udp.h
-	g++ -Wall -c Source/Socket/Udp/Udp.cpp
+Tcp.o: Source/Socket/Tcp/Tcp.cpp Source/Socket/Tcp/Tcp.h
+	g++ -Wall -c Source/Socket/Tcp/Tcp.cpp
 
-UdpClient.o: Source/Socket/Udp/UdpClient.cpp Source/Socket/Udp/UdpClient.h
-	g++ -Wall -c Source/Socket/Udp/UdpClient.cpp
+TcpClient.o: Source/Socket/Tcp/TcpClient.cpp Source/Socket/Tcp/TcpClient.h
+	g++ -Wall -c Source/Socket/Tcp/TcpClient.cpp
 
-UdpServer.o: Source/Socket/Udp/UdpServer.cpp Source/Socket/Udp/UdpServer.h
-	g++ -Wall -c Source/Socket/Udp/UdpServer.cpp
+TcpServer.o: Source/Socket/Tcp/TcpServer.cpp Source/Socket/Tcp/TcpServer.h
+	g++ -Wall -c Source/Socket/Tcp/TcpServer.cpp
 
 Socket.o: Source/Socket/Socket.cpp Source/Socket/Socket.h
 	g++ -Wall -c Source/Socket/Socket.cpp
+
+GlobalInfo.o: ThreadControl/GlobalInfo.cpp ThreadControl/GlobalInfo.h
+    g++ -Wall -c ThreadControl/GlobalInfo.cpp
+
+ThreadManagement.o: ThreadControl/ThreadManagement.cpp ThreadControl/ThreadManagement.h
+    g++ -Wall -c ThreadControl/ThreadManagement.cpp
 
 clean:
 	rm -f *.o *.out
