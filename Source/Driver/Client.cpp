@@ -14,7 +14,6 @@
 #include <boost/archive/binary_oarchive.hpp>
 
 #include <boost/serialization/export.hpp>
-#include <boost/log/trivial.hpp>
 
 BOOST_CLASS_EXPORT_GUID(MatrixBlock, "matrix_block");
 BOOST_CLASS_EXPORT_GUID(BFS, "bfs");
@@ -210,7 +209,6 @@ void Client::handleNavigation() {
  */
 string Client::drive() {
     char buffer[64] = {0};
-    int num_step = 0;
     while (!getCab()->isArrivedToDestination()) {
         // Driver is in the middle of a ride.
         // Get message from server.

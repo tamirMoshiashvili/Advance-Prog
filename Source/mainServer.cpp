@@ -19,6 +19,7 @@ static void operate(uint16_t port);
 int main(int argc, char **argv) {
     string port = argv[1];
     operate((uint16_t) atoi(port.c_str()));
+    delete GlobalInfo::getInstance();
     return 0;
 }
 

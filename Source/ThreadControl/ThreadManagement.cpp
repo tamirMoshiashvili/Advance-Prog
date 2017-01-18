@@ -43,6 +43,7 @@ void *ThreadManagement::threadFunction(void *param) {
         command = globalInfo->getCurrentCommand(driverSocket);
     }
     delete clientThreadInfo;
+    pthread_exit(NULL);
 }
 
 /**
@@ -71,4 +72,5 @@ void *ThreadManagement::produceNavigation(void *param) {
     globalInfo->addRideToMap(ride->getId(), bfs->getPathAsString());
     pthread_mutex_destroy(&locker);
     delete bfs;
+    pthread_exit(NULL);
 }

@@ -16,7 +16,7 @@ TcpServer::TcpServer(uint16_t port_num, int numOfClients)
  * Destructor.
  */
 TcpServer::~TcpServer() {
-    for (int i = 0; i < clientDescriptors->size(); ++i) {
+    for (unsigned long int i = 0; i < clientDescriptors->size(); ++i) {
         sendData(END, (*clientDescriptors)[i]);
         close((*clientDescriptors)[i]);
     }

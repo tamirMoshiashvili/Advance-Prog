@@ -15,8 +15,9 @@ using namespace boost;
  * @param map pointer to city map.
  * @return TaxiCenter object.
  */
-TaxiCenter::TaxiCenter(CityMap *map) : cityMap(map), clock(0), tcpServer(NULL),
-                                       numOfDrivers(0) {
+TaxiCenter::TaxiCenter(CityMap *map) : numOfDrivers(0), tcpServer(NULL),
+                                       cityMap(map),
+                                       clock(0) {
     pthread_mutex_init(&locker, 0);
 }
 
@@ -46,6 +47,7 @@ TaxiCenter::~TaxiCenter() {
         pthread_join(*rideThreads[i], NULL);
         delete rideThreads[i];
     }
+    delete cityMap;
     pthread_mutex_destroy(&locker);
 }
 

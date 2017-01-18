@@ -1,4 +1,3 @@
-#include <boost/log/trivial.hpp>
 #include "PathCalculator.h"
 
 /**

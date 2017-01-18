@@ -20,7 +20,6 @@ Block::Block() : Recognizable(), visited(false), father(NULL) {
  * Destructor.
  */
 Block::~Block() {
-
 }
 
 /**
@@ -83,6 +82,6 @@ list<Block *> Block::getNeighbors() {
  * @param other pointer to block.
  * @return
  */
-bool Block::operator==(Block* other) {
+bool Block::operator==(Block *other) {
     return this->getId() == other->getId();
 }

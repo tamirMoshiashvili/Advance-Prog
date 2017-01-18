@@ -1,3 +1,4 @@
+#include <iostream>
 #include "GlobalInfo.h"
 
 GlobalInfo *GlobalInfo::globalInfo = NULL;
@@ -32,6 +33,11 @@ GlobalInfo *GlobalInfo::getInstance() {
 GlobalInfo::~GlobalInfo() {
     instanceFlag = false;
     pthread_mutex_destroy(&lock);
+    map<int, deque<string> *>::iterator it;
+    for (it = rideIdToPath.begin();
+         it != rideIdToPath.end(); ++it) {
+        delete it->second;
+    }
 }
 
 /**
