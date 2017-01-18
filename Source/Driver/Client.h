@@ -4,6 +4,8 @@
 
 #include "Driver.h"
 
+using namespace std;
+
 /**
  * Client is a driver that contact with some server,
  * and operate according to him.
@@ -29,7 +31,7 @@ private:
 
     void connectToCab();
 
-    void handleRide();
+    string handleRide();
 
     void getRideFromServer();
 
@@ -37,7 +39,7 @@ private:
 
     void handleNavigation();
 
-    void drive();
+    string drive();
 };
 
 

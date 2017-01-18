@@ -12,9 +12,6 @@ void *ThreadManagement::threadFunction(void *param) {
     int driverSocket = clientThreadInfo->socket;
     TaxiCenter *center = clientThreadInfo->taxiCenter;
     GlobalInfo *globalInfo = clientThreadInfo->globalInfo;
-//    pthread_mutex_t *map_insertion_locker = clientThreadInfo->map_insertion_locker;
-    pthread_mutex_t *map_insertion_locker =globalInfo->getLocker();
-    pthread_mutex_init(map_insertion_locker, 0);
     // Get driver-id and its cab id.
     center->identifyDriver(driverSocket, globalInfo);
     globalInfo->turnOffFlag(driverSocket);
@@ -29,8 +26,7 @@ void *ThreadManagement::threadFunction(void *param) {
                 }
                 break;
             case 9:
-                BOOST_LOG_TRIVIAL(debug) << "driver " << driverSocket
-                                         << " enter 9";
+                BOOST_LOG_TRIVIAL(debug) << "driver " << driverSocket << " enter 9";
                 // Operate the driver.
                 center->makeDriverWork(driverSocket);
                 break;
@@ -39,12 +35,9 @@ void *ThreadManagement::threadFunction(void *param) {
         }
         if (globalInfo->getIsNewCommand(driverSocket)) {
             // Get ready for the next mission.
-//            pthread_mutex_lock(map_insertion_locker);
             BOOST_LOG_TRIVIAL(debug) << "driver with the num of socket: "
-                                     << driverSocket
-                                     << " finished";
+                                     << driverSocket << " finished";
             globalInfo->setNotNewCommand(driverSocket);
-//            pthread_mutex_unlock(map_insertion_locker);
             // Wait for new mission.
             while (!globalInfo->getIsNewCommand(driverSocket)) {
             }
@@ -54,6 +47,3 @@ void *ThreadManagement::threadFunction(void *param) {
     }
     delete clientThreadInfo;
 }
-
-
-

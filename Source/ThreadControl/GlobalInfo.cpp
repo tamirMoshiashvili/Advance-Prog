@@ -90,7 +90,6 @@ bool GlobalInfo::isDriverLocationRequested(int driverSocket) {
  * @return true if all finished, false otherwise.
  */
 bool GlobalInfo::areAllDriversFinishedCommand() {
-//    pthread_mutex_lock(&lock);
     map<int, int>::iterator it;
     for (it = commandPerDriver.begin();
          it != commandPerDriver.end(); ++it) {
@@ -98,7 +97,6 @@ bool GlobalInfo::areAllDriversFinishedCommand() {
             return false;
         }
     }
-//    pthread_mutex_unlock(&lock);
     return true;
 }
 
@@ -160,7 +158,3 @@ void GlobalInfo::turnOffFlag(int driverSocket) {
 pthread_mutex_t *GlobalInfo::getLocker() {
     return &lock;
 }
-
-
-
-

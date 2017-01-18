@@ -113,10 +113,10 @@ void Client::connectToCab() {
 void Client::operate() {
     // Get message from server.
     char buffer[64] = {0};
+    // Get a message from the server.
+    receiveData(buffer, sizeof(buffer));
     while (true) {
-        // Get a message from the server.
-        receiveData(buffer, sizeof(buffer));
-        BOOST_LOG_TRIVIAL(debug) << "in func 'operate' got" << buffer;
+        BOOST_LOG_TRIVIAL(debug) << "in func 'operate' got: " << buffer;
         if (!strcmp(buffer, END)) {
             // End-message has been sent, end of the client.
             break;
@@ -126,26 +126,34 @@ void Client::operate() {
             sendData(YES);
             // Server asks for availability only when ride need to be handled,
             // since we are available, take the ride.
-            handleRide();
+            strcpy(buffer, handleRide().c_str());
+            continue;
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for the location, send the location of the driver.
             sendLocationToServer();
+        } else if (!strcmp(buffer, GO)) {
+            // Client has no ride to drive in yet, so there is nothing to do.
+            sendData(RECEIVED);
         }
         // reset the buffer.
         memset(buffer, 0, 64);
+        // Get a message from the server.
+        receiveData(buffer, sizeof(buffer));
     }
 }
 
 /**
  * Get a ride and drive.
+ * @return last message received.
  */
-void Client::handleRide() {
+string Client::handleRide() {
     // Get a ride from the server and add the needed listeners.
     getRideFromServer();
     // Handle the navigation-process.
     char buffer[64] = {0};
     // Get message from server.
     receiveData(buffer, sizeof(buffer));
+    string answer(buffer);
     if (!strcmp(buffer, SEND_LOCATION)) {
         // Server asked for location, send location.
         sendLocationToServer();
@@ -153,8 +161,9 @@ void Client::handleRide() {
         handleNavigation();
         // Start the loop which means the driver is in the middle of a ride.
         BOOST_LOG_TRIVIAL(debug) <<"move to 'drive' func";
-        drive();
+        answer = drive();
     }
+    return answer;
 }
 
 /**
@@ -213,9 +222,11 @@ void Client::handleNavigation() {
 
 /**
  * Client is in the middle of a ride.
+ * @return last message in the buffer.
  */
-void Client::drive() {
+string Client::drive() {
     char buffer[64] = {0};
+    int num_step = 0;
     while (!getCab()->isArrivedToDestination()) {
         // Driver is in the middle of a ride.
         // Get message from server.
@@ -228,8 +239,9 @@ void Client::drive() {
             // Server asked for availability, Send no.
             sendData(NO);
         } else if (!strcmp(buffer, GO)) {
+            sendData(RECEIVED);
             // Driver got a sign to continue the ride.
-            BOOST_LOG_TRIVIAL(debug) << "driver should move one step";
+            BOOST_LOG_TRIVIAL(debug) << "driver should move, step: " << ++num_step;
             moveOneStep();
         } else if (!strcmp(buffer, SEND_LOCATION)) {
             // Server asked for location, send the location of the driver.
@@ -238,6 +250,5 @@ void Client::drive() {
         // reset the buffer.
         memset(buffer, 0, 64);
     }
+    return string(buffer);
 }
-
-

@@ -233,6 +233,8 @@ TaxiCenter::produceNavigation(Ride *ride, Point srcDriverPoint) {
 void TaxiCenter::makeDriverWork(int driverSocket) {
     char buffer[16] = {0};
     tcpServer->sendData(GO, driverSocket);
+    tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
+    BOOST_LOG_TRIVIAL(debug) << buffer;
     Ride *ride = NULL;
     // Iterate over the rides list.
     pthread_mutex_lock(&locker);
@@ -244,9 +246,9 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
             // Get the driver's answer.
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             if (!strcmp(buffer, YES)) {
-                BOOST_LOG_TRIVIAL(debug)<< "rides list size:" << rides.size()
-                     << "  driver socket is: "
-                     << driverSocket << endl;
+                BOOST_LOG_TRIVIAL(debug) << "rides list size:" << rides.size()
+                                         << "  driver socket is: "
+                                         << driverSocket << endl;
                 ride = *it;
                 sendRide(driverSocket, ride);
                 break;
@@ -268,7 +270,7 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
  */
 void TaxiCenter::advanceClock() {
     ++clock;
-    BOOST_LOG_TRIVIAL(debug)<< "time is: " << clock << "\n";
+    BOOST_LOG_TRIVIAL(debug) << "time is: " << clock << "\n";
 }
 
 /**
@@ -319,4 +321,3 @@ Point TaxiCenter::askDriverLocation(int driverSocket) {
     ia >> driverLocation;
     return driverLocation;
 }
-
