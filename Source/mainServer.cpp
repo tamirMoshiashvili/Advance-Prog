@@ -67,13 +67,13 @@ static void operate(uint16_t port) {
                 }
                 break;
             case 9:
+                mainFlow.advanceClock();
                 // Wait for the flag.
                 while (globalInfo->isFlagTurnOn()) {}
                 // Advance.
                 globalInfo->updateCommand(mission);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
-                mainFlow.advanceClock();
                 break;
             default:
                 // Invalid option.
