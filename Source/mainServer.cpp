@@ -23,7 +23,6 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-
 /**
  * Read input from user and operate according to the missions.
  * @param port port number.
