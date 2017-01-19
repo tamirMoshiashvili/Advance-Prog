@@ -72,5 +72,6 @@ void *ThreadManagement::produceNavigation(void *param) {
     globalInfo->addRideToMap(ride->getId(), bfs->getPathAsString());
     pthread_mutex_destroy(&locker);
     delete bfs;
+    delete info;
     pthread_exit(NULL);
 }
