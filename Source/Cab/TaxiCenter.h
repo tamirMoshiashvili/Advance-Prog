@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <boost/archive/binary_iarchive.hpp>
 #include "../ThreadControl/GlobalInfo.h"
+#include "../ThreadPool/ThreadPool.h"
 
 
 /**
@@ -28,8 +29,9 @@ private:
     list<Ride *> rides;
     int clock;
     vector<pthread_t *> threads;
-    vector<pthread_t *> rideThreads;
     pthread_mutex_t locker;
+    ThreadPool ridesThreadPool;
+    pthread_mutex_t rides_lock;
 
 public:
     TaxiCenter(CityMap *map);

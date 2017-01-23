@@ -3,12 +3,16 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../ThreadControl/ThreadManagement.h"
+#include "../ThreadPool/CalcPath.h"
 
 
 using namespace std;
 using namespace boost;
+
+#define NUM_THREADS 2
 
 /**
  * Constructor.
@@ -17,14 +21,18 @@ using namespace boost;
  */
 TaxiCenter::TaxiCenter(CityMap *map) : numOfDrivers(0), tcpServer(NULL),
                                        cityMap(map),
-                                       clock(0) {
-    pthread_mutex_init(&locker, 0);
+                                       clock(0), ridesThreadPool(NUM_THREADS) {
+    pthread_mutex_init(&locker, NULL);
+    pthread_mutex_init(&rides_lock, NULL);
 }
 
 /**
  * Destructor.
  */
 TaxiCenter::~TaxiCenter() {
+    //TODO: check terminating program while jobs still being execute
+    //TODO: how deletions of rides will affect termination.
+    ridesThreadPool.terminate();
     // Delete drivers.
     delete tcpServer;
     // Wait for all the threads to end.
@@ -42,10 +50,6 @@ TaxiCenter::~TaxiCenter() {
     for (map<int, Ride *>::iterator it = idToRides.begin();
          it != idToRides.end(); ++it) {
         delete it->second;
-    }
-    for (unsigned long i = 0; i < rideThreads.size(); i++) {
-        pthread_join(*rideThreads[i], NULL);
-        delete rideThreads[i];
     }
     delete cityMap;
     pthread_mutex_destroy(&locker);
@@ -98,17 +102,8 @@ void TaxiCenter::addCab(Cab *cab) {
 void TaxiCenter::addRide(Ride *ride) {
     idToRides.insert(std::pair<int, Ride *>(ride->getId(), ride));
     rides.push_back(ride);
-    pthread_t *rideThread = new pthread_t;
-    PathCalcInfo *info = new PathCalcInfo;
-    info->ride = ride;
-    info->cityMap = cityMap;
-    int status = pthread_create(rideThread, NULL,
-                                ThreadManagement::produceNavigation,
-                                (void *) info);
-    if (status) {
-        cout << "ERROR" << endl;
-    }
-    rideThreads.push_back(rideThread);
+    Job *calcPath = new CalcPath(ride, cityMap, &rides_lock);
+    ridesThreadPool.addJob(calcPath);
 }
 
 /**
@@ -179,6 +174,8 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             if (!strcmp(buffer, YES)) {
                 ride = *it;
+                BOOST_LOG_TRIVIAL(debug) << "make driver work:: send ride "
+                                         << ride->getId() << " to driver";
                 sendRide(driverSocket, ride);
                 break;
             } else {
@@ -199,6 +196,7 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
  */
 void TaxiCenter::advanceClock() {
     ++clock;
+    BOOST_LOG_TRIVIAL(debug) << "Time is: " << clock;
 }
 
 /**

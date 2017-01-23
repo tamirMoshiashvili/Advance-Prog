@@ -2,6 +2,7 @@
 #include "../Cab/Vehicle/StandardCab.h"
 #include "../Cab/Vehicle/LuxuryCab.h"
 #include <stdlib.h>
+#include <boost/log/trivial.hpp>
 
 using namespace std;
 

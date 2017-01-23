@@ -65,10 +65,15 @@ set(SOURCE_FILES Source/Basic/Point.cpp Source/Basic/Point.h
         #Tests/LocationDetectorTest.cpp
         #Tests/InputParserTest.cpp
         #Tests/MainFlowTest.cpp
-        Source/Ride/Navigation/Navigation.cpp Source/Ride/Navigation/Navigation.h)
+        Source/Ride/Navigation/Navigation.cpp Source/Ride/Navigation/Navigation.h
+        Source/ThreadControl/GlobalInfo.cpp Source/ThreadControl/GlobalInfo.h
+        Source/ThreadControl/ThreadManagement.cpp Source/ThreadControl/ThreadManagement.h
+        Source/ThreadPool/ThreadPool.cpp Source/ThreadPool/ThreadPool.h
+        Source/ThreadPool/Job.cpp Source/ThreadPool/Job.h Source/ThreadPool/CalcPath.cpp
+        Source/ThreadPool/CalcPath.h)
 
 add_executable(server ${SOURCE_FILES} Source/mainServer.cpp)
-add_executable(client ${SOURCE_FILES} Source/mainClient.cpp Source/ThreadControl/GlobalInfo.cpp Source/ThreadControl/GlobalInfo.h Source/ThreadControl/ThreadManagement.cpp Source/ThreadControl/ThreadManagement.h)
+add_executable(client ${SOURCE_FILES} Source/mainClient.cpp)
 target_link_libraries(server ${Boost_LIBRARIES})
 target_link_libraries(client ${Boost_LIBRARIES})
 
