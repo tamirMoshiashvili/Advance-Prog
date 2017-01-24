@@ -13,7 +13,8 @@ class InputManager {
 public:
     static int readNumber();
 
-    static std::list<Point> readObstacles(int numObstacles);
+    static bool readObstacles(int numObstacles, list<Point> *obstacles,
+                              int width, int height);
 
     static CityMap *readCityMap();
 
