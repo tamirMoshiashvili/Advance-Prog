@@ -103,10 +103,18 @@ Block *CityMap::getBlock(int x, int y) {
     return (*grid[x])[y];
 }
 
+/**
+ * Get the width of the map.
+ * @return number.
+ */
 int CityMap::getWigth() {
     return width;
 }
 
+/**
+ * Get the height of the map.
+ * @return number.
+ */
 int CityMap::getHeight() {
     return height;
 }

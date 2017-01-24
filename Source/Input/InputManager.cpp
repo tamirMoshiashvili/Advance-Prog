@@ -57,18 +57,23 @@ CityMap *InputManager::readCityMap() {
         return NULL;
     }
     list <Point> obstacles = readObstacles(numObstacles);
-    // Create the map.
-    CityMap *map = new CityMap(width, height);
     int x, y;
-    // Iterate through the obstacles-list and add each to the map.
+    // Iterate through the obstacles-list and check if valid.
     for (std::list<Point>::iterator it = obstacles.begin();
-         it != obstacles.end(); it++) {
+         it != obstacles.end(); ++it) {
         x = (*it).getX();
         y = (*it).getY();
         if (x < 0 || x >= width || y < 0 || y >= height) {
-            delete map;
             return NULL;
         }
+    }
+    // Create the map.
+    CityMap *map = new CityMap(width, height);
+    // Add all the obstacles to the map.
+    for (std::list<Point>::iterator it = obstacles.begin();
+         it != obstacles.end(); ++it) {
+        x = (*it).getX();
+        y = (*it).getY();
         map->addObstacle(x, y);
     }
     return map;
@@ -176,6 +181,7 @@ Cab *InputManager::readCab() {
 /**
  * Create new ride according to user's input.
  * Note: the object is in the heap.
+ * @param cityMap city-map;
  * @return pointer to ride.
  */
 Ride *InputManager::readRide(CityMap *cityMap) {
