@@ -3,6 +3,7 @@
 #include "../Cab/Vehicle/LuxuryCab.h"
 #include <stdlib.h>
 #include <boost/log/trivial.hpp>
+#include <sstream>
 
 using namespace std;
 
@@ -44,6 +45,7 @@ CityMap *InputManager::readCityMap() {
     while (true) {
         cin >> width >> height;
         if (!cin.good() || width < 1 || height < 1) {
+            // Invalid map-size.
             BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -51,14 +53,17 @@ CityMap *InputManager::readCityMap() {
             // Read number of obstacles that will be.
             cin >> numObstacles;
             if (!cin.good() || numObstacles < 0) {
+                // Invalid number of obstacles.
                 BOOST_LOG_TRIVIAL(debug) << "wrong number of obstacles";
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             } else {
                 if (!readObstacles(numObstacles, &obstacles, width, height)) {
+                    // Invalid obstacle.
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 } else {
+                    // Valid input.
                     break;
                 }
             }
@@ -125,25 +130,39 @@ int InputManager::countComma(string str) {
  * @return pointer to client.
  */
 Client *InputManager::readClient(string ip_addr, uint16_t port) {
-    // Read a string from the user.
-    string str = readLine(), subStr;
-    if (countComma(str) != 4) {
-        // Invalid input.
+    string in;
+    getline(cin, in);
+    if (countComma(in) != 4) {
+        // Invalid number of commas.
+        BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
         return NULL;
     }
-    // Parse the input.
-    int id = atoi(parseWord(str).c_str());
-    int age = atoi(parseWord(str).c_str());
-    MaritalStatus maritalStatus;
-    subStr = parseWord(str);
-    maritalStatus = InputManager::parseStatus(subStr);
-    int experience = atoi(parseWord(str).c_str());
-    int cabID = atoi(str.c_str());
-    if (id < 0 || age < 0 || maritalStatus > 3 || experience < 0 || cabID < 0) {
+    stringstream s(in);
+    int id, age, experience, cabId;
+    MaritalStatus m_status;
+    char status_chr, comma[4];
+    // Input.
+    s >> id >> comma[0] >> age >> comma[1] >> status_chr
+      >> comma[2] >> experience >> comma[3] >> cabId;
+    // Check for valid commas.
+    for (int i = 0; i < 4; ++i) {
+        if (comma[i] != ',') {
+            // Invalid char instead of comma.
+            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of comma";
+            return NULL;
+        }
+    }
+    char status_arr[1];
+    status_arr[0] = status_chr;
+    m_status = InputManager::parseStatus(string(status_arr));
+    if (!cin.good() || id < 0 || age < 0
+        || m_status > 3 || experience < 0 || cabId < 0) {
         // Invalid input.
+        BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
     }
-    return new Client(id, age, maritalStatus, experience, cabID, ip_addr, port);
+    // Valid input.
+    return new Client(id, age, m_status, experience, cabId, ip_addr, port);
 }
 
 /**
