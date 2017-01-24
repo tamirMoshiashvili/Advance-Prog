@@ -29,10 +29,10 @@ public:
 
     static Color parseColor(string str);
 
+    static string readLine();
+
 private:
     static string parseWord(string &input);
-
-    static string readLine();
 };
 
 

@@ -66,6 +66,8 @@ static void operate(uint16_t port) {
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }
                 break;
+            case 7:
+                break;
             case 9:
                 mainFlow.advanceClock();
                 // Wait for the flag.
@@ -77,6 +79,7 @@ static void operate(uint16_t port) {
                 break;
             default:
                 // Invalid option.
+                cout << "-1\n";
                 break;
         }
     } while (mission != 7);
