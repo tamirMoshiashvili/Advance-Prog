@@ -23,7 +23,7 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         cin >> firstVal >> comma >> secondVal;
         if (!cin.good() || comma != ','
             || firstVal < 0 || firstVal >= width ||
-                secondVal < 0 || secondVal >= height) {
+            secondVal < 0 || secondVal >= height) {
             BOOST_LOG_TRIVIAL(debug) << "wrong obstacle";
             return false;
         }
@@ -40,7 +40,8 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
  */
 CityMap *InputManager::readCityMap() {
     int width, height, numObstacles;
-    while(true) {
+    list <Point> obstacles;
+    while (true) {
         cin >> width >> height;
         if (!cin.good() || width < 1 || height < 1) {
             BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
@@ -54,17 +55,18 @@ CityMap *InputManager::readCityMap() {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             } else {
-                break;
+                if (!readObstacles(numObstacles, &obstacles, width, height)) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                } else {
+                    break;
+                }
             }
         }
     }
-    list <Point> obstacles;
-    bool answer = readObstacles(numObstacles, &obstacles, width, height);
-    if (!answer) {
-        // Invalid obstacles input.
-        return NULL;
-    }
-    BOOST_LOG_TRIVIAL(debug) << width << " " << height << " " << numObstacles;
+    BOOST_LOG_TRIVIAL(debug) << "width: " << width
+                             << ", height: " << height
+                             << ", num-obstacles: " << numObstacles;
     int x, y;
     // Create the map.
     CityMap *map = new CityMap(width, height);
