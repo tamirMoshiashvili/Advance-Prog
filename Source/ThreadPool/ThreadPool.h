@@ -9,6 +9,9 @@ using namespace std;
 
 static void *doJobs(void *param);
 
+/**
+ * Class that implements the thread-pool-pattern.
+ */
 class ThreadPool {
 private:
     queue<Job *> jobs;

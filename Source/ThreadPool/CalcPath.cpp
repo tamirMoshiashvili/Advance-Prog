@@ -4,10 +4,20 @@
 #include "../Ride/Navigation/BFS.h"
 #include "../ThreadControl/GlobalInfo.h"
 
+/**
+ * Constructor.
+ * @param ride ride.
+ * @param map city-map.
+ * @param lock mutex object.
+ * @return CalcPath object.
+ */
 CalcPath::CalcPath(Ride *ride, CityMap *map, pthread_mutex_t *lock) : ride(
         ride), cityMap(map), locker(lock) {
 }
 
+/**
+ * Destructor.
+ */
 CalcPath::~CalcPath() {
 
 }
@@ -33,5 +43,3 @@ void CalcPath::execute() {
     pthread_mutex_unlock(locker);
     delete bfs;
 }
-
-

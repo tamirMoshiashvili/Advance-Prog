@@ -6,6 +6,9 @@
 #include "../Ride/Ride.h"
 #include "../Map/CityMap.h"
 
+/**
+ * A task that calculate path.
+ */
 class CalcPath : public Job {
 private:
     Ride *ride;

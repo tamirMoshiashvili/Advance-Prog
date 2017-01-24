@@ -16,7 +16,7 @@ static void *doJobs(void *param) {
 }
 
 /**
- * Contructor. Create threads as te number was given.
+ * Contructor. Create threads as the number was given.
  * @param numThreads
  * @return
  */

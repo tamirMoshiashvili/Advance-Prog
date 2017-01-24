@@ -203,7 +203,9 @@ Ride *InputManager::readRide(CityMap *cityMap) {
     int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
     if (id < 0 || xStart < 0 || xStart >= mapWidth || yStart < 0 ||
         yStart >= mapHeight || xEnd < 0 || xEnd >= mapWidth || yEnd < 0 ||
-        yEnd >= mapHeight || numPassengers < 0 || tariff < 0 || time < 1) {
+        yEnd >= mapHeight || numPassengers < 0 || tariff < 0 || time < 1 ||
+        cityMap->getBlock(xStart, yStart)->checkIfVisited() ||
+        cityMap->getBlock(xEnd, yEnd)->checkIfVisited()) {
         return NULL;
     }
     return new Ride(id, Point(xStart, yStart), Point(xEnd, yEnd),
