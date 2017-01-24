@@ -166,8 +166,6 @@ void GlobalInfo::turnOffFlag(int driverSocket) {
 void GlobalInfo::addRideToMap(int rideId, deque<string> *string_path) {
     pthread_mutex_lock(&lock);
     rideIdToPath.insert(pair<int, deque<string> *>(rideId, string_path));
-    BOOST_LOG_TRIVIAL(debug) << "add ride " << rideId
-                             << " to map in global info";
     pthread_mutex_unlock(&lock);
 }
 

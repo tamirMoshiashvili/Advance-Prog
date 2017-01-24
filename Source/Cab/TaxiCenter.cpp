@@ -12,7 +12,7 @@
 using namespace std;
 using namespace boost;
 
-#define NUM_THREADS 2
+#define NUM_THREADS 5
 
 /**
  * Constructor.
@@ -30,8 +30,6 @@ TaxiCenter::TaxiCenter(CityMap *map) : numOfDrivers(0), tcpServer(NULL),
  * Destructor.
  */
 TaxiCenter::~TaxiCenter() {
-    //TODO: check terminating program while jobs still being execute
-    //TODO: how deletions of rides will affect termination.
     ridesThreadPool.terminate();
     // Delete drivers.
     delete tcpServer;

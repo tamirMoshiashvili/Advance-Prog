@@ -1,7 +1,3 @@
-//
-// Created by eden on 21/01/17.
-//
-
 #ifndef EX2_CALCPATH_H
 #define EX2_CALCPATH_H
 

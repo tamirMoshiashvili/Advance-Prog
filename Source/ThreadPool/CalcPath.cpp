@@ -1,7 +1,3 @@
-//
-// Created by eden on 21/01/17.
-//
-
 #include <boost/log/trivial.hpp>
 #include "CalcPath.h"
 #include "../Ride/Navigation/PathCalculator.h"
@@ -16,10 +12,10 @@ CalcPath::~CalcPath() {
 
 }
 
+/**
+ * Calculate the path of the ride.
+ */
 void CalcPath::execute() {
-    for (int i = 0; i < 10; ++i) {
-        cout << i << endl;
-    }
     //Find source point of ride.
     Point srcRidePoint = ride->getSourcePoint();
     Block *src =

@@ -13,14 +13,6 @@ struct ClientThreadInfo {
 };
 
 /**
- * Contains information in order to calculate the path.
- */
-struct PathCalcInfo{
-    Ride *ride;
-    CityMap *cityMap;
-};
-
-/**
  * Class which hold a static-function which will be in use for every thread
  * that need to contact with a client.
  */
@@ -28,7 +20,6 @@ class ThreadManagement {
 public:
     static void *threadFunction(void *param);
 
-    static void *produceNavigation(void *param);
 };
 
 
