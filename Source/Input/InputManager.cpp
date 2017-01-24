@@ -20,11 +20,8 @@ int InputManager::readNumber() {
  * Read from the user list of points, where the obstacles will be.
  * @return list of points.
  */
-list <Point> InputManager::readObstacles() {
+list <Point> InputManager::readObstacles(int numObstacles) {
     list <Point> obstacles = list<Point>();
-    // Read number of obstacles that will be.
-    int numObstacles;
-    cin >> numObstacles;
     string obstacleData;
     string first, second;
     size_t separator;
@@ -53,7 +50,13 @@ list <Point> InputManager::readObstacles() {
  */
 CityMap *InputManager::readCityMap() {
     int width = readNumber(), height = readNumber();
-    list <Point> obstacles = readObstacles();
+    // Read number of obstacles that will be.
+    int numObstacles;
+    cin >> numObstacles;
+    if (width < 1 || height < 1 || numObstacles < 0) {
+        return NULL;
+    }
+    list <Point> obstacles = readObstacles(numObstacles);
     // Create the map.
     CityMap *map = new CityMap(width, height);
     int x, y;
@@ -62,6 +65,10 @@ CityMap *InputManager::readCityMap() {
          it != obstacles.end(); it++) {
         x = (*it).getX();
         y = (*it).getY();
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            delete map;
+            return NULL;
+        }
         map->addObstacle(x, y);
     }
     return map;
@@ -126,8 +133,7 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
     maritalStatus = InputManager::parseStatus(subStr);
     int experience = atoi(parseWord(str).c_str());
     int cabID = atoi(str.c_str());
-    if (id < 0 || age < 0 || maritalStatus < 0 || maritalStatus > 3 ||
-        experience < 0 || cabID < 0) {
+    if (id < 0 || age < 0 || maritalStatus > 3 || experience < 0 || cabID < 0) {
         // Invalid input.
         return NULL;
     }
@@ -140,9 +146,13 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
  * @param taxiCenter pointer to taxi-center.
  * @return pointer to cab.
  */
-Cab *InputManager::readCab(TaxiCenter *taxiCenter) {
+Cab *InputManager::readCab() {
     // Read a string from the user.
     string str = readLine(), subStr;
+    if (countComma(str) != 3) {
+        // Invalid input.
+        return NULL;
+    }
     // Parse the input.
     int id = atoi(parseWord(str).c_str());
     int type = atoi(parseWord(str).c_str());
@@ -150,6 +160,9 @@ Cab *InputManager::readCab(TaxiCenter *taxiCenter) {
     Manufacturer manufacturer = InputManager::parseManufacturer(subStr);
     subStr = parseWord(str);
     Color color = InputManager::parseColor(subStr);
+    if (id < 0 || type < 1 || type > 2 || manufacturer > 3 || color > 4) {
+        return NULL;
+    }
     // Create a cab of type according to the input.
     Cab *cab = NULL;
     if (type == 1) {
@@ -165,9 +178,13 @@ Cab *InputManager::readCab(TaxiCenter *taxiCenter) {
  * Note: the object is in the heap.
  * @return pointer to ride.
  */
-Ride *InputManager::readRide() {
+Ride *InputManager::readRide(CityMap *cityMap) {
     // Read a string from the user.
     string str = readLine();
+    if (countComma(str) != 7) {
+        // Invalid input.
+        return NULL;
+    }
     // Parse the input.
     int id = atoi(parseWord(str).c_str());
     int xStart = atoi(parseWord(str).c_str());
@@ -177,6 +194,12 @@ Ride *InputManager::readRide() {
     int numPassengers = atoi(parseWord(str).c_str());
     double tariff = strtod(parseWord(str).c_str(), NULL);
     int time = atoi(str.c_str());
+    int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
+    if (id < 0 || xStart < 0 || xStart >= mapWidth || yStart < 0 ||
+        yStart >= mapHeight || xEnd < 0 || xEnd >= mapWidth || yEnd < 0 ||
+        yEnd >= mapHeight || numPassengers < 0 || tariff < 0 || time < 1) {
+        return NULL;
+    }
     return new Ride(id, Point(xStart, yStart), Point(xEnd, yEnd),
                     numPassengers, tariff, time);
 }
@@ -187,7 +210,7 @@ Ride *InputManager::readRide() {
  * @return marital-status object.
  */
 MaritalStatus InputManager::parseStatus(string str) {
-    MaritalStatus maritalStatus = SINGLE;
+    MaritalStatus maritalStatus = DEFAULT_STATUS;
     if (!str.compare("S")) {
         maritalStatus = SINGLE;
     } else if (!str.compare("M")) {
@@ -206,7 +229,7 @@ MaritalStatus InputManager::parseStatus(string str) {
  * @return manufacturer object.
  */
 Manufacturer InputManager::parseManufacturer(string str) {
-    Manufacturer manufacturer = HONDA;
+    Manufacturer manufacturer = DEFAULT_MANUFACTURER;
     if (!str.compare("H")) {
         manufacturer = HONDA;
     } else if (!str.compare("S")) {
@@ -225,7 +248,7 @@ Manufacturer InputManager::parseManufacturer(string str) {
  * @return color object.
  */
 Color InputManager::parseColor(string str) {
-    Color color = RED;
+    Color color = DEFAULT_COLOR;
     if (!str.compare("R")) {
         color = RED;
     } else if (!str.compare("B")) {

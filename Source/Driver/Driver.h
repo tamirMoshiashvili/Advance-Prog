@@ -12,7 +12,7 @@
  * Represents a marital status of a person.
  */
 enum MaritalStatus {
-    SINGLE, MARRIED, DIVORCED, WIDOWED
+    SINGLE, MARRIED, DIVORCED, WIDOWED, DEFAULT_STATUS
 };
 
 class MovementNotifier;

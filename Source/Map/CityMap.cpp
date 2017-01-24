@@ -102,3 +102,11 @@ void CityMap::addObstacle(int x, int y) {
 Block *CityMap::getBlock(int x, int y) {
     return (*grid[x])[y];
 }
+
+int CityMap::getWigth() {
+    return width;
+}
+
+int CityMap::getHeight() {
+    return height;
+}

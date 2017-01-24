@@ -29,7 +29,10 @@ int main(int argc, char **argv) {
  */
 static void operate(uint16_t port) {
     // Create objects.
-    CityMap *map = InputManager::readCityMap();
+    CityMap *map;
+    do {
+        map = InputManager::readCityMap();
+    } while (map == NULL);
     TaxiCenter *taxiCenter = new TaxiCenter(map);
     MainFlow mainFlow(taxiCenter);
     // Create the object that will hold the mutual info for all drivers.
@@ -53,15 +56,22 @@ static void operate(uint16_t port) {
                 break;
             case 2:
                 // Add new ride.
-                mainFlow.addRide(InputManager::readRide());
+                Ride *ride = InputManager::readRide(map);
+                if (ride != NULL) {
+                    mainFlow.addRide(ride);
+                }
                 break;
             case 3:
                 // Add new cab.
-                mainFlow.addCab(InputManager::readCab(taxiCenter));
+                Cab *cab = InputManager::readCab();
+                if (cab != NULL) {
+                    mainFlow.addCab(cab);
+                }
                 break;
             case 4:
                 // Ask for driver location.
                 cin >> driverId;
+                //TODO: if driver id doesn't exist we should print -1?
                 globalInfo->updateCommand(mission, driverId);
                 while (!globalInfo->areAllDriversFinishedCommand()) {
                 }

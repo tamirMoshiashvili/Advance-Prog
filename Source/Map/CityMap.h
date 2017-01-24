@@ -39,6 +39,10 @@ public:
 
     Block *getBlock(int x, int y);
 
+    int getWigth();
+
+    int getHeight();
+
 private:
     void addNeighborsToEachBlock();
 

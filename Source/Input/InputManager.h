@@ -13,15 +13,15 @@ class InputManager {
 public:
     static int readNumber();
 
-    static std::list<Point> readObstacles();
+    static std::list<Point> readObstacles(int numObstacles);
 
     static CityMap *readCityMap();
 
     static Client *readClient(string ip_addr, uint16_t port);
 
-    static Cab *readCab(TaxiCenter *taxiCenter);
+    static Cab *readCab();
 
-    static Ride *readRide();
+    static Ride *readRide(CityMap *cityMap);
 
     static MaritalStatus parseStatus(string str);
 

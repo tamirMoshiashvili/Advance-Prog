@@ -11,14 +11,14 @@
  * Represents a manufacturer of cars.
  */
 enum Manufacturer {
-    HONDA, SUBARO, TESLA, FIAT
+    HONDA, SUBARO, TESLA, FIAT, DEFAULT_MANUFACTURER
 };
 
 /**
  * Represents a color.
  */
 enum Color {
-    RED, BLUE, GREEN, PINK, WHITE
+    RED, BLUE, GREEN, PINK, WHITE, DEFAULT_COLOR
 };
 
 /**
