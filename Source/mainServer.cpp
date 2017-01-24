@@ -45,6 +45,10 @@ static void operate(uint16_t port) {
     do {
         // Get input.
         cin >> mission;
+        if (!cin.good()) {
+            mission = 0;
+        }
+        cin.clear();
         cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         // Determine which mission needed to be executed.
         switch (mission) {
@@ -61,6 +65,8 @@ static void operate(uint16_t port) {
                 ride = InputManager::readRide(map);
                 if (ride != NULL) {
                     mainFlow.addRide(ride);
+                } else {
+                    cout << "-1\n";
                 }
                 break;
             case 3:
@@ -68,6 +74,8 @@ static void operate(uint16_t port) {
                 cab = InputManager::readCab();
                 if (cab != NULL) {
                     mainFlow.addCab(cab);
+                } else {
+                    cout << "-1\n";
                 }
                 break;
             case 4:
