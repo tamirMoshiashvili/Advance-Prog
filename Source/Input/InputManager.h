@@ -33,6 +33,8 @@ public:
 
 private:
     static string parseWord(string &input);
+
+    static int countComma(string str);
 };
 
 

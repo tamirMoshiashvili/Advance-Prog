@@ -91,6 +91,21 @@ string InputManager::readLine() {
 }
 
 /**
+ * Count the number of commas are in the given string.
+ * @param str string.
+ * @return number of commas.
+ */
+int InputManager::countComma(string str) {
+    int numComma = 0;
+    for (unsigned long i = 0; i < str.length(); ++i) {
+        if (str.at(i) == ',') {
+            ++numComma;
+        }
+    }
+    return numComma;
+}
+
+/**
  * Create new driver according to user's input.
  * @param ip_addr ip address.
  * @param port port number.
@@ -99,6 +114,10 @@ string InputManager::readLine() {
 Client *InputManager::readClient(string ip_addr, uint16_t port) {
     // Read a string from the user.
     string str = readLine(), subStr;
+    if (countComma(str) != 4) {
+        // Invalid input.
+        return NULL;
+    }
     // Parse the input.
     int id = atoi(parseWord(str).c_str());
     int age = atoi(parseWord(str).c_str());
@@ -107,6 +126,11 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
     maritalStatus = InputManager::parseStatus(subStr);
     int experience = atoi(parseWord(str).c_str());
     int cabID = atoi(str.c_str());
+    if (id < 0 || age < 0 || maritalStatus < 0 || maritalStatus > 3 ||
+        experience < 0 || cabID < 0) {
+        // Invalid input.
+        return NULL;
+    }
     return new Client(id, age, maritalStatus, experience, cabID, ip_addr, port);
 }
 
