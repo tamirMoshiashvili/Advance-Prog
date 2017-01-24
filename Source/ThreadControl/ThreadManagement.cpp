@@ -44,4 +44,3 @@ void *ThreadManagement::threadFunction(void *param) {
     delete clientThreadInfo;
     pthread_exit(NULL);
 }
-
