@@ -40,6 +40,8 @@ static void operate(uint16_t port) {
     // Run the loop.
     int mission, driverId;
     int numDrivers = 0;
+    Ride *ride;
+    Cab *cab;
     do {
         // Get input.
         cin >> mission;
@@ -56,14 +58,14 @@ static void operate(uint16_t port) {
                 break;
             case 2:
                 // Add new ride.
-                Ride *ride = InputManager::readRide(map);
+                ride = InputManager::readRide(map);
                 if (ride != NULL) {
                     mainFlow.addRide(ride);
                 }
                 break;
             case 3:
                 // Add new cab.
-                Cab *cab = InputManager::readCab();
+                cab = InputManager::readCab();
                 if (cab != NULL) {
                     mainFlow.addCab(cab);
                 }

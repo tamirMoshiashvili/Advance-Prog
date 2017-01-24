@@ -14,26 +14,17 @@ using namespace std;
  * @param height height of the map.
  * @return list of points.
  */
-bool InputManager::readObstacles(int numObstacles, list<Point> *obstacles,
+bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
                                  int width, int height) {
-    string obstacleData;
-    string first, second;
-    size_t separator;
     int firstVal, secondVal;
+    char comma;
     for (int i = 0; i < numObstacles; ++i) {
         // Get one obstacle, of form "number,number" .
-        cin >> obstacleData;
-        // Find the index of the separator.
-        separator = obstacleData.find(",");
-        // Calculate first value of the point.
-        first = obstacleData.substr(0, separator);
-        firstVal = atoi(first.c_str());
-        // Calculate second value of the point.
-        second = obstacleData.substr(separator + 1, obstacleData.length() - 1);
-        secondVal = atoi(second.c_str());
-
-        if (firstVal < 0 || firstVal >= width ||
+        cin >> firstVal >> comma >> secondVal;
+        if (!cin.good() || comma != ','
+            || firstVal < 0 || firstVal >= width ||
                 secondVal < 0 || secondVal >= height) {
+            BOOST_LOG_TRIVIAL(debug) << "wrong obstacle";
             return false;
         }
         // Add the point to the list of obstacles.
@@ -48,29 +39,32 @@ bool InputManager::readObstacles(int numObstacles, list<Point> *obstacles,
  * @return pointer to city-map.
  */
 CityMap *InputManager::readCityMap() {
-    int width, height;
-    cin >> width;
-    if (!cin.good()){
-        // Invalid type for width input.
-        return NULL;
-    }
-    cin >> height;
-    if (!cin.good()){
-        // Invalid type for width input.
-        return NULL;
-    }
-    // Read number of obstacles that will be.
-    int numObstacles;
-    cin >> numObstacles;
-    if (!cin.good() || width < 1 || height < 1 || numObstacles < 0) {
-        return NULL;
+    int width, height, numObstacles;
+    while(true) {
+        cin >> width >> height;
+        if (!cin.good() || width < 1 || height < 1) {
+            BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            // Read number of obstacles that will be.
+            cin >> numObstacles;
+            if (!cin.good() || numObstacles < 0) {
+                BOOST_LOG_TRIVIAL(debug) << "wrong number of obstacles";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            } else {
+                break;
+            }
+        }
     }
     list <Point> obstacles;
     bool answer = readObstacles(numObstacles, &obstacles, width, height);
-    if (!answer){
+    if (!answer) {
         // Invalid obstacles input.
         return NULL;
     }
+    BOOST_LOG_TRIVIAL(debug) << width << " " << height << " " << numObstacles;
     int x, y;
     // Create the map.
     CityMap *map = new CityMap(width, height);
