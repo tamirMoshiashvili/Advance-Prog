@@ -220,7 +220,7 @@ Cab *InputManager::readCab() {
     color = InputManager::parseColor(color_chr);
     BOOST_LOG_TRIVIAL(debug) << id << " " << type <<" "<< manufacturer << " "
                              << color;
-    if (s.fail() ||!s.eof() ||  id < 0 || type < 1
+    if (s.fail() ||  id < 0 || type < 1
         || type > 2 || manufacturer == DEFAULT_MANUFACTURER ||
         color == DEFAULT_COLOR) {
         // Invalid input.
@@ -291,16 +291,12 @@ MaritalStatus InputManager::parseStatus(char chr) {
     MaritalStatus maritalStatus = DEFAULT_STATUS;
     if (!str.compare("S")) {
         maritalStatus = SINGLE;
-        BOOST_LOG_TRIVIAL(debug) << "is single";
     } else if (!str.compare("M")) {
         maritalStatus = MARRIED;
-        BOOST_LOG_TRIVIAL(debug) << "is married";
     } else if (!str.compare("D")) {
         maritalStatus = DIVORCED;
-        BOOST_LOG_TRIVIAL(debug) << "is divorced";
     } else if (!str.compare("W")) {
         maritalStatus = WIDOWED;
-        BOOST_LOG_TRIVIAL(debug) << "is widowed";
     }
     return maritalStatus;
 }
@@ -316,16 +312,12 @@ Manufacturer InputManager::parseManufacturer(char chr) {
     Manufacturer manufacturer = DEFAULT_MANUFACTURER;
     if (!str.compare("H")) {
         manufacturer = HONDA;
-        BOOST_LOG_TRIVIAL(debug) << "is Honda";
     } else if (!str.compare("S")) {
         manufacturer = SUBARO;
-        BOOST_LOG_TRIVIAL(debug) << "is Subaro";
     } else if (!str.compare("T")) {
         manufacturer = TESLA;
-        BOOST_LOG_TRIVIAL(debug) << "is Telsa";
     } else if (!str.compare("F")) {
         manufacturer = FIAT;
-        BOOST_LOG_TRIVIAL(debug) << "is Fiat";
     }
     return manufacturer;
 }
@@ -341,19 +333,14 @@ Color InputManager::parseColor(char chr) {
     Color color = DEFAULT_COLOR;
     if (!str.compare("R")) {
         color = RED;
-        BOOST_LOG_TRIVIAL(debug) << "is Red";
     } else if (!str.compare("B")) {
         color = BLUE;
-        BOOST_LOG_TRIVIAL(debug) << "is Blue";
     } else if (!str.compare("G")) {
         color = GREEN;
-        BOOST_LOG_TRIVIAL(debug) << "is Green";
     } else if (!str.compare("P")) {
         color = PINK;
-        BOOST_LOG_TRIVIAL(debug) << "is Pink";
     } else if (!str.compare("W")) {
         color = WHITE;
-        BOOST_LOG_TRIVIAL(debug) << "is White";
     }
     return color;
 }
