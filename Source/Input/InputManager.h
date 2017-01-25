@@ -27,9 +27,9 @@ public:
 
     static MaritalStatus parseStatus(char chr);
 
-    static Manufacturer parseManufacturer(string str);
+    static Manufacturer parseManufacturer(char chr);
 
-    static Color parseColor(string str);
+    static Color parseColor(char chr);
 
     static string readLine();
 

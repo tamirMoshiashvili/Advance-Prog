@@ -185,22 +185,36 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
  */
 Cab *InputManager::readCab() {
     // Read a string from the user.
-    string str = readLine(), subStr;
-    if (countFlag(str, ',') != 3) {
+    string in;
+    getline(cin, in);
+    if (countFlag(in, ',') != 3) {
         // Invalid input.
         return NULL;
     }
-    // Parse the input.
-    int id = atoi(parseWord(str).c_str());
-    int type = atoi(parseWord(str).c_str());
-    subStr = parseWord(str);
-    Manufacturer manufacturer = InputManager::parseManufacturer(subStr);
-    subStr = parseWord(str);
-    Color color = InputManager::parseColor(subStr);
-    if (id < 0 || type < 1 || type > 2 || manufacturer > 3 || color > 4) {
+    stringstream s(in);
+    int id, type;
+    Manufacturer manufacturer;
+    Color color;
+    char manufacturer_chr, color_chr, comma[3], dummy = 0;
+    // Input.
+    s >> id >> comma[0] >> type >> comma[1] >> manufacturer_chr
+      >> comma[2] >> color_chr >> dummy;
+    for (int i = 0; i < 3; ++i) {
+        if (comma[i] != ',') {
+            // Invalid char instead of comma.
+            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of comma";
+            return NULL;
+        }
+    }
+    manufacturer = InputManager::parseManufacturer(manufacturer_chr);
+    color = InputManager::parseColor(color_chr);
+    if (!cin.good() || id < 0 || type < 1 || type > 2 || manufacturer > 3
+        || color > 4 || dummy != 0) {
+        // Invalid input.
+        BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
     }
-    // Create a cab of type according to the input.
+    //Create a cab of type according to the input.
     Cab *cab = NULL;
     if (type == 1) {
         cab = new StandardCab(id, manufacturer, color, 1);
@@ -218,26 +232,31 @@ Cab *InputManager::readCab() {
  */
 Ride *InputManager::readRide(CityMap *cityMap) {
     // Read a string from the user.
-    string str = readLine();
-    if (countFlag(str, ',') != 7) {
+    string in;
+    getline(cin, in);
+    if (countFlag(in, ',') != 7) {
         // Invalid input.
         return NULL;
     }
-    // Parse the input.
-    int id = atoi(parseWord(str).c_str());
-    int xStart = atoi(parseWord(str).c_str());
-    int yStart = atoi(parseWord(str).c_str());
-    int xEnd = atoi(parseWord(str).c_str());
-    int yEnd = atoi(parseWord(str).c_str());
-    int numPassengers = atoi(parseWord(str).c_str());
-    double tariff = strtod(parseWord(str).c_str(), NULL);
-    int time = atoi(str.c_str());
+    stringstream s(in);
+    int id, xStart, yStart, xEnd, yEnd, numPassengers, time;
+    double tariff;
+    char comma[7], dummy = 0;
+    // Input.
+    s >> id >> comma[0] >> xStart >> comma[1] >> yStart
+      >> comma[2] >> xEnd >> comma[3] >> yEnd >> comma[4] >> numPassengers
+      >> comma[5] >> tariff >> comma[6] >> time >> dummy;
+
     int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
-    if (id < 0 || xStart < 0 || xStart >= mapWidth || yStart < 0 ||
+
+    if (!cin.good() || id < 0 || xStart < 0 || xStart >= mapWidth ||
+        yStart < 0 ||
         yStart >= mapHeight || xEnd < 0 || xEnd >= mapWidth || yEnd < 0 ||
         yEnd >= mapHeight || numPassengers < 0 || tariff < 0 || time < 1 ||
         cityMap->getBlock(xStart, yStart)->checkIfVisited() ||
-        cityMap->getBlock(xEnd, yEnd)->checkIfVisited()) {
+        cityMap->getBlock(xEnd, yEnd)->checkIfVisited() || dummy != 0) {
+        // Invalid input.
+        BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
     }
     return new Ride(id, Point(xStart, yStart), Point(xEnd, yEnd),
@@ -270,7 +289,9 @@ MaritalStatus InputManager::parseStatus(char chr) {
  * @param str string that represents manufacturer.
  * @return manufacturer object.
  */
-Manufacturer InputManager::parseManufacturer(string str) {
+Manufacturer InputManager::parseManufacturer(char chr) {
+    char arr[1] = {chr};
+    string str(arr);
     Manufacturer manufacturer = DEFAULT_MANUFACTURER;
     if (!str.compare("H")) {
         manufacturer = HONDA;
@@ -289,7 +310,9 @@ Manufacturer InputManager::parseManufacturer(string str) {
  * @param str string that represents color.
  * @return color object.
  */
-Color InputManager::parseColor(string str) {
+Color InputManager::parseColor(char chr) {
+    char arr[1] = {chr};
+    string str(arr);
     Color color = DEFAULT_COLOR;
     if (!str.compare("R")) {
         color = RED;
