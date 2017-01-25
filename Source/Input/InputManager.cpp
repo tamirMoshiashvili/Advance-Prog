@@ -178,7 +178,7 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
         return NULL;
     }
     m_status = InputManager::parseStatus(status_chr);
-    if (s.fail() || !s.eof() || id < 0 || age < 0 || m_status > 3
+    if (s.fail() || id < 0 || age < 0 || m_status > 3
         || experience < 0 || cabId < 0) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
@@ -200,6 +200,7 @@ Cab *InputManager::readCab() {
     getline(cin, in);
     if (countFlag(in, ',') != 3) {
         // Invalid input.
+        BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
         return NULL;
     }
     stringstream s(in);
@@ -210,13 +211,18 @@ Cab *InputManager::readCab() {
     // Input.
     s >> id >> comma[0] >> type >> comma[1]
       >> manufacturer_chr >> comma[2] >> color_chr;
-    if (checkIfFlags(comma, 3, ',')) {
+    BOOST_LOG_TRIVIAL(debug) << comma[0] << comma[1] << comma[2];
+    if (!checkIfFlags(comma, 3, ',')) {
+        BOOST_LOG_TRIVIAL(debug) << "Not a comma";
         return NULL;
     }
     manufacturer = InputManager::parseManufacturer(manufacturer_chr);
     color = InputManager::parseColor(color_chr);
-    if (s.fail() || !s.eof() || id < 0 || type < 1
-        || type > 2 || manufacturer > 3 || color > 4) {
+    BOOST_LOG_TRIVIAL(debug) << id << " " << type <<" "<< manufacturer << " "
+                             << color;
+    if (s.fail() ||!s.eof() ||  id < 0 || type < 1
+        || type > 2 || manufacturer == DEFAULT_MANUFACTURER ||
+        color == DEFAULT_COLOR) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
@@ -255,6 +261,10 @@ Ride *InputManager::readRide(CityMap *cityMap) {
       >> comma[2] >> xEnd >> comma[3] >> yEnd >> comma[4] >> numPassengers
       >> comma[5] >> tariff >> comma[6] >> time;
 
+    if (!checkIfFlags(comma, 7, ',')) {
+        BOOST_LOG_TRIVIAL(debug) << "Not a comma";
+        return NULL;
+    }
     int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
 
     if (s.fail() || !s.eof() || id < 0 || xStart < 0 || xStart >= mapWidth ||
@@ -281,12 +291,16 @@ MaritalStatus InputManager::parseStatus(char chr) {
     MaritalStatus maritalStatus = DEFAULT_STATUS;
     if (!str.compare("S")) {
         maritalStatus = SINGLE;
+        BOOST_LOG_TRIVIAL(debug) << "is single";
     } else if (!str.compare("M")) {
         maritalStatus = MARRIED;
+        BOOST_LOG_TRIVIAL(debug) << "is married";
     } else if (!str.compare("D")) {
         maritalStatus = DIVORCED;
+        BOOST_LOG_TRIVIAL(debug) << "is divorced";
     } else if (!str.compare("W")) {
         maritalStatus = WIDOWED;
+        BOOST_LOG_TRIVIAL(debug) << "is widowed";
     }
     return maritalStatus;
 }
@@ -302,12 +316,16 @@ Manufacturer InputManager::parseManufacturer(char chr) {
     Manufacturer manufacturer = DEFAULT_MANUFACTURER;
     if (!str.compare("H")) {
         manufacturer = HONDA;
+        BOOST_LOG_TRIVIAL(debug) << "is Honda";
     } else if (!str.compare("S")) {
         manufacturer = SUBARO;
+        BOOST_LOG_TRIVIAL(debug) << "is Subaro";
     } else if (!str.compare("T")) {
         manufacturer = TESLA;
+        BOOST_LOG_TRIVIAL(debug) << "is Telsa";
     } else if (!str.compare("F")) {
         manufacturer = FIAT;
+        BOOST_LOG_TRIVIAL(debug) << "is Fiat";
     }
     return manufacturer;
 }
@@ -323,14 +341,19 @@ Color InputManager::parseColor(char chr) {
     Color color = DEFAULT_COLOR;
     if (!str.compare("R")) {
         color = RED;
+        BOOST_LOG_TRIVIAL(debug) << "is Red";
     } else if (!str.compare("B")) {
         color = BLUE;
+        BOOST_LOG_TRIVIAL(debug) << "is Blue";
     } else if (!str.compare("G")) {
         color = GREEN;
+        BOOST_LOG_TRIVIAL(debug) << "is Green";
     } else if (!str.compare("P")) {
         color = PINK;
+        BOOST_LOG_TRIVIAL(debug) << "is Pink";
     } else if (!str.compare("W")) {
         color = WHITE;
+        BOOST_LOG_TRIVIAL(debug) << "is White";
     }
     return color;
 }
