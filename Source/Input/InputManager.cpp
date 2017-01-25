@@ -154,10 +154,10 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
     stringstream s(in);
     int id, age, experience, cabId;
     MaritalStatus m_status;
-    char status_chr, comma[4], dummy = 0;
+    char status_chr, comma[4];
     // Input.
     s >> id >> comma[0] >> age >> comma[1] >> status_chr
-      >> comma[2] >> experience >> comma[3] >> cabId >> dummy;
+      >> comma[2] >> experience >> comma[3] >> cabId;
     // Check for valid commas.
     for (int i = 0; i < 4; ++i) {
         if (comma[i] != ',') {
@@ -167,8 +167,8 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
         }
     }
     m_status = InputManager::parseStatus(status_chr);
-    if (s.fail() || id < 0 || age < 0 || m_status > 3
-        || experience < 0 || cabId < 0 || dummy != 0) {
+    if (s.fail() || !s.eof() || id < 0 || age < 0 || m_status > 3
+        || experience < 0 || cabId < 0) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
