@@ -167,7 +167,7 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
         }
     }
     m_status = InputManager::parseStatus(status_chr);
-    if (!cin.good() || id < 0 || age < 0 || m_status > 3
+    if (!s.good() || id < 0 || age < 0 || m_status > 3
         || experience < 0 || cabId < 0 || dummy != 0) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
