@@ -3,7 +3,6 @@
 #include "../Cab/Vehicle/LuxuryCab.h"
 #include <stdlib.h>
 #include <boost/log/trivial.hpp>
-#include <sstream>
 
 using namespace std;
 
@@ -20,12 +19,22 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
     int firstVal, secondVal;
     char comma;
     for (int i = 0; i < numObstacles; ++i) {
+        string in;
+        getline(cin, in);
+        if (countFlag(in, ',') != 1) {
+            // Invalid number of commas.
+            BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
+            return false;
+        }
+        stringstream s(in);
         // Get one obstacle, of form "number,number" .
-        cin >> firstVal >> comma >> secondVal;
-        if (!cin.good() || comma != ','
-            || firstVal < 0 || firstVal >= width ||
-            secondVal < 0 || secondVal >= height) {
-            BOOST_LOG_TRIVIAL(debug) << "wrong obstacle";
+        char dummy = 0;
+        s >> firstVal >> comma >> secondVal >> dummy;
+        if (!cin.good() || comma != ',' || firstVal < 0
+            || firstVal >= width || secondVal < 0
+            || secondVal >= height || dummy != 0) {
+            // Invalid arg for obstacle.
+            BOOST_LOG_TRIVIAL(debug) << "Invalid arg for obstacle";
             return false;
         }
         // Add the point to the list of obstacles.
@@ -42,26 +51,30 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
 CityMap *InputManager::readCityMap() {
     int width, height, numObstacles;
     list <Point> obstacles;
+    string in;
     while (true) {
-        cin >> width >> height;
-        if (!cin.good() || width < 1 || height < 1) {
+        getline(cin, in);
+        stringstream s(in);
+        char dummy = 0;
+        s >> width >> height >> dummy;
+        if (!cin.good() || width < 1 || height < 1 || dummy != 0) {
             // Invalid map-size.
             BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } else {
             // Read number of obstacles that will be.
-            cin >> numObstacles;
-            if (!cin.good() || numObstacles < 0) {
+            dummy = 0;
+            getline(cin, in);
+            stringstream s2(in);
+            s2 >> numObstacles >> dummy;
+            if (!cin.good() || numObstacles < 0 || dummy != 0) {
                 // Invalid number of obstacles.
                 BOOST_LOG_TRIVIAL(debug) << "wrong number of obstacles";
                 cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
             } else {
                 if (!readObstacles(numObstacles, &obstacles, width, height)) {
                     // Invalid obstacle.
                     cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 } else {
                     // Valid input.
                     break;
@@ -100,7 +113,7 @@ string InputManager::parseWord(string &input) {
 
 /**
  * Read full line from the user.
- * @return string.
+ * @return string string.
  */
 string InputManager::readLine() {
     string str;
@@ -109,18 +122,19 @@ string InputManager::readLine() {
 }
 
 /**
- * Count the number of commas are in the given string.
+ * Count the number of flags in the given string.
  * @param str string.
- * @return number of commas.
+ * @param flag char to find.
+ * @return number of flags in the string.
  */
-int InputManager::countComma(string str) {
-    int numComma = 0;
+int InputManager::countFlag(string str, char flag) {
+    int num = 0;
     for (unsigned long i = 0; i < str.length(); ++i) {
-        if (str.at(i) == ',') {
-            ++numComma;
+        if (str.at(i) == flag) {
+            ++num;
         }
     }
-    return numComma;
+    return num;
 }
 
 /**
@@ -132,7 +146,7 @@ int InputManager::countComma(string str) {
 Client *InputManager::readClient(string ip_addr, uint16_t port) {
     string in;
     getline(cin, in);
-    if (countComma(in) != 4) {
+    if (countFlag(in, ',') != 4) {
         // Invalid number of commas.
         BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
         return NULL;
@@ -140,10 +154,10 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
     stringstream s(in);
     int id, age, experience, cabId;
     MaritalStatus m_status;
-    char status_chr, comma[4];
+    char status_chr, comma[4], dummy = 0;
     // Input.
     s >> id >> comma[0] >> age >> comma[1] >> status_chr
-      >> comma[2] >> experience >> comma[3] >> cabId;
+      >> comma[2] >> experience >> comma[3] >> cabId >> dummy;
     // Check for valid commas.
     for (int i = 0; i < 4; ++i) {
         if (comma[i] != ',') {
@@ -152,11 +166,9 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
             return NULL;
         }
     }
-    char status_arr[1];
-    status_arr[0] = status_chr;
-    m_status = InputManager::parseStatus(string(status_arr));
-    if (!cin.good() || id < 0 || age < 0
-        || m_status > 3 || experience < 0 || cabId < 0) {
+    m_status = InputManager::parseStatus(status_chr);
+    if (!cin.good() || id < 0 || age < 0 || m_status > 3
+        || experience < 0 || cabId < 0 || dummy != 0) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
@@ -174,7 +186,7 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
 Cab *InputManager::readCab() {
     // Read a string from the user.
     string str = readLine(), subStr;
-    if (countComma(str) != 3) {
+    if (countFlag(str, ',') != 3) {
         // Invalid input.
         return NULL;
     }
@@ -207,7 +219,7 @@ Cab *InputManager::readCab() {
 Ride *InputManager::readRide(CityMap *cityMap) {
     // Read a string from the user.
     string str = readLine();
-    if (countComma(str) != 7) {
+    if (countFlag(str, ',') != 7) {
         // Invalid input.
         return NULL;
     }
@@ -234,10 +246,12 @@ Ride *InputManager::readRide(CityMap *cityMap) {
 
 /**
  * Parse a string into marital-status.
- * @param str string that represents marital-status.
+ * @param chr char that represents marital-status.
  * @return marital-status object.
  */
-MaritalStatus InputManager::parseStatus(string str) {
+MaritalStatus InputManager::parseStatus(char chr) {
+    char arr[1] = {chr};
+    string str(arr);
     MaritalStatus maritalStatus = DEFAULT_STATUS;
     if (!str.compare("S")) {
         maritalStatus = SINGLE;

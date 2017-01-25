@@ -5,6 +5,7 @@
 #include "../Driver/Driver.h"
 #include "../Cab/TaxiCenter.h"
 #include "../Driver/Client.h"
+#include <sstream>
 
 /**
  * Read and parse input drom the user.
@@ -24,7 +25,7 @@ public:
 
     static Ride *readRide(CityMap *cityMap);
 
-    static MaritalStatus parseStatus(string str);
+    static MaritalStatus parseStatus(char chr);
 
     static Manufacturer parseManufacturer(string str);
 
@@ -35,7 +36,7 @@ public:
 private:
     static string parseWord(string &input);
 
-    static int countComma(string str);
+    static int countFlag(string str, char flag);
 };
 
 
