@@ -30,10 +30,7 @@ int main(int argc, char **argv) {
  */
 static void operate(uint16_t port) {
     // Create objects.
-    CityMap *map;
-    do {
-        map = InputManager::readCityMap();
-    } while (map == NULL);
+    CityMap *map = InputManager::readCityMap();
     TaxiCenter *taxiCenter = new TaxiCenter(map);
     MainFlow mainFlow(taxiCenter);
     // Create the object that will hold the mutual info for all drivers.
@@ -45,12 +42,16 @@ static void operate(uint16_t port) {
     Cab *cab;
     do {
         // Get input.
-        cin >> mission;
-        if (!cin.good()) {
+        string in;
+        getline(cin, in);
+        stringstream s(in);
+        s >> mission;
+        if (s.fail() || !s.eof()) {
+            // Invalid command.
+            BOOST_LOG_TRIVIAL(debug) << "Invalid command";
             mission = 0;
         }
         cin.clear();
-        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         // Determine which mission needed to be executed.
         switch (mission) {
             case 1:
@@ -82,11 +83,11 @@ static void operate(uint16_t port) {
             case 4:
                 // Ask for driver location.
                 cin >> driverId;
-                if (GlobalInfo::getInstance()->doesDriverExist(driverId)){
+                if (GlobalInfo::getInstance()->doesDriverExist(driverId)) {
                     globalInfo->updateCommand(mission, driverId);
                     while (!globalInfo->areAllDriversFinishedCommand()) {
                     }
-                } else{
+                } else {
                     // Driver does not exist, Invalid input.
                     BOOST_LOG_TRIVIAL(debug) << "Invalid driver id";
                     cout << "-1\n";
