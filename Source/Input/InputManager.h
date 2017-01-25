@@ -12,8 +12,6 @@
  */
 class InputManager {
 public:
-    static int readNumber();
-
     static bool readObstacles(int numObstacles, list<Point> *obstacles,
                               int width, int height);
 
@@ -35,6 +33,8 @@ public:
 
 private:
     static string parseWord(string &input);
+
+    static bool checkIfFlags(char *flags_arr,int size, char flag);
 
     static int countFlag(string str, char flag);
 };

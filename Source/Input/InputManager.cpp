@@ -28,11 +28,9 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         }
         stringstream s(in);
         // Get one obstacle, of form "number,number" .
-        char dummy = 0;
-        s >> firstVal >> comma >> secondVal >> dummy;
-        if ((dummy != 0 && !s.good()) || comma != ',' || firstVal < 0
-            || firstVal >= width || secondVal < 0
-            || secondVal >= height) {
+        s >> firstVal >> comma >> secondVal;
+        if (s.fail() || !s.eof() || comma != ',' || firstVal < 0
+            || firstVal >= width || secondVal < 0 || secondVal >= height) {
             // Invalid arg for obstacle.
             BOOST_LOG_TRIVIAL(debug) << "Invalid arg for obstacle";
             return false;
@@ -55,19 +53,17 @@ CityMap *InputManager::readCityMap() {
     while (true) {
         getline(cin, in);
         stringstream s(in);
-        char dummy = 0;
-        s >> width >> height >> dummy;
-        if ((dummy != 0 && !s.good()) || width < 1 || height < 1) {
+        s >> width >> height;
+        if (s.fail() || !s.eof() || width < 1 || height < 1) {
             // Invalid map-size.
             BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
             cin.clear();
         } else {
             // Read number of obstacles that will be.
-            dummy = 0;
             getline(cin, in);
             stringstream s2(in);
-            s2 >> numObstacles >> dummy;
-            if ((dummy != 0 && !s2.good()) || numObstacles < 0) {
+            s2 >> numObstacles;
+            if (s2.fail() || !s2.eof() || numObstacles < 0) {
                 // Invalid number of obstacles.
                 BOOST_LOG_TRIVIAL(debug) << "wrong number of obstacles";
                 cin.clear();
@@ -138,6 +134,25 @@ int InputManager::countFlag(string str, char flag) {
 }
 
 /**
+ * Check if all the chars inside the array are equal to the given flag.
+ * @param flags_arr array of chars.
+ * @param size size of the array.
+ * @param flag char.
+ * @return true if the array contains only the given flag in all of its cells.
+ */
+bool InputManager::checkIfFlags(char *flags_arr, int size, char flag) {
+    for (int i = 0; i < size; ++i) {
+        if (flags_arr[i] != flag) {
+            // Invalid char instead of comma.
+            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of: '" << flag
+                                     << "' .";
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
  * Create new driver according to user's input.
  * @param ip_addr ip address.
  * @param port port number.
@@ -159,12 +174,8 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
     s >> id >> comma[0] >> age >> comma[1] >> status_chr
       >> comma[2] >> experience >> comma[3] >> cabId;
     // Check for valid commas.
-    for (int i = 0; i < 4; ++i) {
-        if (comma[i] != ',') {
-            // Invalid char instead of comma.
-            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of comma";
-            return NULL;
-        }
+    if (!checkIfFlags(comma, 4, ',')) {
+        return NULL;
     }
     m_status = InputManager::parseStatus(status_chr);
     if (s.fail() || !s.eof() || id < 0 || age < 0 || m_status > 3
@@ -195,27 +206,24 @@ Cab *InputManager::readCab() {
     int id, type;
     Manufacturer manufacturer;
     Color color;
-    char manufacturer_chr, color_chr, comma[3], dummy = 0;
+    char manufacturer_chr, color_chr, comma[3];
     // Input.
-    s >> id >> comma[0] >> type >> comma[1] >> manufacturer_chr
-      >> comma[2] >> color_chr >> dummy;
-    for (int i = 0; i < 3; ++i) {
-        if (comma[i] != ',') {
-            // Invalid char instead of comma.
-            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of comma";
-            return NULL;
-        }
+    s >> id >> comma[0] >> type >> comma[1]
+      >> manufacturer_chr >> comma[2] >> color_chr;
+    if (checkIfFlags(comma, 3, ',')) {
+        return NULL;
     }
     manufacturer = InputManager::parseManufacturer(manufacturer_chr);
     color = InputManager::parseColor(color_chr);
-    if (!cin.good() || id < 0 || type < 1 || type > 2 || manufacturer > 3
-        || color > 4 || dummy != 0) {
+    if (s.fail() || !s.eof() || id < 0 || type < 1
+        || type > 2 || manufacturer > 3 || color > 4) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
     }
     //Create a cab of type according to the input.
     Cab *cab = NULL;
+    //TODO: add cab-factory.
     if (type == 1) {
         cab = new StandardCab(id, manufacturer, color, 1);
     } else if (type == 2) {
@@ -241,20 +249,19 @@ Ride *InputManager::readRide(CityMap *cityMap) {
     stringstream s(in);
     int id, xStart, yStart, xEnd, yEnd, numPassengers, time;
     double tariff;
-    char comma[7], dummy = 0;
+    char comma[7];
     // Input.
     s >> id >> comma[0] >> xStart >> comma[1] >> yStart
       >> comma[2] >> xEnd >> comma[3] >> yEnd >> comma[4] >> numPassengers
-      >> comma[5] >> tariff >> comma[6] >> time >> dummy;
+      >> comma[5] >> tariff >> comma[6] >> time;
 
     int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
 
-    if (!cin.good() || id < 0 || xStart < 0 || xStart >= mapWidth ||
-        yStart < 0 ||
-        yStart >= mapHeight || xEnd < 0 || xEnd >= mapWidth || yEnd < 0 ||
-        yEnd >= mapHeight || numPassengers < 0 || tariff < 0 || time < 1 ||
-        cityMap->getBlock(xStart, yStart)->checkIfVisited() ||
-        cityMap->getBlock(xEnd, yEnd)->checkIfVisited() || dummy != 0) {
+    if (s.fail() || !s.eof() || id < 0 || xStart < 0 || xStart >= mapWidth ||
+        yStart < 0 || yStart >= mapHeight || xEnd < 0 || xEnd >= mapWidth ||
+        yEnd < 0 || yEnd >= mapHeight || numPassengers < 0 || tariff < 0 ||
+        time < 1 || cityMap->getBlock(xStart, yStart)->checkIfVisited() ||
+        cityMap->getBlock(xEnd, yEnd)->checkIfVisited()) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
