@@ -218,11 +218,10 @@ Cab *InputManager::readCab() {
     }
     manufacturer = InputManager::parseManufacturer(manufacturer_chr);
     color = InputManager::parseColor(color_chr);
-    BOOST_LOG_TRIVIAL(debug) << id << " " << type <<" "<< manufacturer << " "
+    BOOST_LOG_TRIVIAL(debug) << id << " " << type << " " << manufacturer << " "
                              << color;
-    if (s.fail() ||  id < 0 || type < 1
-        || type > 2 || manufacturer == DEFAULT_MANUFACTURER ||
-        color == DEFAULT_COLOR) {
+    if (s.fail() || id < 0 || type < 1 || type > 2 ||
+        manufacturer == DEFAULT_MANUFACTURER || color == DEFAULT_COLOR) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
@@ -271,7 +270,8 @@ Ride *InputManager::readRide(CityMap *cityMap) {
         yStart < 0 || yStart >= mapHeight || xEnd < 0 || xEnd >= mapWidth ||
         yEnd < 0 || yEnd >= mapHeight || numPassengers < 0 || tariff < 0 ||
         time < 1 || cityMap->getBlock(xStart, yStart)->checkIfVisited() ||
-        cityMap->getBlock(xEnd, yEnd)->checkIfVisited()) {
+        cityMap->getBlock(xEnd, yEnd)->checkIfVisited() ||
+        Point(xStart, yStart) == Point(xEnd, yEnd)) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
