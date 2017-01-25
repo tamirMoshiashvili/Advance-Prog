@@ -186,6 +186,26 @@ bool GlobalInfo::doesRideExist(int rideId) {
 }
 
 /**
+ * Check if a driver with the given Id exist.
+ * @param driverId driver id number.
+ * @return true if it in the map, false otherwise.
+ */
+bool GlobalInfo::doesDriverExist(int driverId) {
+    bool answer = false;
+    pthread_mutex_lock(&lock);
+    for (map<int, int>::iterator it = descriptorToDriverId.begin();
+         it!=descriptorToDriverId.end();++it){
+        if (it->second == driverId) {
+            // Driver has been found.
+            answer = true;
+            break;
+        }
+    }
+    pthread_mutex_unlock(&lock);
+    return answer;
+}
+
+/**
  * Get the path of the ride with the given id, and delete it from the map.
  * @param rideId id of ride.
  * @return deque of strings, which is the path of the ride.

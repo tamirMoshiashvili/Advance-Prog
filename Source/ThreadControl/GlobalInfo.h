@@ -53,6 +53,8 @@ public:
 
     bool doesRideExist(int rideId);
 
+    bool doesDriverExist(int driverId);
+
     deque<string> *popPathOf(int rideId);
 };
 

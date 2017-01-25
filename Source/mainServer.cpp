@@ -9,6 +9,7 @@
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/log/trivial.hpp>
 
 using namespace std;
 using namespace boost;
@@ -81,9 +82,14 @@ static void operate(uint16_t port) {
             case 4:
                 // Ask for driver location.
                 cin >> driverId;
-                //TODO: if driver id doesn't exist we should print -1?
-                globalInfo->updateCommand(mission, driverId);
-                while (!globalInfo->areAllDriversFinishedCommand()) {
+                if (GlobalInfo::getInstance()->doesDriverExist(driverId)){
+                    globalInfo->updateCommand(mission, driverId);
+                    while (!globalInfo->areAllDriversFinishedCommand()) {
+                    }
+                } else{
+                    // Driver does not exist, Invalid input.
+                    BOOST_LOG_TRIVIAL(debug) << "Invalid driver id";
+                    cout << "-1\n";
                 }
                 break;
             case 7:
