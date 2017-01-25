@@ -24,6 +24,7 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         if (countFlag(in, ',') != 1) {
             // Invalid number of commas.
             BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
+            cin.clear();
             return false;
         }
         stringstream s(in);
@@ -33,6 +34,7 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
             || firstVal >= width || secondVal < 0 || secondVal >= height) {
             // Invalid arg for obstacle.
             BOOST_LOG_TRIVIAL(debug) << "Invalid arg for obstacle";
+            cin.clear();
             return false;
         }
         // Add the point to the list of obstacles.
@@ -144,8 +146,7 @@ bool InputManager::checkIfFlags(char *flags_arr, int size, char flag) {
     for (int i = 0; i < size; ++i) {
         if (flags_arr[i] != flag) {
             // Invalid char instead of comma.
-            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of: '" << flag
-                                     << "' .";
+            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of: '" << flag << "' .";
             return false;
         }
     }
@@ -201,6 +202,7 @@ Cab *InputManager::readCab() {
     if (countFlag(in, ',') != 3) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
+        cin.clear();
         return NULL;
     }
     stringstream s(in);
@@ -214,16 +216,17 @@ Cab *InputManager::readCab() {
     BOOST_LOG_TRIVIAL(debug) << comma[0] << comma[1] << comma[2];
     if (!checkIfFlags(comma, 3, ',')) {
         BOOST_LOG_TRIVIAL(debug) << "Not a comma";
+        cin.clear();
         return NULL;
     }
     manufacturer = InputManager::parseManufacturer(manufacturer_chr);
     color = InputManager::parseColor(color_chr);
-    BOOST_LOG_TRIVIAL(debug) << id << " " << type << " " << manufacturer << " "
-                             << color;
+    BOOST_LOG_TRIVIAL(debug) << id << " " << type << " " << manufacturer << " " << color;
     if (s.fail() || id < 0 || type < 1 || type > 2 ||
         manufacturer == DEFAULT_MANUFACTURER || color == DEFAULT_COLOR) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
+        cin.clear();
         return NULL;
     }
     //Create a cab of type according to the input.
@@ -249,6 +252,7 @@ Ride *InputManager::readRide(CityMap *cityMap) {
     getline(cin, in);
     if (countFlag(in, ',') != 7) {
         // Invalid input.
+        cin.clear();
         return NULL;
     }
     stringstream s(in);
@@ -262,6 +266,7 @@ Ride *InputManager::readRide(CityMap *cityMap) {
 
     if (!checkIfFlags(comma, 7, ',')) {
         BOOST_LOG_TRIVIAL(debug) << "Not a comma";
+        cin.clear();
         return NULL;
     }
     int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
@@ -274,6 +279,7 @@ Ride *InputManager::readRide(CityMap *cityMap) {
         Point(xStart, yStart) == Point(xEnd, yEnd)) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
+        cin.clear();
         return NULL;
     }
     return new Ride(id, Point(xStart, yStart), Point(xEnd, yEnd),

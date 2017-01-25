@@ -38,8 +38,6 @@ static void operate(uint16_t port) {
     // Run the loop.
     int mission, driverId;
     int numDrivers = 0;
-    Ride *ride;
-    Cab *cab;
     do {
         // Get input.
         string in;
@@ -50,49 +48,77 @@ static void operate(uint16_t port) {
             // Invalid command.
             BOOST_LOG_TRIVIAL(debug) << "Invalid command";
             mission = 0;
+            cin.clear();
         }
-        cin.clear();
         // Determine which mission needed to be executed.
         switch (mission) {
             case 1:
+            {
                 // Connect with drivers.
-                cin >> numDrivers;
-                mainFlow.addDrivers(numDrivers, port);
-                globalInfo->updateCommand(mission);
-                while (!globalInfo->areAllDriversFinishedCommand()) {
+                string num;
+                getline(cin, num);
+                stringstream s2(num);
+                s2 >> numDrivers;
+                if (s2.fail() || !s2.eof()) {
+                    // Invalid number of drivers.
+                    BOOST_LOG_TRIVIAL(debug) << "Invalid number of drivers";
+                    cout << "-1\n";
+                    cin.clear();
+                } else {
+                    mainFlow.addDrivers(numDrivers, port);
+                    globalInfo->updateCommand(mission);
+                    while (!globalInfo->areAllDriversFinishedCommand()) {
+                    }
                 }
                 break;
+            }
             case 2:
+            {
                 // Add new ride.
-                ride = InputManager::readRide(map);
+                Ride *ride = InputManager::readRide(map);
                 if (ride != NULL) {
                     mainFlow.addRide(ride);
                 } else {
                     cout << "-1\n";
                 }
                 break;
+            }
             case 3:
+            {
                 // Add new cab.
-                cab = InputManager::readCab();
+                Cab *cab = InputManager::readCab();
                 if (cab != NULL) {
                     mainFlow.addCab(cab);
                 } else {
                     cout << "-1\n";
                 }
                 break;
+            }
             case 4:
+            {
                 // Ask for driver location.
-                cin >> driverId;
-                if (GlobalInfo::getInstance()->doesDriverExist(driverId)) {
-                    globalInfo->updateCommand(mission, driverId);
-                    while (!globalInfo->areAllDriversFinishedCommand()) {
-                    }
-                } else {
-                    // Driver does not exist, Invalid input.
+                string id;
+                getline(cin, id);
+                stringstream id_s(id);
+                id_s >> driverId;
+                if (id_s.fail() || !id_s.eof()) {
+                    // Invalid driver id.
                     BOOST_LOG_TRIVIAL(debug) << "Invalid driver id";
                     cout << "-1\n";
+                    cin.clear();
+                } else {
+                    if (GlobalInfo::getInstance()->doesDriverExist(driverId)) {
+                        globalInfo->updateCommand(mission, driverId);
+                        while (!globalInfo->areAllDriversFinishedCommand()) {
+                        }
+                    } else {
+                        // Driver does not exist, Invalid input.
+                        BOOST_LOG_TRIVIAL(debug)<< "Invalid: driver does not exist";
+                        cout << "-1\n";
+                    }
                 }
                 break;
+            }
             case 7:
                 break;
             case 9:
