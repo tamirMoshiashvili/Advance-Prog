@@ -30,9 +30,9 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         // Get one obstacle, of form "number,number" .
         char dummy = 0;
         s >> firstVal >> comma >> secondVal >> dummy;
-        if (!cin.good() || comma != ',' || firstVal < 0
+        if ((dummy != 0 && !s.good()) || comma != ',' || firstVal < 0
             || firstVal >= width || secondVal < 0
-            || secondVal >= height || dummy != 0) {
+            || secondVal >= height) {
             // Invalid arg for obstacle.
             BOOST_LOG_TRIVIAL(debug) << "Invalid arg for obstacle";
             return false;
@@ -57,7 +57,7 @@ CityMap *InputManager::readCityMap() {
         stringstream s(in);
         char dummy = 0;
         s >> width >> height >> dummy;
-        if (!cin.good() || width < 1 || height < 1 || dummy != 0) {
+        if ((dummy != 0 && !s.good()) || width < 1 || height < 1) {
             // Invalid map-size.
             BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
             cin.clear();
@@ -67,7 +67,7 @@ CityMap *InputManager::readCityMap() {
             getline(cin, in);
             stringstream s2(in);
             s2 >> numObstacles >> dummy;
-            if (!cin.good() || numObstacles < 0 || dummy != 0) {
+            if ((dummy != 0 && !s2.good()) || numObstacles < 0) {
                 // Invalid number of obstacles.
                 BOOST_LOG_TRIVIAL(debug) << "wrong number of obstacles";
                 cin.clear();
@@ -167,7 +167,7 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
         }
     }
     m_status = InputManager::parseStatus(status_chr);
-    if (!s.good() || id < 0 || age < 0 || m_status > 3
+    if (s.fail() || id < 0 || age < 0 || m_status > 3
         || experience < 0 || cabId < 0 || dummy != 0) {
         // Invalid input.
         BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
