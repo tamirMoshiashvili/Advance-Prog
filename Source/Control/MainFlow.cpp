@@ -136,3 +136,4 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
     delete GlobalInfo::getInstance();
     pthread_exit(NULL);
 }
+
