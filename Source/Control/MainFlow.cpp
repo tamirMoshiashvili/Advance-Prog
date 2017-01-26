@@ -60,6 +60,7 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
                     cout << "-1\n";
                     cin.clear();
                 } else {
+                    // Add drivers.
                     taxiCenter->initialize(numDrivers, port);
                     globalInfo->updateCommand(mission);
                     while (!globalInfo->areAllDriversFinishedCommand()) {
@@ -136,4 +137,3 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
     delete GlobalInfo::getInstance();
     pthread_exit(NULL);
 }
-

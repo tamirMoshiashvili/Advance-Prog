@@ -131,6 +131,11 @@ deque<string> *PathCalculator::getPathAsString() {
     return string_path;
 }
 
+/**
+ * Check if the ride is not valid.
+ * That will happen when the path of the ride is empty.
+ * @return true if the ride empty, false otherwise.
+ */
 bool PathCalculator::isValidRide() {
     return !path->empty();
 }

@@ -140,7 +140,7 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
 /**
  * Send a navigation system of the given ride, to the driver with the given id.
  * @param driverId id number of the driver.
- * @param ride pointer to ride object.
+ * @param string_path the path to send.
  */
 void TaxiCenter::sendNavigation(int driverSocket, deque<string> *string_path) {
     // Serialize the path.
