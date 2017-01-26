@@ -39,6 +39,8 @@ public:
 
     deque<string> *getPathAsString();
 
+    bool isValidRide();
+
 private:
     virtual void applyToBlock(Block *block, Block *father)=0;
 

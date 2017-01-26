@@ -130,3 +130,7 @@ deque<string> *PathCalculator::getPathAsString() {
     }
     return string_path;
 }
+
+bool PathCalculator::isValidRide() {
+    return !path->empty();
+}

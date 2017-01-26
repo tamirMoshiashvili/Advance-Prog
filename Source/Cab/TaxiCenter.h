@@ -55,7 +55,7 @@ public:
     void makeDriverWork(int driverSocket);
 
 private:
-    void sendNavigation(int driverSocket, Ride *ride);
+    void sendNavigation(int driverSocket, deque<string>* string_path);
 };
 
 

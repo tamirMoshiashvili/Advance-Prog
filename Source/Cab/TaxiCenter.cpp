@@ -110,6 +110,15 @@ void TaxiCenter::addRide(Ride *ride) {
  * @param ride pointer to ride object.
  */
 void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
+    GlobalInfo *globalInfo = GlobalInfo::getInstance();
+    int rideId = ride->getId();
+    while (!globalInfo->doesRideExist(rideId)) {}
+    // Create opposite stack of blocks ids which represents the path.
+    deque<string> *string_path = globalInfo->popPathOf(rideId);
+    if (string_path == NULL) {
+        BOOST_LOG_TRIVIAL(debug) << "Invalid ride detected";
+        return;
+    }
     // Serialize the ride.
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);
@@ -125,7 +134,7 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
         cout << "ERROR, expected received-msg, got: " << buffer;
     }
     // Send a navigation-system of the given ride to the driver.
-    sendNavigation(driverSocket, ride);
+    sendNavigation(driverSocket, string_path);
 }
 
 /**
@@ -133,12 +142,7 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
  * @param driverId id number of the driver.
  * @param ride pointer to ride object.
  */
-void TaxiCenter::sendNavigation(int driverSocket, Ride *ride) {
-    GlobalInfo *globalInfo = GlobalInfo::getInstance();
-    int rideId = ride->getId();
-    while (!globalInfo->doesRideExist(rideId)) {}
-    // Create opposite stack of blocks ids which represents the path.
-    deque<string> *string_path = globalInfo->popPathOf(rideId);
+void TaxiCenter::sendNavigation(int driverSocket, deque<string> *string_path) {
     // Serialize the path.
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);

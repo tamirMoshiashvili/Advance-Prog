@@ -38,8 +38,16 @@ void CalcPath::execute() {
     bfs->addStoppingPoint(dest);
     pthread_mutex_lock(locker);
     bfs->applyAlgorithm();
+    deque<string> *path;
+    if (!bfs->isValidRide()) {
+        cout << "-1\n";
+        BOOST_LOG_TRIVIAL(debug) << "ride is not valid";
+        path = NULL;
+    } else {
+        path = bfs->getPathAsString();
+    }
     GlobalInfo *globalInfo = GlobalInfo::getInstance();
-    globalInfo->addRideToMap(ride->getId(), bfs->getPathAsString());
+    globalInfo->addRideToMap(ride->getId(), path);
     pthread_mutex_unlock(locker);
     delete bfs;
 }
