@@ -8,7 +8,6 @@
 #include "../ThreadControl/ThreadManagement.h"
 #include "../ThreadPool/CalcPath.h"
 
-
 using namespace std;
 using namespace boost;
 
