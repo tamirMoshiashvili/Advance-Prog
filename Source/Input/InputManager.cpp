@@ -231,7 +231,6 @@ Cab *InputManager::readCab() {
     }
     //Create a cab of type according to the input.
     Cab *cab = NULL;
-    //TODO: add cab-factory.
     if (type == 1) {
         cab = new StandardCab(id, manufacturer, color, 1);
     } else if (type == 2) {

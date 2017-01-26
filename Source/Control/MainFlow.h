@@ -19,13 +19,7 @@ public:
 
     ~MainFlow();
 
-    void addDrivers(int numDrivers, uint16_t port);
-
-    void addCab(Cab *cab);
-
-    void addRide(Ride *ride);
-
-    void advanceClock();
+    void operateTaxiCenter(uint16_t port, CityMap *map);
 };
 
 
