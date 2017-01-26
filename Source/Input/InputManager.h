@@ -29,11 +29,7 @@ public:
 
     static Color parseColor(char chr);
 
-    static string readLine();
-
 private:
-    static string parseWord(string &input);
-
     static bool checkIfFlags(char *flags_arr,int size, char flag);
 
     static int countFlag(string str, char flag);

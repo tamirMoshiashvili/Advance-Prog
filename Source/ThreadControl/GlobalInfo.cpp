@@ -1,5 +1,4 @@
 #include <iostream>
-#include <boost/log/trivial.hpp>
 #include "GlobalInfo.h"
 
 GlobalInfo *GlobalInfo::globalInfo = NULL;

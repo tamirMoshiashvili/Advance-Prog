@@ -25,7 +25,6 @@ public:
     void addKilometersPassed(int num);
 
     int getNumKilometersPassed();
-
 };
 
 

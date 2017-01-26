@@ -1,4 +1,3 @@
-#include <boost/log/trivial.hpp>
 #include "CalcPath.h"
 #include "../Ride/Navigation/PathCalculator.h"
 #include "../Ride/Navigation/BFS.h"
@@ -41,7 +40,6 @@ void CalcPath::execute() {
     deque<string> *path;
     if (!bfs->isValidRide()) {
         cout << "-1\n";
-        BOOST_LOG_TRIVIAL(debug) << "ride is not valid";
         path = NULL;
     } else {
         path = bfs->getPathAsString();

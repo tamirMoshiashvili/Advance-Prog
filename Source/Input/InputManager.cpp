@@ -2,7 +2,6 @@
 #include "../Cab/Vehicle/StandardCab.h"
 #include "../Cab/Vehicle/LuxuryCab.h"
 #include <stdlib.h>
-#include <boost/log/trivial.hpp>
 
 using namespace std;
 
@@ -23,7 +22,6 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         getline(cin, in);
         if (countFlag(in, ',') != 1) {
             // Invalid number of commas.
-            BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
             cin.clear();
             return false;
         }
@@ -33,7 +31,6 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         if (s.fail() || !s.eof() || comma != ',' || firstVal < 0
             || firstVal >= width || secondVal < 0 || secondVal >= height) {
             // Invalid arg for obstacle.
-            BOOST_LOG_TRIVIAL(debug) << "Invalid arg for obstacle";
             cin.clear();
             return false;
         }
@@ -58,7 +55,6 @@ CityMap *InputManager::readCityMap() {
         s >> width >> height;
         if (s.fail() || !s.eof() || width < 1 || height < 1) {
             // Invalid map-size.
-            BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
             cout << "-1\n";
             cin.clear();
         } else {
@@ -68,7 +64,6 @@ CityMap *InputManager::readCityMap() {
             s2 >> numObstacles;
             if (s2.fail() || !s2.eof() || numObstacles < 0) {
                 // Invalid number of obstacles.
-                BOOST_LOG_TRIVIAL(debug) << "wrong number of obstacles";
                 cout << "-1\n";
                 cin.clear();
             } else {
@@ -83,9 +78,6 @@ CityMap *InputManager::readCityMap() {
             }
         }
     }
-    BOOST_LOG_TRIVIAL(debug) << "width: " << width
-                             << ", height: " << height
-                             << ", num-obstacles: " << numObstacles;
     int x, y;
     // Create the map.
     CityMap *map = new CityMap(width, height);
@@ -97,29 +89,6 @@ CityMap *InputManager::readCityMap() {
         map->addObstacle(x, y);
     }
     return map;
-}
-
-/**
- * Gets a string and parse the substring till the ',' character.
- * Then erase that part from the original string.
- * @param input reference to string.
- * @return a substring of the input.
- */
-string InputManager::parseWord(string &input) {
-    unsigned long int i = input.find(',');
-    string subStr = input.substr(0, i);
-    input.erase(0, i + 1);
-    return subStr;
-}
-
-/**
- * Read full line from the user.
- * @return string string.
- */
-string InputManager::readLine() {
-    string str;
-    getline(cin, str);
-    return str;
 }
 
 /**
@@ -149,7 +118,6 @@ bool InputManager::checkIfFlags(char *flags_arr, int size, char flag) {
     for (int i = 0; i < size; ++i) {
         if (flags_arr[i] != flag) {
             // Invalid char instead of comma.
-            BOOST_LOG_TRIVIAL(debug) << "Invalid char instead of: '" << flag << "' .";
             return false;
         }
     }
@@ -167,7 +135,6 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
     getline(cin, in);
     if (countFlag(in, ',') != 4) {
         // Invalid number of commas.
-        BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
         return NULL;
     }
     stringstream s(in);
@@ -185,7 +152,6 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
     if (s.fail() || id < 0 || age < 0 || m_status > 3
         || experience < 0 || cabId < 0) {
         // Invalid input.
-        BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         return NULL;
     }
     // Valid input.
@@ -204,7 +170,6 @@ Cab *InputManager::readCab() {
     getline(cin, in);
     if (countFlag(in, ',') != 3) {
         // Invalid input.
-        BOOST_LOG_TRIVIAL(debug) << "Invalid number of commas";
         cin.clear();
         return NULL;
     }
@@ -216,19 +181,15 @@ Cab *InputManager::readCab() {
     // Input.
     s >> id >> comma[0] >> type >> comma[1]
       >> manufacturer_chr >> comma[2] >> color_chr;
-    BOOST_LOG_TRIVIAL(debug) << comma[0] << comma[1] << comma[2];
     if (!checkIfFlags(comma, 3, ',')) {
-        BOOST_LOG_TRIVIAL(debug) << "Not a comma";
         cin.clear();
         return NULL;
     }
     manufacturer = InputManager::parseManufacturer(manufacturer_chr);
     color = InputManager::parseColor(color_chr);
-    BOOST_LOG_TRIVIAL(debug) << id << " " << type << " " << manufacturer << " " << color;
     if (s.fail() || id < 0 || type < 1 || type > 2 ||
         manufacturer == DEFAULT_MANUFACTURER || color == DEFAULT_COLOR) {
         // Invalid input.
-        BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         cin.clear();
         return NULL;
     }
@@ -267,7 +228,6 @@ Ride *InputManager::readRide(CityMap *cityMap) {
       >> comma[5] >> tariff >> comma[6] >> time;
 
     if (!checkIfFlags(comma, 7, ',')) {
-        BOOST_LOG_TRIVIAL(debug) << "Not a comma";
         cin.clear();
         return NULL;
     }
@@ -280,7 +240,6 @@ Ride *InputManager::readRide(CityMap *cityMap) {
         cityMap->getBlock(xEnd, yEnd)->checkIfVisited() ||
         Point(xStart, yStart) == Point(xEnd, yEnd)) {
         // Invalid input.
-        BOOST_LOG_TRIVIAL(debug) << "Invalid arguments of vars";
         cin.clear();
         return NULL;
     }

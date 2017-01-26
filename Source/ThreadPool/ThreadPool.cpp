@@ -1,7 +1,6 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <iostream>
-#include <boost/log/trivial.hpp>
 #include "ThreadPool.h"
 
 /**

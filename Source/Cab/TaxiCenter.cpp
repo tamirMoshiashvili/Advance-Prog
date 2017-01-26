@@ -19,8 +19,8 @@ using namespace boost;
  * @return TaxiCenter object.
  */
 TaxiCenter::TaxiCenter(CityMap *map) : numOfDrivers(0), tcpServer(NULL),
-                                       cityMap(map),
-                                       clock(0), ridesThreadPool(NUM_THREADS) {
+                                       cityMap(map), clock(0),
+                                       ridesThreadPool(NUM_THREADS) {
     pthread_mutex_init(&locker, NULL);
     pthread_mutex_init(&rides_lock, NULL);
 }
@@ -115,7 +115,7 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
     // Create opposite stack of blocks ids which represents the path.
     deque<string> *string_path = globalInfo->popPathOf(rideId);
     if (string_path == NULL) {
-        BOOST_LOG_TRIVIAL(debug) << "Invalid ride detected";
+        // Invalid ride detected.
         return;
     }
     // Serialize the ride.
@@ -175,8 +175,6 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
             tcpServer->receiveData(buffer, sizeof(buffer), driverSocket);
             if (!strcmp(buffer, YES)) {
                 ride = *it;
-                BOOST_LOG_TRIVIAL(debug) << "make driver work:: send ride "
-                                         << ride->getId() << " to driver";
                 sendRide(driverSocket, ride);
                 break;
             } else {
@@ -197,7 +195,6 @@ void TaxiCenter::makeDriverWork(int driverSocket) {
  */
 void TaxiCenter::advanceClock() {
     ++clock;
-    BOOST_LOG_TRIVIAL(debug) << "Time is: " << clock;
 }
 
 /**

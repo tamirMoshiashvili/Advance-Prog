@@ -1,5 +1,4 @@
 #include <iostream>
-#include <boost/log/trivial.hpp>
 #include <sstream>
 #include "MainFlow.h"
 #include "../Input/InputManager.h"
@@ -41,7 +40,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
         s >> mission;
         if (s.fail() || !s.eof()) {
             // Invalid command.
-            BOOST_LOG_TRIVIAL(debug) << "Invalid command";
             mission = 0;
             cin.clear();
         }
@@ -56,7 +54,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
                 s2 >> numDrivers;
                 if (s2.fail() || !s2.eof()) {
                     // Invalid number of drivers.
-                    BOOST_LOG_TRIVIAL(debug) << "Invalid number of drivers";
                     cout << "-1\n";
                     cin.clear();
                 } else {
@@ -99,7 +96,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
                 id_s >> driverId;
                 if (id_s.fail() || !id_s.eof()) {
                     // Invalid driver id.
-                    BOOST_LOG_TRIVIAL(debug) << "Invalid driver id";
                     cout << "-1\n";
                     cin.clear();
                 } else {
@@ -109,7 +105,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
                         }
                     } else {
                         // Driver does not exist, Invalid input.
-                        BOOST_LOG_TRIVIAL(debug)<< "Invalid: driver does not exist";
                         cout << "-1\n";
                     }
                 }
