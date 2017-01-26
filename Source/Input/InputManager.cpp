@@ -59,6 +59,7 @@ CityMap *InputManager::readCityMap() {
         if (s.fail() || !s.eof() || width < 1 || height < 1) {
             // Invalid map-size.
             BOOST_LOG_TRIVIAL(debug) << "wrong map sizes";
+            cout << "-1\n";
             cin.clear();
         } else {
             // Read number of obstacles that will be.
@@ -68,10 +69,12 @@ CityMap *InputManager::readCityMap() {
             if (s2.fail() || !s2.eof() || numObstacles < 0) {
                 // Invalid number of obstacles.
                 BOOST_LOG_TRIVIAL(debug) << "wrong number of obstacles";
+                cout << "-1\n";
                 cin.clear();
             } else {
                 if (!readObstacles(numObstacles, &obstacles, width, height)) {
                     // Invalid obstacle.
+                    cout << "-1\n";
                     cin.clear();
                 } else {
                     // Valid input.
