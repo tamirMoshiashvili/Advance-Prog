@@ -77,6 +77,7 @@ void Point::operator=(const Point &point) {
     y = point.y;
 }
 
+
 /**
  * Get a string-representation of the point.
  * @return string in format "x,y".
