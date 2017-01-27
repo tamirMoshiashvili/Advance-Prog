@@ -89,6 +89,7 @@ void Client::sendIds() {
  * Get a cab from the server and set it as cab.
  */
 void Client::connectToCab() {
+    cout << "Connect to cab\n";
     // Get a cab from the server.
     char buffer[1024] = {0};
     receiveData(buffer, sizeof(buffer));
@@ -112,6 +113,7 @@ void Client::operate() {
     receiveData(buffer, sizeof(buffer));
     while (true) {
         if (!strcmp(buffer, END)) {
+            cout << "Reached end\n";
             // End-message has been sent, end of the client.
             break;
         } else if (!strcmp(buffer, IS_AVAILABLE)) {
@@ -140,6 +142,7 @@ void Client::operate() {
  * @return last message received.
  */
 string Client::handleRide() {
+    cout << "Wait for a ride...\n";
     // Get a ride from the server and add the needed listeners.
     getRideFromServer();
     // Handle the navigation-process.
@@ -171,6 +174,7 @@ void Client::getRideFromServer() {
  * Send the location of the client to the server.
  */
 void Client::sendLocationToServer() {
+    cout << "Sent location...\n";
     // Serialize the location of the client.
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);
@@ -187,6 +191,7 @@ void Client::sendLocationToServer() {
  * Get and set the navigation.
  */
 void Client::handleNavigation() {
+    cout << "Wait for navigation...\n";
     // Get navigation from server.
     char buffer[65536] = {0};
     receiveData(buffer, sizeof(buffer));
@@ -208,6 +213,7 @@ void Client::handleNavigation() {
  * @return last message in the buffer.
  */
 string Client::drive() {
+    cout << "Start a drive\n";
     char buffer[64] = {0};
     while (!getCab()->isArrivedToDestination()) {
         // Driver is in the middle of a ride.

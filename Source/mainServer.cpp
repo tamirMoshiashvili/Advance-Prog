@@ -17,5 +17,6 @@ int main(int argc, char **argv) {
     TaxiCenter *taxiCenter = new TaxiCenter(map);
     MainFlow mainFlow(taxiCenter);
     mainFlow.operateTaxiCenter((uint16_t) atoi(port.c_str()), map);
+    delete GlobalInfo::getInstance();
     return 0;
 }

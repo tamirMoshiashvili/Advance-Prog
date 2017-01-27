@@ -18,6 +18,7 @@ void *ThreadManagement::threadFunction(void *param) {
     while (command != 7) {
         switch (command) {
             case 4:
+                cout << "Command 4 with des: " << driverSocket << "\n";
                 // Check if client's location is needed.
                 if (globalInfo->isDriverLocationRequested(driverSocket)) {
                     Point point = center->askDriverLocation(driverSocket);
@@ -25,6 +26,7 @@ void *ThreadManagement::threadFunction(void *param) {
                 }
                 break;
             case 9:
+                cout << "Command 9 with des: " << driverSocket << "\n";
                 // Operate the driver.
                 center->makeDriverWork(driverSocket);
                 break;
@@ -35,6 +37,7 @@ void *ThreadManagement::threadFunction(void *param) {
             // Get ready for the next mission.
             globalInfo->setNotNewCommand(driverSocket);
             // Wait for new mission.
+            cout << "Wait for new command...\n";
             while (!globalInfo->getIsNewCommand(driverSocket)) {
             }
         }
