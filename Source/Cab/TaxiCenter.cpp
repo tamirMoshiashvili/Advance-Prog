@@ -3,7 +3,6 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/archive/binary_oarchive.hpp>
-#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../ThreadControl/ThreadManagement.h"
 #include "../ThreadPool/CalcPath.h"
