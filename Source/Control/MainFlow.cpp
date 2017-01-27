@@ -72,7 +72,7 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
                 if (ride != NULL) {
                     taxiCenter->addRide(ride);
                 } else {
-                    cout << "-1\n";
+                    cin.clear();
                 }
                 break;
             }
@@ -84,6 +84,7 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
                     taxiCenter->addCab(cab);
                 } else {
                     cout << "-1\n";
+                    cin.clear();
                 }
                 break;
             }
