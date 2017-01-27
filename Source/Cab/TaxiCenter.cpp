@@ -12,6 +12,7 @@ using namespace boost;
 
 #define NUM_THREADS 5
 
+
 /**
  * Constructor.
  * @param map pointer to city map.
