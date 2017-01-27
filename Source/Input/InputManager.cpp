@@ -22,7 +22,6 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         getline(cin, in);
         if (countFlag(in, ',') != 1) {
             // Invalid number of commas.
-            cin.clear();
             return false;
         }
         stringstream s(in);
@@ -31,7 +30,6 @@ bool InputManager::readObstacles(int numObstacles, list <Point> *obstacles,
         if (s.fail() || !s.eof() || comma != ',' || firstVal < 0
             || firstVal >= width || secondVal < 0 || secondVal >= height) {
             // Invalid arg for obstacle.
-            cin.clear();
             return false;
         }
         // Add the point to the list of obstacles.
@@ -146,12 +144,14 @@ Client *InputManager::readClient(string ip_addr, uint16_t port) {
       >> comma[2] >> experience >> comma[3] >> cabId;
     // Check for valid commas.
     if (!checkIfFlags(comma, 4, ',')) {
+        cin.clear();
         return NULL;
     }
     m_status = InputManager::parseStatus(status_chr);
-    if (s.fail() || id < 0 || age < 0 || m_status > 3
-        || experience < 0 || cabId < 0) {
+    if (s.fail() || !s.eof() || id < 0 || age < 0 ||
+        m_status > 3 || experience < 0 || cabId < 0) {
         // Invalid input.
+        cin.clear();
         return NULL;
     }
     // Valid input.
@@ -170,7 +170,6 @@ Cab *InputManager::readCab() {
     getline(cin, in);
     if (countFlag(in, ',') != 3) {
         // Invalid input.
-        cin.clear();
         return NULL;
     }
     stringstream s(in);
@@ -182,7 +181,6 @@ Cab *InputManager::readCab() {
     s >> id >> comma[0] >> type >> comma[1]
       >> manufacturer_chr >> comma[2] >> color_chr;
     if (!checkIfFlags(comma, 3, ',')) {
-        cin.clear();
         return NULL;
     }
     manufacturer = InputManager::parseManufacturer(manufacturer_chr);
@@ -190,7 +188,12 @@ Cab *InputManager::readCab() {
     if (s.fail() || id < 0 || type < 1 || type > 2 ||
         manufacturer == DEFAULT_MANUFACTURER || color == DEFAULT_COLOR) {
         // Invalid input.
-        cin.clear();
+        return NULL;
+    }
+    char dummy = 0;
+    s >> dummy;
+    if (!s.eof() || dummy != 0){
+        // Additional input.
         return NULL;
     }
     //Create a cab of type according to the input.
@@ -215,7 +218,6 @@ Ride *InputManager::readRide(CityMap *cityMap) {
     getline(cin, in);
     if (countFlag(in, ',') != 7) {
         // Invalid input.
-        cin.clear();
         return NULL;
     }
     stringstream s(in);
@@ -228,7 +230,6 @@ Ride *InputManager::readRide(CityMap *cityMap) {
       >> comma[5] >> tariff >> comma[6] >> time;
 
     if (!checkIfFlags(comma, 7, ',')) {
-        cin.clear();
         return NULL;
     }
     int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
@@ -240,7 +241,6 @@ Ride *InputManager::readRide(CityMap *cityMap) {
         cityMap->getBlock(xEnd, yEnd)->checkIfVisited() ||
         Point(xStart, yStart) == Point(xEnd, yEnd)) {
         // Invalid input.
-        cin.clear();
         return NULL;
     }
     return new Ride(id, Point(xStart, yStart), Point(xEnd, yEnd),
@@ -253,16 +253,14 @@ Ride *InputManager::readRide(CityMap *cityMap) {
  * @return marital-status object.
  */
 MaritalStatus InputManager::parseStatus(char chr) {
-    char arr[1] = {chr};
-    string str(arr);
     MaritalStatus maritalStatus = DEFAULT_STATUS;
-    if (!str.compare("S")) {
+    if (chr == 'S') {
         maritalStatus = SINGLE;
-    } else if (!str.compare("M")) {
+    } else if (chr == 'M') {
         maritalStatus = MARRIED;
-    } else if (!str.compare("D")) {
+    } else if (chr == 'D') {
         maritalStatus = DIVORCED;
-    } else if (!str.compare("W")) {
+    } else if (chr == 'W') {
         maritalStatus = WIDOWED;
     }
     return maritalStatus;
@@ -274,16 +272,14 @@ MaritalStatus InputManager::parseStatus(char chr) {
  * @return manufacturer object.
  */
 Manufacturer InputManager::parseManufacturer(char chr) {
-    char arr[1] = {chr};
-    string str(arr);
     Manufacturer manufacturer = DEFAULT_MANUFACTURER;
-    if (!str.compare("H")) {
+    if (chr == 'H') {
         manufacturer = HONDA;
-    } else if (!str.compare("S")) {
+    } else if (chr == 'S') {
         manufacturer = SUBARO;
-    } else if (!str.compare("T")) {
+    } else if (chr == 'T') {
         manufacturer = TESLA;
-    } else if (!str.compare("F")) {
+    } else if (chr == 'F') {
         manufacturer = FIAT;
     }
     return manufacturer;
@@ -298,15 +294,15 @@ Color InputManager::parseColor(char chr) {
     char arr[1] = {chr};
     string str(arr);
     Color color = DEFAULT_COLOR;
-    if (!str.compare("R")) {
+    if (chr == 'R') {
         color = RED;
-    } else if (!str.compare("B")) {
+    } else if (chr == 'B') {
         color = BLUE;
-    } else if (!str.compare("G")) {
+    } else if (chr == 'G') {
         color = GREEN;
-    } else if (!str.compare("P")) {
+    } else if (chr == 'P') {
         color = PINK;
-    } else if (!str.compare("W")) {
+    } else if (chr == 'W') {
         color = WHITE;
     }
     return color;
