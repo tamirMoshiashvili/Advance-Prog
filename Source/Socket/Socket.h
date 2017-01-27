@@ -17,6 +17,8 @@ using namespace std;
 #define GO            "go"
 #define SEND_LOCATION "send location"
 #define RECEIVED      "received msg"
+#define VALID_RIDE "Valid"
+#define INVALID_RIDE "Invalid"
 
 // Return values to each function if error happened.
 #define CORRECT           0

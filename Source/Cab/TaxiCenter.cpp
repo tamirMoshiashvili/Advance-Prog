@@ -114,10 +114,18 @@ void TaxiCenter::sendRide(int driverSocket, Ride *ride) {
     while (!globalInfo->doesRideExist(rideId)) {}
     // Create opposite stack of blocks ids which represents the path.
     deque<string> *string_path = globalInfo->popPathOf(rideId);
+    char msg[16] = {0};
     if (string_path == NULL) {
         // Invalid ride detected.
+        tcpServer->sendData(INVALID_RIDE, driverSocket);
+        // Receive a "RECEIVED" message.
+        tcpServer->receiveData(msg, sizeof(msg), driverSocket);
         return;
+    } else {
+        tcpServer->sendData(VALID_RIDE, driverSocket);
     }
+    // Receive a "RECEIVED" message.
+    tcpServer->receiveData(msg, sizeof(msg), driverSocket);
     // Serialize the ride.
     string serial_str;
     iostreams::back_insert_device<string> inserter(serial_str);

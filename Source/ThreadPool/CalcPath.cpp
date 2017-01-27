@@ -39,8 +39,6 @@ void CalcPath::execute() {
     bfs->applyAlgorithm();
     deque<string> *path;
     if (!bfs->isValidRide()) {
-
-        cout << "-1\n";
         path = NULL;
     } else {
         path = bfs->getPathAsString();

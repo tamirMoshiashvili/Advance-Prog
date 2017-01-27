@@ -47,7 +47,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
         switch (mission) {
             case 1:
             {
-                cout << "Command 1\n";
                 // Connect with drivers.
                 string num;
                 getline(cin, num);
@@ -68,7 +67,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
             }
             case 2:
             {
-                cout << "Command 2\n";
                 // Add new ride.
                 Ride *ride = InputManager::readRide(map);
                 if (ride != NULL) {
@@ -80,7 +78,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
             }
             case 3:
             {
-                cout << "Command 3\n";
                 // Add new cab.
                 Cab *cab = InputManager::readCab();
                 if (cab != NULL) {
@@ -131,7 +128,6 @@ void MainFlow::operateTaxiCenter(uint16_t port, CityMap *map) {
                 break;
         }
     } while (mission != 7);
-    cout << "Do end of program\n";
     // Announce about end of program.
     globalInfo->updateCommand(mission);
     pthread_exit(NULL);

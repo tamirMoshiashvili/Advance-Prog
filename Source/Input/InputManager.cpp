@@ -192,7 +192,7 @@ Cab *InputManager::readCab() {
     }
     char dummy = 0;
     s >> dummy;
-    if (!s.eof() || dummy != 0){
+    if (!s.eof() || dummy != 0) {
         // Additional input.
         return NULL;
     }
@@ -218,6 +218,7 @@ Ride *InputManager::readRide(CityMap *cityMap) {
     getline(cin, in);
     if (countFlag(in, ',') != 7) {
         // Invalid input.
+        cout << "-1\n";
         return NULL;
     }
     stringstream s(in);
@@ -230,6 +231,7 @@ Ride *InputManager::readRide(CityMap *cityMap) {
       >> comma[5] >> tariff >> comma[6] >> time;
 
     if (!checkIfFlags(comma, 7, ',')) {
+        cout << "-1\n";
         return NULL;
     }
     int mapWidth = cityMap->getWigth(), mapHeight = cityMap->getHeight();
@@ -237,7 +239,12 @@ Ride *InputManager::readRide(CityMap *cityMap) {
     if (s.fail() || !s.eof() || id < 0 || xStart < 0 || xStart >= mapWidth ||
         yStart < 0 || yStart >= mapHeight || xEnd < 0 || xEnd >= mapWidth ||
         yEnd < 0 || yEnd >= mapHeight || numPassengers < 0 || tariff < 0 ||
-        time < 1 || cityMap->getBlock(xStart, yStart)->checkIfVisited() ||
+        time < 1) {
+        cout << "-1\n";
+        return NULL;
+    }
+
+    if (cityMap->getBlock(xStart, yStart)->checkIfVisited() ||
         cityMap->getBlock(xEnd, yEnd)->checkIfVisited() ||
         Point(xStart, yStart) == Point(xEnd, yEnd)) {
         // Invalid input.
@@ -291,8 +298,6 @@ Manufacturer InputManager::parseManufacturer(char chr) {
  * @return color object.
  */
 Color InputManager::parseColor(char chr) {
-    char arr[1] = {chr};
-    string str(arr);
     Color color = DEFAULT_COLOR;
     if (chr == 'R') {
         color = RED;
